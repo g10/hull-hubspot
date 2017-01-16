@@ -47,7 +47,7 @@ export default class ContactProperty {
 
   sync({ segments, groups, properties }) {
     const propertiesList = this.getPropertiesList({ segments, properties });
-    this.ensureHullGroup(groups)
+    return this.ensureHullGroup(groups)
       .then(this.ensureCustomProperties.bind(this, propertiesList))
       .catch(err => {
         this.logger.warn("Error in ContactProperty sync", { message: err.message });
