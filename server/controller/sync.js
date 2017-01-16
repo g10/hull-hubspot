@@ -4,9 +4,9 @@
  */
 export default class SyncStrategy {
 
-  syncAction(req, res) {
+  syncAction(req, res, next) {
     return req.shipApp.queueAgent.create("startSyncJob")
-      .then((jobId) => res.end(`ok: ${jobId}`), () => res.end("err"));
+      .then(next, next);
   }
 
   startSyncJob(req) {
