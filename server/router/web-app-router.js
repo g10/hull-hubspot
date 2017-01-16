@@ -6,6 +6,7 @@ import NotifHandler from "../lib/hull/notif-handler";
 import ParseMessageMiddleware from "../lib/middleware/parse-message";
 import AppMiddleware from "../lib/middleware/app";
 import RequireConfiguration from "../lib/middleware/require-configuration";
+import responseMiddleware from "../util/middleware/response.js";
 
 
 export default function (deps) {
@@ -35,7 +36,7 @@ export default function (deps) {
 
   router.post("/batch", RequireConfiguration, bodyParser.json(), batchController.handleBatchExtractAction);
   router.post("/fetchAll", RequireConfiguration, bodyParser.json(), fetchAllController.fetchAllAction);
-  router.post("/sync", RequireConfiguration, bodyParser.json(), syncController.syncAction);
+  router.post("/sync", RequireConfiguration, bodyParser.json(), syncController.syncAction, responseMiddleware);
 
   router.post("/notify", NotifHandler(Hull, {
     hostSecret,

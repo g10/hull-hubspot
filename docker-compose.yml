@@ -1,39 +1,18 @@
 version: '2'
 services:
-    node-cli:
+    npm:
         image: node:5
         env_file: .env
-        entrypoint: bash
-        working_dir: /app
+        entrypoint: npm
+        command: run start:dev
         ports:
-            - "8082:8082"
-        volumes:
-            - .:/app
-    dev:
-        image: node:5
-        env_file: .env
-        entrypoint: npm run start:dev
-        ports:
-            - "8082:8082"
+            - "8083:8083"
         working_dir: /app
         volumes:
             - .:/app
-    install:
-        image: node:5
-        env_file: .env
-        command: npm install
-        working_dir: /app
-        volumes:
-            - .:/app
+        links:
+            - redis
     redis:
         image: redis:3
         ports:
           - "6379:6379"
-    kue:
-        image: node:5
-        volumes:
-            - .:/app
-        working_dir: /app
-        entrypoint: node_modules/kue/bin/kue-dashboard -p 3050 -r redis://docker.local:6379
-        ports:
-          - "3050:3050"

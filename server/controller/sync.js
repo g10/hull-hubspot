@@ -4,9 +4,9 @@
  */
 export default class SyncStrategy {
 
-  syncAction(req, res) {
+  syncAction(req, res, next) {
     return req.shipApp.queueAgent.create("startSyncJob")
-      .then((jobId) => res.end(`ok: ${jobId}`));
+      .then(next, next);
   }
 
   startSyncJob(req) {
@@ -25,7 +25,7 @@ export default class SyncStrategy {
     const lastImportTime = req.payload.lastImportTime;
     const count = req.payload.count || 100;
     const offset = req.payload.offset || 0;
-
+    req.hull.client.logger.info("syncJob.getRecentContacts", { lastImportTime, count, offset });
     return req.shipApp.hubspotAgent.getRecentContacts(lastImportTime, count, offset)
       .then((res) => {
         const promises = [];
