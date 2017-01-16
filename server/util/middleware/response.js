@@ -7,7 +7,11 @@ import _ from "lodash";
  */
 export default function responseMiddleware(result, req, res, next) {
   if (_.isError(result)) {
-    req.hull.client.logger.error("action.error", result);
+    try {
+      req.hull.client.logger.error("action.error", result);
+    } catch (e) {
+      console.error("action.error", result);
+    }
     res.status(500);
   } else {
     res.status(200);
