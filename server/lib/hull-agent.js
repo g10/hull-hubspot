@@ -6,6 +6,7 @@ import BatchStream from "batch-stream";
 import JSONStream from "JSONStream";
 import request from "request";
 import URI from "urijs";
+import moment from "moment";
 
 
 function getProperties(raw, path, id_path) {
@@ -93,10 +94,15 @@ export default class HullAgent {
   }
 
   /**
-  * Get information about last import done from hubspot
+  * Get information about last import done from Hubspot.
+  * It tries to get the data from user's information, if not available
+  * defaults to one hour from now.
+  *
   * @return {Promise -> lastImportTime (ISO 8601)} 2016-08-04T12:51:46Z
   */
   getLastUpdate() {
+    const defaultValue = moment().subtract(1, "hour").format();
+
     return this.hullClient.get("/search/user_reports", {
       include: ["traits_hubspot/fetched_at"],
       sort: {
@@ -106,10 +112,16 @@ export default class HullAgent {
       page: 1
     })
     .then((r) => {
+      if (!_.get(r, "data.[0]['traits_hubspot/fetched_at']")) {
+        return defaultValue;
+      }
       return r.data[0]["traits_hubspot/fetched_at"];
     })
-    .catch(() => {
-      return Promise.resolve(new Date(0));
+    .catch((err) => {
+      if (err.status === 400) {
+        return Promise.resolve(defaultValue);
+      }
+      return Promise.reject(err);
     });
   }
 
