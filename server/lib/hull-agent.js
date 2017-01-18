@@ -6,7 +6,6 @@ import BatchStream from "batch-stream";
 import JSONStream from "JSONStream";
 import request from "request";
 import URI from "urijs";
-import moment from "moment";
 
 
 function getProperties(raw, path, id_path) {
