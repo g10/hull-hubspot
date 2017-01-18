@@ -19,7 +19,7 @@ export default class HubspotClient {
       .use(superagentPromisePlugin)
       .query({ access_token: accessToken })
       .on("request", (reqData) => {
-        this.instrumentationAgent.metricInc("api_call", 1, this.ship);
+        this.instrumentationAgent.metricInc("ship.service_api.call", 1, this.hullClient.configuration());
         this.hullClient.logger.info("hubspotClient.req", reqData.url);
       });
   }
@@ -44,7 +44,7 @@ export default class HubspotClient {
     if (!refreshToken) {
       return Promise.reject(new Error("Refresh token is not set."));
     }
-    this.instrumentationAgent.metricInc("api_call", 1, this.ship);
+    this.instrumentationAgent.metricInc("ship.service_api.call", 1, this.hullClient.configuration());
     return this.attach(this.req.post("/auth/v1/refresh"))
       .set("Content-Type", "application/x-www-form-urlencoded")
       .send({

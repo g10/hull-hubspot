@@ -34,7 +34,7 @@ export default class UsersController {
             properties
           };
         });
-        req.shipApp.instrumentationAgent.metricVal("send_users", body.length, req.hull.ship);
+        req.shipApp.instrumentationAgent.metricVal("ship.outgoing.users", body.length, req.hull.client.configuration());
         return req.shipApp.hubspotAgent.batchUsers(body);
       })
       .then(res => {
@@ -64,7 +64,7 @@ export default class UsersController {
    */
   saveContactsJob(req) {
     const contacts = req.payload.contacts;
-    req.shipApp.instrumentationAgent.metricVal("save_contact", contacts.length, req.hull.ship);
+    req.shipApp.instrumentationAgent.metricVal("ship.incoming.users", contacts.length, req.hull.client.configuration());
     return req.shipApp.hullAgent.saveContacts(contacts);
   }
 }
