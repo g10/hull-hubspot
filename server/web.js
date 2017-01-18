@@ -16,6 +16,10 @@ const clientID = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const port = process.env.PORT || 8082;
 
+if (process.env.COMBINED) {
+  require("./worker"); // eslint-disable-line global-require
+}
+
 const app = WebApp();
 
 if (instrumentationAgent.raven) {

@@ -85,7 +85,8 @@ export default class InstrumentationAgent {
   }
 
   getMetricTags({ organization, id } = {}) {
-    const tags = ["source:ship", `ship_version:${this.manifest.version}`, `ship_name:${this.manifest.name}`];
+    const tags = ["source:ship", `ship_version:${this.manifest.version}`, `ship_name:${this.manifest.name}`,
+      `env:${process.env.NODE_ENV || "production"}`];
     if (organization) {
       tags.push(`organization:${organization}`);
     }
