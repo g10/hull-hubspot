@@ -48,7 +48,7 @@ export default class InstrumentationAgent {
 
   catchError(err, extra = {}, tags = {}) {
     if (this.raven && err) {
-      return this.raven.captureException(err, {
+      this.raven.captureException(err, {
         extra,
         tags,
         fingerprint: [

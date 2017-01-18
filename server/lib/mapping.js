@@ -46,7 +46,7 @@ export default class Mapping {
       return traits;
     }, {});
 
-    hullTraits["hubspot/fetched_at"] = new Date();
+    hullTraits["hubspot/vid"] = userData.vid;
 
     return hullTraits;
   }

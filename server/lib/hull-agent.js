@@ -93,38 +93,6 @@ export default class HullAgent {
     }));
   }
 
-  /**
-  * Get information about last import done from Hubspot.
-  * It tries to get the data from user's information, if not available
-  * defaults to one hour from now.
-  *
-  * @return {Promise -> lastImportTime (ISO 8601)} 2016-08-04T12:51:46Z
-  */
-  getLastUpdate() {
-    const defaultValue = moment().subtract(1, "hour").format();
-
-    return this.hullClient.get("/search/user_reports", {
-      include: ["traits_hubspot/fetched_at"],
-      sort: {
-        "traits_hubspot/fetched_at": "desc"
-      },
-      per_page: 1,
-      page: 1
-    })
-    .then((r) => {
-      if (!_.get(r, "data.[0]['traits_hubspot/fetched_at']")) {
-        return defaultValue;
-      }
-      return r.data[0]["traits_hubspot/fetched_at"];
-    })
-    .catch((err) => {
-      if (err.status === 400) {
-        return Promise.resolve(defaultValue);
-      }
-      return Promise.reject(err);
-    });
-  }
-
   shouldSyncUser(user) {
     const segmentIds = this.ship.private_settings.synchronized_segments || [];
     if (segmentIds.length === 0) {
