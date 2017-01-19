@@ -2,7 +2,7 @@ import Hull from "hull";
 import raven from "raven";
 
 import bootstrap from "./bootstrap";
-import BatchSyncHandler from "./lib/batch-sync-handler";
+import BatchSyncHandler from "./util/handler/batch-sync";
 import WebApp from "./app/web-app";
 import WebAppRouter from "./router/web-app-router";
 import WebStaticRouter from "./router/web-static-router";

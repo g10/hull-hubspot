@@ -1,7 +1,7 @@
 import Promise from "bluebird";
 import _ from "lodash";
 
-import BatchSyncHandler from "../lib/batch-sync-handler";
+import BatchSyncHandler from "../util/handler/batch-sync";
 
 export default class UserUpdateStrategy {
   userUpdateHandler(payload, { req }) {
@@ -28,6 +28,7 @@ export default class UserUpdateStrategy {
     return BatchSyncHandler.getHandler({
       hull: req.hull,
       ship: req.hull.ship,
+      ns: "user_update",
       options: {
         maxSize: 100,
         throttle: 30000
