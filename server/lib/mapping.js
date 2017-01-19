@@ -103,7 +103,6 @@ export default class Mapping {
     if (hubspotUser.vid) {
       ident.anonymous_id = `hubspot:${hubspotUser.vid}`;
     }
-    console.log("IDENT", ident);
     return ident;
   }
 }
