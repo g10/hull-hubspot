@@ -87,4 +87,23 @@ export default class Mapping {
 
     return contactProps;
   }
+
+  /**
+   * Prepares a Hull User resolution object for `hull.as` method.
+   * @param  {Object} hubspotUser
+   * @return {Object}
+   */
+  getIdentFromHubspot(hubspotUser) {
+    const ident = {};
+
+    if (_.get(hubspotUser, "properties.email.value")) {
+      ident.email = _.get(hubspotUser, "properties.email.value");
+    }
+
+    if (hubspotUser.vid) {
+      ident.anonymous_id = `hubspot:${hubspotUser.vid}`;
+    }
+    console.log("IDENT", ident);
+    return ident;
+  }
 }

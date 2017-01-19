@@ -16,7 +16,7 @@ export default class UsersController {
     const users = (req.payload.users || []).filter(u => !_.isEmpty(u.email));
 
     if (users.length === 0) {
-      return req.hull.client.logger.log("skip psendUsersJob - empty users list");
+      return req.hull.client.logger.log("skip sendUsersJob - empty users list");
     }
 
     req.hull.client.logger.log("sendUsersJob", { count_users: users.length });
@@ -25,7 +25,8 @@ export default class UsersController {
       req.hull.client.logger.warn("sendUsersJob works best for under 100 users at once", users.length);
     }
 
-    return req.shipApp.hullAgent.getSegments()
+    return req.shipApp.hubspotAgent.syncContactProperties()
+      .then(() => req.shipApp.hullAgent.getSegments())
       .then(segments => {
         const body = users.map((user) => {
           const properties = req.shipApp.mapping.getHubspotProperties(segments, user);

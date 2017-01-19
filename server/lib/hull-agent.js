@@ -88,7 +88,8 @@ export default class HullAgent {
       if (!traits.email) {
         return "";
       }
-      return this.hullClient.as({ email: traits.email }).traits(traits);
+      const ident = this.mapping.getIdentFromHubspot(c);
+      return this.hullClient.as(ident).traits(traits);
     }));
   }
 
