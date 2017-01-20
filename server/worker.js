@@ -9,7 +9,7 @@ const { queueAdapter, instrumentationAgent, shipCache, jobs } = bootstrap;
 const hostSecret = process.env.SECRET || "1234";
 
 new WorkerApp({ queueAdapter, instrumentationAgent, jobs })
-  .use(Hull.Middleware({ hostSecret, shipCache }))
+  .use(Hull.Middleware({ hostSecret, shipCache, clientConfig: { flushAt: 100, flushAfter: 500 } }))
   .use(AppMiddleware({ queueAdapter, shipCache, instrumentationAgent }))
   .process();
 
