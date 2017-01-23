@@ -46,7 +46,7 @@ export default class Mapping {
       return traits;
     }, {});
 
-    hullTraits["hubspot/id"] = userData.vid;
+    hullTraits["hubspot/id"] = userData["canonical-vid"] || userData.vid;
 
     return hullTraits;
   }
