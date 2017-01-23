@@ -42,21 +42,20 @@ export default class WorkerApp {
     const jobName = job.data.name;
     const req = job.data.context;
     const jobData = job.data.payload;
-    console.log("dispatch", job.id, jobName);
     req.payload = jobData || {};
     const res = {};
-
-    if (!this.jobs[jobName]) {
-      const err = new Error(`Job not found: ${jobName}`);
-      console.error(err.message);
-      return Promise.reject(err);
-    }
 
     const startTime = process.hrtime();
     return Promise.fromCallback((callback) => {
       this.instrumentationAgent.startTransaction(jobName, () => {
         this.runMiddleware(req, res)
           .then(() => {
+            if (!this.jobs[jobName]) {
+              const err = new Error(`Job not found: ${jobName}`);
+              req.hull.client.logger.error(err.message);
+              return Promise.reject(err);
+            }
+            req.hull.client.logger.info("dispatch", { id: job.id, name: jobName });
             this.instrumentationAgent.metricInc(`ship.job.${jobName}.start`, 1, req.hull.client.configuration());
             return this.jobs[jobName].call(job, req, res);
           })
