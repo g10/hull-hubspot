@@ -46,7 +46,7 @@ export default class Mapping {
       return traits;
     }, {});
 
-    hullTraits["hubspot/fetched_at"] = new Date();
+    hullTraits["hubspot/id"] = userData["canonical-vid"] || userData.vid;
 
     return hullTraits;
   }
@@ -86,5 +86,23 @@ export default class Mapping {
     });
 
     return contactProps;
+  }
+
+  /**
+   * Prepares a Hull User resolution object for `hull.as` method.
+   * @param  {Object} hubspotUser
+   * @return {Object}
+   */
+  getIdentFromHubspot(hubspotUser) {
+    const ident = {};
+
+    if (_.get(hubspotUser, "properties.email.value")) {
+      ident.email = _.get(hubspotUser, "properties.email.value");
+    }
+
+    if (hubspotUser.vid) {
+      ident.anonymous_id = `hubspot:${hubspotUser.vid}`;
+    }
+    return ident;
   }
 }

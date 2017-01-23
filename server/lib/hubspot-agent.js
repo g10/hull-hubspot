@@ -140,6 +140,7 @@ export default class HubspotAgent {
     .then((res) => {
       res.body.contacts = res.body.contacts.filter((c) => {
         return moment(c.properties.lastmodifieddate.value, "x")
+          .milliseconds(0)
           .isAfter(lastImportTime);
       });
       return res;
@@ -180,6 +181,38 @@ export default class HubspotAgent {
         })
         .set("Content-Type", "application/json")
         .send(body);
+    });
+  }
+
+  /**
+  * Get information about last import done from Hubspot.
+  * It tries to get the data from user's information, if not available
+  * defaults to one hour from now.
+  *
+  * @return {Promise -> lastImportTime (ISO 8601)} 2016-08-04T12:51:46Z
+  */
+  getLastUpdate() {
+    const defaultValue = moment().subtract(1, "hour").format();
+
+    return this.hullClient.get("/search/user_reports", {
+      include: ["traits_hubspot/updated_at"],
+      sort: {
+        "traits_hubspot/updated_at": "desc"
+      },
+      per_page: 1,
+      page: 1
+    })
+    .then((r) => {
+      if (!_.get(r, "data.[0]['traits_hubspot/updated_at']")) {
+        return defaultValue;
+      }
+      return r.data[0]["traits_hubspot/updated_at"];
+    })
+    .catch((err) => {
+      if (err.status === 400) {
+        return Promise.resolve(defaultValue);
+      }
+      return Promise.reject(err);
     });
   }
 }

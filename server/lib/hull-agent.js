@@ -6,7 +6,6 @@ import BatchStream from "batch-stream";
 import JSONStream from "JSONStream";
 import request from "request";
 import URI from "urijs";
-import moment from "moment";
 
 
 function getProperties(raw, path, id_path) {
@@ -89,40 +88,9 @@ export default class HullAgent {
       if (!traits.email) {
         return "";
       }
-      return this.hullClient.as({ email: traits.email }).traits(traits);
+      const ident = this.mapping.getIdentFromHubspot(c);
+      return this.hullClient.as(ident).traits(traits);
     }));
-  }
-
-  /**
-  * Get information about last import done from Hubspot.
-  * It tries to get the data from user's information, if not available
-  * defaults to one hour from now.
-  *
-  * @return {Promise -> lastImportTime (ISO 8601)} 2016-08-04T12:51:46Z
-  */
-  getLastUpdate() {
-    const defaultValue = moment().subtract(1, "hour").format();
-
-    return this.hullClient.get("/search/user_reports", {
-      include: ["traits_hubspot/fetched_at"],
-      sort: {
-        "traits_hubspot/fetched_at": "desc"
-      },
-      per_page: 1,
-      page: 1
-    })
-    .then((r) => {
-      if (!_.get(r, "data.[0]['traits_hubspot/fetched_at']")) {
-        return defaultValue;
-      }
-      return r.data[0]["traits_hubspot/fetched_at"];
-    })
-    .catch((err) => {
-      if (err.status === 400) {
-        return Promise.resolve(defaultValue);
-      }
-      return Promise.reject(err);
-    });
   }
 
   shouldSyncUser(user) {

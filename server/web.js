@@ -2,7 +2,7 @@ import Hull from "hull";
 import raven from "raven";
 
 import bootstrap from "./bootstrap";
-import BatchSyncHandler from "./lib/batch-sync-handler";
+import BatchSyncHandler from "./util/handler/batch-sync";
 import WebApp from "./app/web-app";
 import WebAppRouter from "./router/web-app-router";
 import WebStaticRouter from "./router/web-static-router";
@@ -15,6 +15,10 @@ const hostSecret = process.env.SECRET || "1234";
 const clientID = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const port = process.env.PORT || 8082;
+
+if (process.env.COMBINED) {
+  require("./worker"); // eslint-disable-line global-require
+}
 
 const app = WebApp();
 

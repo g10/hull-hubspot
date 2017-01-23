@@ -8,8 +8,8 @@ import FetchAllController from "./controller/fetch-all";
 import SyncController from "./controller/sync";
 import NotifyController from "./controller/notify";
 
-import InstrumentationAgent from "./lib/instrumentation-agent";
-import KueAdapter from "./lib/adapter/kue";
+import InstrumentationAgent from "./util/instrumentation-agent";
+import KueAdapter from "./util/queue/adapter/kue";
 
 const instrumentationAgent = new InstrumentationAgent();
 
@@ -35,4 +35,15 @@ const controllers = {
   syncController: new SyncController()
 };
 
-export default { queueAdapter, controllers, instrumentationAgent, shipCache };
+// FIXME: change to job per file arch
+const jobs = {
+  handleBatchExtractJob: controllers.batchController.handleBatchExtractJob.bind(controllers.batchController),
+  fetchAllJob: controllers.fetchAllController.fetchAllJob.bind(controllers.fetchAllController),
+  saveContactsJob: controllers.usersController.saveContactsJob.bind(controllers.usersController),
+  sendUsersJob: controllers.usersController.sendUsersJob.bind(controllers.usersController),
+  syncJob: controllers.syncController.syncJob.bind(controllers.syncController),
+  startSyncJob: controllers.syncController.startSyncJob.bind(controllers.syncController),
+  checkTokenJob: controllers.monitorController.checkTokenJob.bind(controllers.monitorController),
+};
+
+export default { queueAdapter, controllers, instrumentationAgent, shipCache, jobs };
