@@ -16,24 +16,19 @@ export default class BatchSyncHandler {
   }
 
   static getHandler(args) {
-    return HANDLERS[args.ship.id] = HANDLERS[args.ship.id] || new BatchSyncHandler(args); // eslint-disable-line no-return-assign
+    const name = args.ns + args.ship.id;
+    return HANDLERS[name] = HANDLERS[name] || new BatchSyncHandler(args); // eslint-disable-line no-return-assign
   }
 
-  constructor({ ship, hull, options = {} }) {
+  constructor({ ns = "", ship, hull, options = {} }) {
+    this.ns = ns;
     this.ship = ship;
     this.hull = hull;
     this.messages = [];
     this.options = options;
 
-    this.status = "idle";
     this.flushLater = _.throttle(this.flush.bind(this), this.options.throttle);
-    this.stats = { flush: 0, add: 0, flushing: 0, success: 0, error: 0, pending: 0 };
-    setInterval(this.debugStats.bind(this), 10000);
     return this;
-  }
-
-  debugStats() {
-    this.hull.client.logger.info("batch.stats", this.stats);
   }
 
   setCallback(callback) {
@@ -41,41 +36,28 @@ export default class BatchSyncHandler {
     return this;
   }
 
-  metric(metric, value = 1) {
-    this.hull.client.logger.info("metric", `bulk.${metric}`, value);
-  }
-
   add(message) {
-    this.stats.add += 1;
-    this.stats.pending += 1;
     this.messages.push(message);
-
+    this.hull.client.logger.info("batchSyncHandler.added", this.messages.length);
     const { maxSize } = this.options;
     if (this.messages.length >= maxSize) {
       this.flush();
     } else {
       this.flushLater();
     }
-    return Promise.resolve();
+    return Promise.resolve("ok");
   }
 
   flush() {
-    this.metric("flush");
-    this.stats.flush += 1;
-    this.stats.flushing += 1;
     const messages = this.messages;
+    this.hull.client.logger.info("batchSyncHandler.flush", messages.length);
     this.messages = [];
-    this.stats.pending -= messages.length;
     return this.callback(messages)
       .then(() => {
-        this.metric("flush.success");
-        this.stats.success += 1;
-        this.stats.flushing -= 1;
+        this.hull.client.logger.info("batchSyncHandler.flush.sucess");
       }, (err) => {
-        this.hull.client.logger.error("flush.error", err);
-        this.metric("flush.error");
-        this.stats.error += 1;
-        this.stats.flushing -= 1;
+        console.error(err);
+        this.hull.client.logger.error("batchSyncHandler.flush.error", err);
       });
   }
 }

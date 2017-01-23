@@ -11,7 +11,7 @@ export default class SyncStrategy {
 
   startSyncJob(req) {
     const count = 100;
-    return req.shipApp.hullAgent.getLastUpdate()
+    return req.shipApp.hubspotAgent.getLastUpdate()
       .then((lastImportTime) => {
         req.hull.client.logger.info("syncAction.lastImportTime", lastImportTime);
         return req.shipApp.queueAgent.create("syncJob", {

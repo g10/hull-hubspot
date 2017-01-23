@@ -1,15 +1,16 @@
 import Hull from "hull";
 
 import bootstrap from "./bootstrap";
-import WorkerApp from "./app/worker-app";
-import WorkerRouter from "./router/worker-router";
+import WorkerApp from "./util/app/worker";
+import AppMiddleware from "./lib/middleware/app";
 
-const { queueAdapter, controllers, instrumentationAgent, shipCache } = bootstrap;
+const { queueAdapter, instrumentationAgent, shipCache, jobs } = bootstrap;
 
 const hostSecret = process.env.SECRET || "1234";
 
-new WorkerApp({ queueAdapter, hostSecret, instrumentationAgent, shipCache })
-  .use(WorkerRouter(controllers))
+new WorkerApp({ queueAdapter, instrumentationAgent, jobs })
+  .use(Hull.Middleware({ hostSecret, shipCache, clientConfig: { flushAt: 100, flushAfter: 500 } }))
+  .use(AppMiddleware({ queueAdapter, shipCache, instrumentationAgent }))
   .process();
 
 Hull.logger.info("workerApp.process");
