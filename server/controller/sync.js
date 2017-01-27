@@ -1,4 +1,3 @@
-import moment from "moment";
 /**
  * Handles operation for automatic sync changes of hubspot profiles
  * to hull users.
