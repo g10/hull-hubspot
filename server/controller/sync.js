@@ -10,7 +10,7 @@ export default class SyncStrategy {
   }
 
   startSyncJob(req) {
-    const count = 1;
+    const count = 100;
     const lastFetchAt = req.shipApp.hubspotAgent.getLastFetchAt();
     req.hull.client.logger.info("syncAction.lastFetchAt", lastFetchAt);
     return req.shipApp.queueAgent.create("syncJob", {
