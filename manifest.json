@@ -23,7 +23,29 @@
       "name": "sync_fields_to_hubspot",
       "title": "Custom Fields Sync (Hull to Hubspot)",
       "type": "array",
-      "format": "trait"
+      "format": "table",
+      "items": {
+        "type": "object",
+        "properties": {
+          "hull": {
+            "title": "Hull Field ID",
+            "type": "string",
+            "format": "trait",
+            "options": {
+              "placeholder": "Enter a Hull field id"
+            }
+          },
+          "name": {
+            "title": "Hubspot Field ID",
+            "type": "string",
+            "format": "select",
+            "options" : {
+              "allowCreate": true,
+              "loadOptions" : "/schema/contact_properties"
+            }
+          }
+        }
+      }
     },
     {
       "name": "sync_fields_to_hull",

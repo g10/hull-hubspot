@@ -8,11 +8,6 @@ export default function getContactProperties(req, res) {
     hubspotClient.get("/properties/v1/contacts/properties"),
     hubspotClient.get("/properties/v1/contacts/groups")
   ]).spread(({ body: props }, { body: groups }) => {
-      console.log(groups);
-
-
-
-
       res.json({ options: groups.map(group => {
         return {
           label: group.displayName,
@@ -28,5 +23,8 @@ export default function getContactProperties(req, res) {
         }
       })
     });
-    });
+  })
+  .catch(() => {
+    res.json({ options: [] });
+  });
 }
