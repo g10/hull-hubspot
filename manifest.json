@@ -36,7 +36,11 @@
           "name": {
             "title": "Hubspot Field ID",
             "type": "string",
-            "format": "string"
+            "format": "select",
+            "options" : {
+              "allowCreate": false,
+              "loadOptions" : "/schema/contact_properties"
+            }
           },
           "hull": {
             "title": "Hull Field ID",
