@@ -65,6 +65,10 @@ export default class HullAgent {
       });
   }
 
+  getShipSettings() {
+    return _.get(this.ship, "private_settings", {});
+  }
+
   /**
    * gets all existing Properties in the organization along with their metadata
    * @return {Promise}
