@@ -2,7 +2,7 @@
   "name": "Hubspot",
   "description": "Sync a Hubspot Channel whenever a User enters or leaves a Segment",
   "picture": "picture.png",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "tags": [
     "outgoing",
     "incoming",

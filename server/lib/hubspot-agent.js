@@ -194,28 +194,15 @@ export default class HubspotAgent {
   *
   * @return {Promise -> lastImportTime (ISO 8601)} 2016-08-04T12:51:46Z
   */
-  getLastUpdate() {
+  getLastFetchAt() {
     const defaultValue = moment().subtract(1, "hour").format();
+    const lastFetchAt = _.get(this.hullAgent.getShipSettings(), "last_fetch_at", defaultValue);
+    return lastFetchAt;
+  }
 
-    return this.hullClient.get("/search/user_reports", {
-      include: ["traits_hubspot/updated_at"],
-      sort: {
-        "traits_hubspot/updated_at": "desc"
-      },
-      per_page: 1,
-      page: 1
-    })
-    .then((r) => {
-      if (!_.get(r, "data.[0]['traits_hubspot/updated_at']")) {
-        return defaultValue;
-      }
-      return r.data[0]["traits_hubspot/updated_at"];
-    })
-    .catch((err) => {
-      if (err.status === 400) {
-        return Promise.resolve(defaultValue);
-      }
-      return Promise.reject(err);
+  setLastFetchAt() {
+    return this.hullAgent.updateShipSettings({
+      last_fetch_at: moment().format()
     });
   }
 }
