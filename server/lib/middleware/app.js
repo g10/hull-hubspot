@@ -12,7 +12,6 @@ export default function ({ queueAdapter, shipCache, instrumentationAgent }) {
     if (!req.hull || !req.hull.ship) {
       return next();
     }
-// req.shipApp.mapping = new Mapping(req.hull.ship);
 
     const hubspotClient = new HubspotClient({ ship: req.hull.ship, hullClient: req.hull.client, instrumentationAgent });
     const hullAgent = new HullAgent(req.hull.ship, req.hull.client, shipCache, req);
