@@ -41,7 +41,7 @@ export default class ContactProperty {
   sync({ segments, groups, properties }) {
     const propertiesList = this.getPropertiesList({ segments, properties });
     return this.ensureHullGroup(groups)
-      .then(this.ensureCustomProperties.bind(this, propertiesList))
+      .then(() => this.ensureCustomProperties(propertiesList, groups))
       .catch(err => {
         this.logger.warn("Error in ContactProperty sync", { message: err.message });
       });
@@ -60,7 +60,7 @@ export default class ContactProperty {
   }
 
   ensureCustomProperties(propertiesList, group = {}) {
-    const groupProperties = (group.properties || []).reduce((props, prop) => {
+    const groupProperties = _.flatten(group.map(g => g.properties)).reduce((props, prop) => {
       return Object.assign(props, { [prop.name]: prop });
     }, {});
     return Promise.all(propertiesList.map(this.ensureProperty.bind(this, groupProperties)))
