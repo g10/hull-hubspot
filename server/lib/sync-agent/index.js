@@ -39,7 +39,6 @@ export default class SyncAgent {
    * @return {Promise}
    */
   syncContactProperties() {
-    // const customProps = this.ship.private_settings.sync_fields_to_hubspot.map(f => f.hull);
     const customProps = this.mapping.map.to_hubspot;
     return Promise.all([
       this.hullAgent.getSegments(),
