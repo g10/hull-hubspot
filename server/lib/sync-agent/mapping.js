@@ -82,7 +82,11 @@ export default class Mapping {
       }
 
       if (hubspotProp.type === "enumeration") {
-        value = _.intersection(value, _.mapValues(hubspotProp.options, "value"));
+        if (_.isArray(value)) {
+          value = _.intersection(value, _.mapValues(hubspotProp.options, "value"));
+        } else if (!_.includes(_.mapValues(hubspotProp.options, "value"), value)) {
+          value = null;
+        }
       }
 
       if (value && prop.read_only !== false) {
