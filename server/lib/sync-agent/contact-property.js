@@ -1,7 +1,6 @@
 import _ from "lodash";
 import Promise from "bluebird";
 
-
 const TYPES_MAPPING = {
   string: { type: "string", fieldType: "text" },
   number: { type: "number", fieldType: "text" },
@@ -34,12 +33,6 @@ const TYPES_MAPPING = {
 
 
 export default class ContactProperty {
-
-  static sync(hubspotClient, { segments, groups, properties, logger }) {
-    const instance = new ContactProperty(hubspotClient, { logger });
-    return instance.sync({ segments, groups, properties });
-  }
-
   constructor(hubspot, { logger }) {
     this.hubspot = hubspot;
     this.logger = logger;
@@ -71,7 +64,7 @@ export default class ContactProperty {
       return Object.assign(props, { [prop.name]: prop });
     }, {});
     return Promise.all(propertiesList.map(this.ensureProperty.bind(this, groupProperties)))
-                  .then((...props) => console.warn("Done updating props", { props }));
+                  .then((...props) => this.logger.info("ContactProperty.ensureCustomProperties", { props }));
   }
 
   shouldUpdateProperty(currentValue, newValue) {
@@ -105,12 +98,8 @@ export default class ContactProperty {
     return [
       this.getHullSegmentsProperty(segments)
     ]
-      .concat(properties.map(({ type, title, id, path = [] }, displayOrder) => {
-        const name = `hull_${id.replace(/^traits_/, "").replace(/\//g, "_")}`;
-        const label = path.concat(title).join(" ");
-
+      .concat(properties.map(({ label, type, name }, displayOrder) => {
         const propType = TYPES_MAPPING[type] || TYPES_MAPPING.string;
-
         return {
           ...propType,
           name,

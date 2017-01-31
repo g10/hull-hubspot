@@ -24,14 +24,14 @@ export default class BatchController {
    * @return {Promise}
    */
   handleBatchExtractJob(req) {
-    return req.shipApp.hullAgent.handleExtract(req.payload.body, req.payload.chunkSize, (usersBatch) => {
+    return req.shipApp.hullAgent.extract.handle(req.payload.body, req.payload.chunkSize, (usersBatch) => {
       if (req.payload.segmentId) {
         usersBatch = usersBatch.map(u => {
           u.segment_ids = _.uniq(_.concat(u.segment_ids || [], [req.payload.segmentId]));
           return u;
         });
       }
-      const filteredUsers = usersBatch.filter((user) => req.shipApp.hullAgent.shouldSyncUser(user));
+      const filteredUsers = usersBatch.filter((user) => req.shipApp.syncAgent.shouldSyncUser(user));
       return req.shipApp.queueAgent.create("sendUsersJob", {
         users: filteredUsers
       });

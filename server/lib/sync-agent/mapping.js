@@ -67,13 +67,24 @@ export default class Mapping {
    * @param  {Object} userData Hull user object
    * @return {Array}           Hubspot properties array
    */
-  getHubspotProperties(segments, userData) {
+  getHubspotProperties(segments, hubspotProperties, userData) {
     const contactProps = _.reduce(this.map.to_hubspot, (props, prop) => {
+      const hubspotProp = _.find(_.flatten(hubspotProperties.map(g => g.properties)), { name: prop.name });
+
       let value = _.get(userData, prop.hull) || _.get(userData, `traits_${prop.hull}`);
       if (/_at$|date$/.test(prop.hull)) {
         const dateValue = new Date(value).getTime();
         if (dateValue) value = dateValue;
       }
+
+      if (hubspotProp.type === "string" && _.isArray(value)) {
+        value = value.join(",");
+      }
+
+      if (hubspotProp.type === "enumeration") {
+        value = _.intersection(value, _.mapValues(hubspotProp.options, "value"));
+      }
+
       if (value && prop.read_only !== false) {
         props.push({
           property: prop.name,

@@ -22,11 +22,12 @@ export default class SyncStrategy {
   }
 
   syncJob(req) {
+    const { hubspotAgent, syncAgent } = req.shipApp;
     const lastImportTime = req.payload.lastImportTime;
     const count = req.payload.count || 100;
     const offset = req.payload.offset || 0;
     req.hull.client.logger.info("syncJob.getRecentContacts", { lastImportTime, count, offset });
-    return req.shipApp.hubspotAgent.getRecentContacts(lastImportTime, count, offset)
+    return hubspotAgent.getRecentContacts(syncAgent.mapping.getHubspotPropertiesKeys(), lastImportTime, count, offset)
       .then((res) => {
         const promises = [];
 

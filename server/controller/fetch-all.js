@@ -25,11 +25,12 @@ export default class FetchAllController {
    * @return {Promise}
    */
   fetchAllJob(req) {
+    const { hubspotAgent, syncAgent } = req.shipApp;
     const count = req.payload.count;
     const offset = req.payload.offset || 0;
     const progress = req.payload.progress || 0;
 
-    return req.shipApp.hubspotAgent.getContacts(count, offset)
+    return hubspotAgent.getContacts(syncAgent.mapping.getHubspotPropertiesKeys(), count, offset)
       .then((data) => {
         const promises = [];
         const newProgress = progress + data.body.contacts.length;

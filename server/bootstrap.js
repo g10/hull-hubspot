@@ -1,5 +1,5 @@
 import CacheManager from "cache-manager";
-import { ShipCache } from "hull";
+import Hull from "hull";
 
 import BatchController from "./controller/batch";
 import MonitorController from "./controller/monitor";
@@ -10,6 +10,10 @@ import NotifyController from "./controller/notify";
 
 import InstrumentationAgent from "./util/instrumentation-agent";
 import KueAdapter from "./util/queue/adapter/kue";
+
+if (process.env.LOG_LEVEL) {
+  Hull.logger.transports.console.level = process.env.LOG_LEVEL;
+}
 
 const instrumentationAgent = new InstrumentationAgent();
 
@@ -24,7 +28,7 @@ const cacheManager = CacheManager.caching({
   ttl: process.env.SHIP_CACHE_TTL || 60
 });
 
-const shipCache = new ShipCache(cacheManager, process.env.SHIP_CACHE_PREFIX || "hull-hubspot");
+const shipCache = new Hull.ShipCache(cacheManager, process.env.SHIP_CACHE_PREFIX || "hull-hubspot");
 
 const controllers = {
   batchController: new BatchController(),

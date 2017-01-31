@@ -25,18 +25,21 @@ export default class UsersController {
       req.hull.client.logger.warn("sendUsersJob works best for under 100 users at once", users.length);
     }
 
-    return req.shipApp.hubspotAgent.syncContactProperties()
-      .then(() => req.shipApp.hullAgent.getSegments())
-      .then(segments => {
-        const body = users.map((user) => {
-          const properties = req.shipApp.mapping.getHubspotProperties(segments, user);
-          return {
-            email: user.email,
-            properties
-          };
+    return req.shipApp.syncAgent.setupShip()
+      .then(({ hubspotProperties }) => {
+        return req.shipApp.hullAgent.getSegments()
+        .then(segments => {
+          const body = users.map((user) => {
+            const properties = req.shipApp.syncAgent.mapping.getHubspotProperties(segments, hubspotProperties, user);
+            req.hull.client.logger.debug("outgoing.user", { email: user.email, properties });
+            return {
+              email: user.email,
+              properties
+            };
+          });
+          req.shipApp.instrumentationAgent.metricVal("ship.outgoing.users", body.length, req.hull.client.configuration());
+          return req.shipApp.hubspotAgent.batchUsers(body);
         });
-        req.shipApp.instrumentationAgent.metricVal("ship.outgoing.users", body.length, req.hull.client.configuration());
-        return req.shipApp.hubspotAgent.batchUsers(body);
       })
       .then(res => {
         if (res === null) {
@@ -66,6 +69,6 @@ export default class UsersController {
   saveContactsJob(req) {
     const contacts = req.payload.contacts;
     req.shipApp.instrumentationAgent.metricVal("ship.incoming.users", contacts.length, req.hull.client.configuration());
-    return req.shipApp.hullAgent.saveContacts(contacts);
+    return req.shipApp.syncAgent.saveContacts(contacts);
   }
 }

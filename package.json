@@ -84,6 +84,7 @@
     "raw-body": "^2.1.7",
     "request": "^2.74.0",
     "rimraf": "^2.5.4",
+    "slug": "^0.9.1",
     "sns-validator": "^0.2.1",
     "superagent": "^2.2.0",
     "superagent-prefix": "0.0.2",
