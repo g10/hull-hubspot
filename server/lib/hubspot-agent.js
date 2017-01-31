@@ -101,8 +101,6 @@ export default class HubspotAgent {
       return this.hullClient.logger.error("getContact gets maximum of 100 contacts at once", count);
     }
 
-    // const properties = this.mapping.getHubspotPropertiesKeys();
-
     return this.retryUnauthorized(() => {
       return this.hubspotClient
         .get("/contacts/v1/lists/all/contacts/all")
@@ -125,7 +123,6 @@ export default class HubspotAgent {
   * @return {Promise -> Array}
   */
   getRecentContacts(properties, lastImportTime, count = 100, offset = 0) {
-    // const properties = this.mapping.getHubspotPropertiesKeys();
     return this.retryUnauthorized(() => {
       return this.hubspotClient
         .get("/contacts/v1/lists/recently_updated/contacts/recent")
