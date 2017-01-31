@@ -145,34 +145,6 @@ export default class HubspotAgent {
     });
   }
 
-
-  /**
-   * makes sure hubspot is properly configured to receive custom properties and segments list
-   * @return {Promise}
-   */
-  // syncContactProperties() {
-  //   // const customProps = this.ship.private_settings.sync_fields_to_hubspot.map(f => f.hull);
-  //   const customProps = this.mapping.map.to_hubspot;
-  //   return Promise.all([
-  //     this.hullAgent.getSegments(),
-  //     this.retryUnauthorized(() => {
-  //       return this.hubspotClient.get("/contacts/v2/groups").query({ includeProperties: true });
-  //     }),
-  //     this.hullAgent.getAvailableProperties()
-  //   ]).then(([segments = [], groupsResponse = {}, hullProperties = {}]) => {
-  //     const groups = (groupsResponse && groupsResponse.body) || [];
-  //     const properties = _.reduce(customProps, (props, customProp) => {
-  //       const hullProp = _.find(hullProperties, { id: customProp.hull });
-  //       props.push(_.merge({}, customProp, _.pick(hullProp, [ "type" ])));
-  //       return props;
-  //     }, []);
-  //     return this.contactProperty.sync({
-  //       segments, groups, properties
-  //     });
-  //   });
-  // }
-
-
   batchUsers(body) {
     if (_.isEmpty(body)) {
       return Promise.resolve(null);

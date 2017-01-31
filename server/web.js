@@ -3,7 +3,7 @@ import raven from "raven";
 
 import bootstrap from "./bootstrap";
 import BatchSyncHandler from "./util/handler/batch-sync";
-import WebApp from "./app/web-app";
+import WebApp from "./util/app/web";
 import WebAppRouter from "./router/web-app-router";
 import WebOauthRouter from "./router/web-oauth-router";
 import WebStaticRouter from "./util/router/static";

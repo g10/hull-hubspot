@@ -6,7 +6,7 @@ import cors from "cors";
 import NotifHandler from "../lib/hull/notif-handler";
 import ParseMessageMiddleware from "../lib/middleware/parse-message";
 import AppMiddleware from "../lib/middleware/app";
-import RequireConfiguration from "../lib/middleware/require-configuration";
+import RequireConfiguration from "../util/middleware/require-configuration";
 import responseMiddleware from "../util/middleware/response.js";
 import * as actions from "../actions";
 

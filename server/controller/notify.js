@@ -5,7 +5,7 @@ import BatchSyncHandler from "../util/handler/batch-sync";
 
 export default class UserUpdateStrategy {
   userUpdateHandler(payload, { req }) {
-    const { syncAgent } = req.shipApp;
+    const { syncAgent, hullAgent } = req.shipApp;
     const message = payload.message;
     if (!syncAgent.isConfigured()) {
       req.hull.client.logger.info("ship is not configured");
@@ -22,7 +22,7 @@ export default class UserUpdateStrategy {
 
     user.segment_ids = _.uniq(_.concat(user.segment_ids || [], segments.map(s => s.id)));
 
-    if (!syncAgent.shouldSyncUser(user)) {
+    if (!hullAgent.userWhitelisted(user)) {
       return Promise.resolve();
     }
 
