@@ -1,29 +1,27 @@
-import Promise from "bluebird";
 import _ from "lodash";
 
 export default function getContactProperties(req, res) {
-  const { hubspotClient } = req.shipApp;
+  const { hubspotClient, hullClient } = req.shipApp;
 
-  return Promise.all([
-    hubspotClient.get("/properties/v1/contacts/properties"),
-    hubspotClient.get("/properties/v1/contacts/groups")
-  ]).spread(({ body: props }, { body: groups }) => {
-    res.json({ options: groups.map(group => {
-      return {
-        label: group.displayName,
-        options: _.chain(props)
-          .filter({ groupName: group.name })
-          .map(prop => {
-            return {
-              label: prop.label,
-              value: prop.name
-            };
-          })
-          .value()
-      };
-    })
+  return hubspotClient.get("/contacts/v2/groups")
+    .query({ includeProperties: true })
+    .then(({ body: groups }) => {
+      res.json({ options: groups.map(group => {
+        return {
+          label: group.displayName,
+          options: _.chain(group.properties)
+            .map(prop => {
+              return {
+                label: prop.label,
+                value: prop.name
+              };
+            })
+            .value()
+        };
+      })
+      });
+    }).catch((err) => {
+      hullClient.logger.error(err);
+      res.json({ options: [] });
     });
-  }).catch(() => {
-    res.json({ options: [] });
-  });
 }
