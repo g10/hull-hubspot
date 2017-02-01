@@ -116,7 +116,7 @@ export default class Mapping {
         }
       }
 
-      if (value && prop.read_only !== false) {
+      if (!_.isEmpty(value) && prop.read_only !== false) {
         props.push({
           property: hubspotProp.name,
           value
