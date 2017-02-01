@@ -44,14 +44,17 @@ export default class HullAgent {
   }
 
   /**
-   *
+   * @param  {Object} user
+   * @return {Boolean}
    */
   userComplete(user) {
     return !_.isEmpty(user.email);
   }
 
   /**
-   *
+   * Returns information if the users should be sent in outgoing sync.
+   * @param  {Object} user Hull user object
+   * @return {Boolean}
    */
   userWhitelisted(user) {
     const segmentIds = _.get(this.ship, "private_settings.synchronized_segments", []);

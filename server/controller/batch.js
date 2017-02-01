@@ -32,7 +32,7 @@ export default class BatchController {
           return u;
         });
       }
-      const filteredUsers = usersBatch.filter((user) => hullAgent.userWhitelisted(user));
+      const filteredUsers = usersBatch.filter((user) => hullAgent.userWhitelisted(user) && hullAgent.userComplete(user));
       return req.shipApp.queueAgent.create("sendUsersJob", {
         users: filteredUsers
       });
