@@ -27,12 +27,29 @@ export default class Mapping {
 
 
   /**
+   * Finds matching Hubspot Property for provided Hull Attribute.
+   * Tries to match name directly, if not found tries the version without hull_prefix
+   * to check if this is an existing field.
+   * @param  {Array} hubspotProperties
+   * @param  {Object} prop
+   * @return {Boolean}
+   */
+  findHubspotProp(hubspotProperties, prop) {
+    return _.find(_.flatten(hubspotProperties.map(g => g.properties)), { name: prop.name })
+      || _.find(_.flatten(hubspotProperties.map(g => g.properties)), { name: prop.name.replace(/^hull_/, "") });
+  }
+
+  /**
    * Maps Hubspot contact properties to Hull traits
    * @param  {Object} userData Hubspot contact
    * @return {Object}          Hull user traits
    */
-  getHullTraits(userData) {
+  getHullTraits(hubspotProperties, userData) {
     const hullTraits = _.reduce(this.map.to_hull, (traits, prop) => {
+      const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
+      if (!hubspotProp) {
+        console.log("getHullTraits.hubspotProp.notfound", prop);
+      }
       if (userData.properties && _.has(userData.properties, prop.name)) {
         let val = _.get(userData, `properties[${prop.name}].value`);
         if (prop.type === "number") {
@@ -40,6 +57,10 @@ export default class Mapping {
           if (!isNaN(val)) {
             val = numVal;
           }
+        }
+
+        if (hubspotProp && hubspotProp.type === "enumeration") {
+          val = val.split(";");
         }
         traits[prop.hull] = val;
       }
@@ -69,11 +90,10 @@ export default class Mapping {
    */
   getHubspotProperties(segments, hubspotProperties, userData) {
     const contactProps = _.reduce(this.map.to_hubspot, (props, prop) => {
-      const hubspotProp = _.find(_.flatten(hubspotProperties.map(g => g.properties)), { name: prop.name })
-        || _.find(_.flatten(hubspotProperties.map(g => g.properties)), { name: prop.name.replace(/^hull_/, "") });
+      const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
 
       if (!hubspotProp) {
-        console.log("Skipping property", prop);
+        console.log("getHubspotProperties.hubspotProp.notfound", prop);
         return props;
       }
 

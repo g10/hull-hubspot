@@ -69,6 +69,9 @@ export default class UsersController {
   saveContactsJob(req) {
     const contacts = req.payload.contacts;
     req.shipApp.instrumentationAgent.metricVal("ship.incoming.users", contacts.length, req.hull.client.configuration());
-    return req.shipApp.syncAgent.saveContacts(contacts);
+    return req.shipApp.syncAgent.setupShip()
+      .then(({ hubspotProperties }) => {
+        return req.shipApp.syncAgent.saveContacts(hubspotProperties, contacts);
+      });
   }
 }

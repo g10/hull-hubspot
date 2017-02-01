@@ -64,7 +64,7 @@ export default class ContactProperty {
       return Object.assign(props, { [prop.name]: prop });
     }, {});
     return Promise.all(propertiesList.map(this.ensureProperty.bind(this, groupProperties)))
-                  .then((...props) => this.logger.info("ContactProperty.ensureCustomProperties", { props }));
+                  .then((...props) => this.logger.info("ContactProperty.ensureCustomProperties", _.map(props[0], p => p.name)));
   }
 
   shouldUpdateProperty(currentValue, newValue) {

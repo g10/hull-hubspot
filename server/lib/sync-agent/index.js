@@ -74,10 +74,10 @@ export default class SyncAgent {
    * @param  {Array} Hubspot contacts
    * @return {Promise}
    */
-  saveContacts(contacts) {
+  saveContacts(hubspotProperties, contacts) {
     this.logger.info("saveContacts", contacts.length);
     return Promise.all(contacts.map((c) => {
-      const traits = this.mapping.getHullTraits(c);
+      const traits = this.mapping.getHullTraits(hubspotProperties, c);
       if (!traits.email) {
         return "";
       }
