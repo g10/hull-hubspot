@@ -69,7 +69,13 @@ export default class Mapping {
    */
   getHubspotProperties(segments, hubspotProperties, userData) {
     const contactProps = _.reduce(this.map.to_hubspot, (props, prop) => {
-      const hubspotProp = _.find(_.flatten(hubspotProperties.map(g => g.properties)), { name: prop.name });
+      const hubspotProp = _.find(_.flatten(hubspotProperties.map(g => g.properties)), { name: prop.name })
+        || _.find(_.flatten(hubspotProperties.map(g => g.properties)), { name: prop.name.replace(/^hull_/, "") });
+
+      if (!hubspotProp) {
+        console.log("Skipping property", prop);
+        return props;
+      }
 
       let value = _.get(userData, prop.hull) || _.get(userData, `traits_${prop.hull}`);
       if (/_at$|date$/.test(prop.hull)) {
@@ -78,20 +84,21 @@ export default class Mapping {
       }
 
       if (hubspotProp.type === "string" && _.isArray(value)) {
-        value = value.join(",");
+        value = value.join(";");
       }
 
       if (hubspotProp.type === "enumeration") {
         if (_.isArray(value)) {
-          value = _.intersection(value, _.mapValues(hubspotProp.options, "value"));
-        } else if (!_.includes(_.mapValues(hubspotProp.options, "value"), value)) {
-          value = null;
+          value = _.intersection(value, _.map(hubspotProp.options, p => p.value));
+          value = value.join(";");
+        } else if (!_.includes(_.map(hubspotProp.options, p => p.value), value)) {
+          value = "";
         }
       }
 
       if (value && prop.read_only !== false) {
         props.push({
-          property: prop.name,
+          property: hubspotProp.name,
           value
         });
       }

@@ -55,8 +55,7 @@ const DEFAULT_MAPPING = [
 export function getFieldsToHubspot(ship = {}) {
   const fields = _.get(ship, "private_settings.sync_fields_to_hubspot") || [];
   return fields.map(f => {
-    // const hull = f.hull.replace(/^traits_/, "");
-    const name = slug(f.name, {
+    const name = "hull_" + slug(f.name, {
       replacement: "_",
       lower: true
     });

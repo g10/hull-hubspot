@@ -77,7 +77,8 @@ export default class ContactProperty {
   }
 
   ensureProperty(groupProperties, property) {
-    const exists = groupProperties[property.name];
+    const exists = groupProperties[property.name]
+      || groupProperties[property.name.replace(/^hull_/, "")];
     if (exists) {
       if (this.shouldUpdateProperty(exists, property)) {
         return this.hubspot
