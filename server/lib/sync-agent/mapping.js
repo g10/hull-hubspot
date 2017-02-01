@@ -116,7 +116,7 @@ export default class Mapping {
         }
       }
 
-      if (!_.isUndefined(value) && prop.read_only !== false) {
+      if (!_.isNil(value) && value !== "" && prop.read_only !== false) {
         props.push({
           property: hubspotProp.name,
           value
