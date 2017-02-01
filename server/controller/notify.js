@@ -22,7 +22,7 @@ export default class UserUpdateStrategy {
 
     user.segment_ids = _.uniq(_.concat(user.segment_ids || [], segments.map(s => s.id)));
 
-    if (!hullAgent.userWhitelisted(user) || hullAgent.userComplete(user)) {
+    if (!hullAgent.userWhitelisted(user) || !hullAgent.userComplete(user)) {
       return Promise.resolve();
     }
 
