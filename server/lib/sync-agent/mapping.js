@@ -97,7 +97,10 @@ export default class Mapping {
         return props;
       }
 
-      let value = _.get(userData, prop.hull) || _.get(userData, `traits_${prop.hull}`);
+      let value = _.has(userData, prop.hull)
+        ? _.get(userData, prop.hull)
+        : _.get(userData, `traits_${prop.hull}`);
+
       if (/_at$|date$/.test(prop.hull)) {
         const dateValue = new Date(value).getTime();
         if (dateValue) value = dateValue;
