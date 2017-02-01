@@ -43,6 +43,11 @@
               "allowCreate": true,
               "loadOptions" : "/schema/contact_properties"
             }
+          },
+          "overwrite" : {
+            "type" : "boolean",
+            "title" : "Hull overwrites Hubspot",
+            "default" : false
           }
         }
       }

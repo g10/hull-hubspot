@@ -101,6 +101,12 @@ export default class Mapping {
         ? _.get(userData, prop.hull)
         : _.get(userData, `traits_${prop.hull}`);
 
+      if (!_.get(prop, "overwrite") && _.get(prop, "default")) {
+        value = _.has(userData, _.get(prop, "default.hull"))
+          ? _.get(userData, _.get(prop, "default.hull"))
+          : value;
+      }
+
       if (/_at$|date$/.test(prop.hull)) {
         const dateValue = new Date(value).getTime();
         if (dateValue) value = dateValue;

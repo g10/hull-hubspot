@@ -59,7 +59,7 @@ export function getFieldsToHubspot(ship = {}) {
       replacement: "_",
       lower: true
     });
-    return { label: f.name, name, hull: f.hull };
+    return { label: f.name, name, hull: f.hull, default: _.find(DEFAULT_MAPPING, { name: f.name }) };
   });
 }
 
