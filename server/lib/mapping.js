@@ -48,6 +48,14 @@ export default class Mapping {
 
     hullTraits["hubspot/id"] = userData["canonical-vid"] || userData.vid;
 
+    if (hullTraits["hubspot/first_name"]) {
+      hullTraits.first_name = { operation: "setIfNull", value: hullTraits["hubspot/first_name"] };
+    }
+
+    if (hullTraits["hubspot/last_name"]) {
+      hullTraits.last_name = { operation: "setIfNull", value: hullTraits["hubspot/last_name"] };
+    }
+
     return hullTraits;
   }
 
@@ -66,6 +74,11 @@ export default class Mapping {
         const dateValue = new Date(value).getTime();
         if (dateValue) value = dateValue;
       }
+
+      if (_.isArray(value)) {
+        value = value.join(";");
+      }
+
       if (value && prop.read_only !== false) {
         props.push({
           property: prop.name,
