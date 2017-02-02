@@ -13,6 +13,13 @@ export default class HullAgent {
     this.extract = new Extract(req, hullClient);
   }
 
+  /**
+   * Updates `private_settings`, touching only provided settings.
+   * Also clears the `shipCache`.
+   * `hullClient.put` will emit `ship:update` notify event.
+   * @param  {Object} newSettings settings to update
+   * @return {Promise}
+   */
   updateShipSettings(newSettings) {
     return this.hullClient.get(this.ship.id)
       .then(ship => {
