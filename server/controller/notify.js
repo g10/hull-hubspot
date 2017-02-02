@@ -5,8 +5,9 @@ import BatchSyncHandler from "../util/handler/batch-sync";
 
 export default class UserUpdateStrategy {
   userUpdateHandler(payload, { req }) {
+    const { syncAgent, hullAgent } = req.shipApp;
     const message = payload.message;
-    if (!req.shipApp.hubspotAgent.isConfigured()) {
+    if (!syncAgent.isConfigured()) {
       req.hull.client.logger.info("ship is not configured");
       return Promise.resolve();
     }
@@ -21,7 +22,7 @@ export default class UserUpdateStrategy {
 
     user.segment_ids = _.uniq(_.concat(user.segment_ids || [], segments.map(s => s.id)));
 
-    if (!req.shipApp.hullAgent.shouldSyncUser(user)) {
+    if (!hullAgent.userWhitelisted(user) || !hullAgent.userComplete(user)) {
       return Promise.resolve();
     }
 
@@ -40,45 +41,48 @@ export default class UserUpdateStrategy {
   }
 
   shipUpdateHandler(payload, { req }) {
-    if (!req.shipApp.hubspotAgent.isConfigured()) {
+    const { syncAgent } = req.shipApp;
+    if (!syncAgent.isConfigured()) {
       req.hull.client.logger.info("ship is not configured");
       return Promise.resolve();
     }
     const message = payload.message; // eslint-disable-line no-unused-vars
-    return req.shipApp.hubspotAgent.syncContactProperties()
+    return syncAgent.setupShip()
       .catch((err) => {
         req.hull.client.logger.error("Error in creating segments property", err.message);
       });
   }
 
   segmentUpdateHandler(payload, { req }) {
-    if (!req.shipApp.hubspotAgent.isConfigured()) {
+    const { syncAgent, hullAgent } = req.shipApp;
+    if (!syncAgent.isConfigured()) {
       req.hull.client.logger.info("ship is not configured");
       return Promise.resolve();
     }
     const segment = payload.message;
-    return req.shipApp.hubspotAgent.syncContactProperties()
+    return syncAgent.setupShip()
       .then(() => {
-        return req.shipApp.hullAgent.requestExtract({ segment });
+        return hullAgent.extract.request({ segment, fields: syncAgent.mapping.getHullTraitsKeys() });
       });
   }
 
   segmentDeleteHandler(payload, { req }) {
-    if (!req.shipApp.hubspotAgent.isConfigured()) {
+    const { syncAgent, hullAgent } = req.shipApp;
+    if (!syncAgent.isConfigured()) {
       req.hull.client.logger.info("ship is not configured");
       return Promise.resolve();
     }
     // TODO: if the segment would have `query` param we could trigger an extract
     // for deleted segment, for now we need to trigger an extract for all userbase
     const segment = payload.message; // eslint-disable-line no-unused-vars
-    return req.shipApp.hubspotAgent.syncContactProperties()
+    return syncAgent.setupShip()
       .then(() => {
         const segments = req.hull.ship.private_settings.synchronized_segments || [];
         if (segments.length === 0) {
-          return req.shipApp.hullAgent.requestExtract({});
+          return hullAgent.extract.request({ fields: syncAgent.mapping.getHullTraitsKeys() });
         }
         return Promise.map(segments, segmentId => {
-          return req.shipApp.hullAgent.requestExtract({ segment: { id: segmentId }, remove: true });
+          return hullAgent.extract.request({ segment: { id: segmentId }, remove: true, fields: syncAgent.mapping.getHullTraitsKeys() });
         });
       });
   }

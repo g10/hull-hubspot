@@ -1,12 +1,14 @@
 import { Router } from "express";
 import bodyParser from "body-parser";
 import { Middleware } from "hull";
+import cors from "cors";
 
 import NotifHandler from "../lib/hull/notif-handler";
 import ParseMessageMiddleware from "../lib/middleware/parse-message";
 import AppMiddleware from "../lib/middleware/app";
-import RequireConfiguration from "../lib/middleware/require-configuration";
+import RequireConfiguration from "../util/middleware/require-configuration";
 import responseMiddleware from "../util/middleware/response.js";
+import * as actions from "../actions";
 
 
 export default function (deps) {
@@ -51,6 +53,12 @@ export default function (deps) {
   }));
 
   router.post("/monitor/checkToken", RequireConfiguration, bodyParser.json(), monitorController.checkTokenAction);
+
+  router.get("/schema/contact_properties", cors(), RequireConfiguration, bodyParser.json(), actions.getContactProperties);
+
+  router.post("/migrate", (req, res, next) => {
+    req.shipApp.syncAgent.migrateSettings().then(next, next);
+  }, responseMiddleware);
 
   return router;
 }

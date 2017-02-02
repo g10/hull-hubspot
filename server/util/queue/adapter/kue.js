@@ -42,7 +42,7 @@ export default class KueAdapter {
    * @return {Object} this
    */
   process(jobName, jobCallback) {
-    return this.queue.process(jobName, (job, done) => {
+    this.queue.process(jobName, (job, done) => {
       jobCallback(job)
         .then((res) => {
           done(null, res);
@@ -50,10 +50,10 @@ export default class KueAdapter {
           done(err);
         })
         .catch((err) => {
-          console.err("err", err);
           done(err);
         });
     });
+    return this;
   }
 
   exit() {

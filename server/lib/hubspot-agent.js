@@ -3,14 +3,12 @@ import Promise from "bluebird";
 import _ from "lodash";
 import promiseRetry from "promise-retry";
 
-import ContactProperty from "./contact-property";
 
 export default class HubspotAgent {
 
-  constructor(hullAgent, hullClient, mapping, hubspotClient, ship, instrumentationAgent) {
+  constructor(hullAgent, hullClient, hubspotClient, ship, instrumentationAgent) {
     this.hullAgent = hullAgent;
     this.hullClient = hullClient;
-    this.mapping = mapping;
     this.hubspotClient = hubspotClient;
     this.ship = ship;
     this.instrumentationAgent = instrumentationAgent;
@@ -98,12 +96,10 @@ export default class HubspotAgent {
   * @param  {Number} [offset=0]
   * @return {Promise}
   */
-  getContacts(count = 100, offset = 0) {
+  getContacts(properties, count = 100, offset = 0) {
     if (count > 100) {
       return this.hullClient.logger.error("getContact gets maximum of 100 contacts at once", count);
     }
-
-    const properties = this.mapping.getHubspotPropertiesKeys();
 
     return this.retryUnauthorized(() => {
       return this.hubspotClient
@@ -126,8 +122,7 @@ export default class HubspotAgent {
   * @param  {Number} [offset=0]
   * @return {Promise -> Array}
   */
-  getRecentContacts(lastImportTime, count = 100, offset = 0) {
-    const properties = this.mapping.getHubspotPropertiesKeys();
+  getRecentContacts(properties, lastImportTime, count = 100, offset = 0) {
     return this.retryUnauthorized(() => {
       return this.hubspotClient
         .get("/contacts/v1/lists/recently_updated/contacts/recent")
@@ -146,29 +141,6 @@ export default class HubspotAgent {
       return res;
     });
   }
-
-
-  /**
-   * makes sure hubspot is properly configured to receive custom properties and segments list
-   * @return {Promise}
-   */
-  syncContactProperties() {
-    const customProps = this.ship.private_settings.sync_fields_to_hubspot;
-    return Promise.all([
-      this.hullAgent.getSegments(),
-      this.retryUnauthorized(() => {
-        return this.hubspotClient.get("/contacts/v2/groups").query({ includeProperties: true });
-      }),
-      this.hullAgent.getAvailableProperties()
-    ]).then(([segments = [], groupsResponse = {}, hullProperties = {}]) => {
-      const groups = (groupsResponse && groupsResponse.body) || [];
-      const properties = _.values(_.pick(hullProperties, customProps));
-      return ContactProperty.sync(this.hubspotClient, {
-        segments, groups, properties, logger: this.hullClient.logger
-      });
-    });
-  }
-
 
   batchUsers(body) {
     if (_.isEmpty(body)) {

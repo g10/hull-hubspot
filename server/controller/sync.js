@@ -21,13 +21,14 @@ export default class SyncStrategy {
   }
 
   syncJob(req) {
+    const { hubspotAgent, syncAgent } = req.shipApp;
     const lastFetchAt = req.payload.lastFetchAt;
     const count = req.payload.count || 100;
     const offset = req.payload.offset || 0;
     const page = req.payload.page || 1;
     req.shipApp.instrumentationAgent.metricVal("ship.incoming.fetch.page", page, req.hull.client.configuration());
     req.hull.client.logger.info("syncJob.getRecentContacts", { lastFetchAt, count, offset, page });
-    return req.shipApp.hubspotAgent.getRecentContacts(lastFetchAt, count, offset)
+    return hubspotAgent.getRecentContacts(syncAgent.mapping.getHubspotPropertiesKeys(), lastFetchAt, count, offset)
       .then((res) => {
         const promises = [];
         if (res.body["has-more"] && res.body.contacts.length > 0) {
