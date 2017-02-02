@@ -56,5 +56,9 @@ export default function (deps) {
 
   router.get("/schema/contact_properties", cors(), RequireConfiguration, bodyParser.json(), actions.getContactProperties);
 
+  router.post("/migrate", (req, res, next) => {
+    req.shipApp.syncAgent.migrateSettings().then(next, next);
+  }, responseMiddleware);
+
   return router;
 }

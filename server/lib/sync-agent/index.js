@@ -34,6 +34,36 @@ export default class SyncAgent {
     });
   }
 
+  migrateSettings() {
+    const mapping = this.ship.private_settings.sync_fields_to_hubspot;
+    const stringSettings = _.filter(mapping, _.isString);
+
+    if (stringSettings.length === 0) {
+      return Promise.resolve("ok");
+    }
+
+    const newSettings = mapping.map(hullTrait => {
+      if (_.isObject(hullTrait)) {
+        return hullTrait;
+      }
+      const label = hullTrait
+        .replace(/^traits_/, "")
+        .replace(/\//, "_")
+        .split("_")
+        .map(_.upperFirst)
+        .join(" ");
+      return { hull: hullTrait, name: label, overwrite: false };
+    });
+
+    if (_.isEqual(newSettings, mapping)) {
+      return Promise.resolve("ok");
+    }
+
+    return this.hullAgent.updateShipSettings({
+      sync_fields_to_hubspot: newSettings
+    });
+  }
+
   /**
    * makes sure hubspot is properly configured to receive custom properties and segments list
    * @return {Promise}

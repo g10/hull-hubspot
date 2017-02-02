@@ -55,12 +55,15 @@ const DEFAULT_MAPPING = [
 export function getFieldsToHubspot(ship = {}) {
   const fields = _.get(ship, "private_settings.sync_fields_to_hubspot") || [];
   return fields.map(f => {
+    if (_.isString(f)) {
+      return false;
+    }
     const name = "hull_" + slug(f.name, {
       replacement: "_",
       lower: true
     });
     return { label: f.name, name, hull: f.hull, default: _.find(DEFAULT_MAPPING, { name: f.name }) };
-  });
+  }).filter(_.isObject);
 }
 
 export function getFieldsToHull(ship = {}) {

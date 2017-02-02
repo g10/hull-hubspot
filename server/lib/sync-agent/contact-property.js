@@ -73,12 +73,19 @@ export default class ContactProperty {
       const newSegmentNames = (newValue.options || []).map(o => o.label).sort();
       return !_.isEqual(currentSegmentNames, newSegmentNames);
     }
+
+    if (newValue.groupName === "hull") {
+      if (newValue.label !== currentValue.label) {
+        return true;
+      }
+    }
     return false;
   }
 
   ensureProperty(groupProperties, property) {
     const exists = groupProperties[property.name]
       || groupProperties[property.name.replace(/^hull_/, "")];
+
     if (exists) {
       if (this.shouldUpdateProperty(exists, property)) {
         return this.hubspot
