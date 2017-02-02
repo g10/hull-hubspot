@@ -74,6 +74,11 @@ export default class Mapping {
         const dateValue = new Date(value).getTime();
         if (dateValue) value = dateValue;
       }
+
+      if (_.isArray(value)) {
+        value = value.join(";");
+      }
+
       if (value && prop.read_only !== false) {
         props.push({
           property: prop.name,
