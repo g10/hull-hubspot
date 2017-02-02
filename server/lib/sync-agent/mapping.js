@@ -112,17 +112,8 @@ export default class Mapping {
         if (dateValue) value = dateValue;
       }
 
-      if (hubspotProp.type === "string" && _.isArray(value)) {
+      if (_.isArray(value)) {
         value = value.join(";");
-      }
-
-      if (hubspotProp.type === "enumeration") {
-        if (_.isArray(value)) {
-          value = _.intersection(value, _.map(hubspotProp.options, p => p.value));
-          value = value.join(";");
-        } else if (!_.includes(_.map(hubspotProp.options, p => p.value), value)) {
-          value = "";
-        }
       }
 
       if (!_.isNil(value) && value !== "" && prop.read_only !== false) {
