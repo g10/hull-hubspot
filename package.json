@@ -1,7 +1,7 @@
 {
   "name": "hull-hubspot",
   "description": "Send Notification of User events and segments to Hubspot",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "homepage": "https://github.com/hull-ships/hull-hubspot",
   "license": "MIT",
   "main": "bin/start",
