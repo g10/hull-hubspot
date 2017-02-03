@@ -14,17 +14,17 @@ function auth(pass) {
 
     if (user.pass !== pass) {
       res.set("WWW-Authenticate", "Basic realm=Authorization Required");
-      return res.send(401);
+      return res.sendStatus(401);
     }
 
     return next();
   };
 }
 
-export default function ({ hostSecret, queueAdapter }) {
+export default function KueRouter({ shipConfig, queueAdapter }) {
   const router = Router();
 
-  router.use(auth(hostSecret));
+  router.use(auth(shipConfig.hostSecret));
   router.use("/_api", queueAdapter.app);
   router.use("/", ui.app);
 

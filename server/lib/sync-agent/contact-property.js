@@ -1,7 +1,6 @@
 import _ from "lodash";
 import Promise from "bluebird";
 
-
 const TYPES_MAPPING = {
   string: { type: "string", fieldType: "text" },
   number: { type: "number", fieldType: "text" },
@@ -34,12 +33,6 @@ const TYPES_MAPPING = {
 
 
 export default class ContactProperty {
-
-  static sync(hubspotClient, { segments, groups, properties, logger }) {
-    const instance = new ContactProperty(hubspotClient, { logger });
-    return instance.sync({ segments, groups, properties });
-  }
-
   constructor(hubspot, { logger }) {
     this.hubspot = hubspot;
     this.logger = logger;
@@ -48,7 +41,7 @@ export default class ContactProperty {
   sync({ segments, groups, properties }) {
     const propertiesList = this.getPropertiesList({ segments, properties });
     return this.ensureHullGroup(groups)
-      .then(this.ensureCustomProperties.bind(this, propertiesList))
+      .then(() => this.ensureCustomProperties(propertiesList, groups))
       .catch(err => {
         this.logger.warn("Error in ContactProperty sync", { message: err.message });
       });
@@ -67,11 +60,11 @@ export default class ContactProperty {
   }
 
   ensureCustomProperties(propertiesList, group = {}) {
-    const groupProperties = (group.properties || []).reduce((props, prop) => {
+    const groupProperties = _.flatten(group.map(g => g.properties)).reduce((props, prop) => {
       return Object.assign(props, { [prop.name]: prop });
     }, {});
     return Promise.all(propertiesList.map(this.ensureProperty.bind(this, groupProperties)))
-                  .then((...props) => console.warn("Done updating props", { props }));
+                  .then((...props) => this.logger.info("ContactProperty.ensureCustomProperties", _.map(props[0], p => p.name)));
   }
 
   shouldUpdateProperty(currentValue, newValue) {
@@ -80,11 +73,19 @@ export default class ContactProperty {
       const newSegmentNames = (newValue.options || []).map(o => o.label).sort();
       return !_.isEqual(currentSegmentNames, newSegmentNames);
     }
+
+    if (newValue.groupName === "hull") {
+      if (newValue.label !== currentValue.label) {
+        return true;
+      }
+    }
     return false;
   }
 
   ensureProperty(groupProperties, property) {
-    const exists = groupProperties[property.name];
+    const exists = groupProperties[property.name]
+      || groupProperties[property.name.replace(/^hull_/, "")];
+
     if (exists) {
       if (this.shouldUpdateProperty(exists, property)) {
         return this.hubspot
@@ -105,12 +106,8 @@ export default class ContactProperty {
     return [
       this.getHullSegmentsProperty(segments)
     ]
-      .concat(properties.map(({ type, title, id, path = [] }, displayOrder) => {
-        const name = `hull_${id.replace(/^traits_/, "").replace(/\//g, "_")}`;
-        const label = path.concat(title).join(" ");
-
+      .concat(properties.map(({ label, type, name }, displayOrder) => {
         const propType = TYPES_MAPPING[type] || TYPES_MAPPING.string;
-
         return {
           ...propType,
           name,

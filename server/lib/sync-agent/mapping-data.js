@@ -1,5 +1,6 @@
 /* eslint-disable */
-import _ from 'lodash';
+import _ from "lodash";
+import slug from "slug";
 
 const DEFAULT_MAPPING = [
   { "name": "email",                                         "hull": "email",                                       "type": "string",  "title": "Email",                                   "read_only": false },
@@ -54,10 +55,15 @@ const DEFAULT_MAPPING = [
 export function getFieldsToHubspot(ship = {}) {
   const fields = _.get(ship, "private_settings.sync_fields_to_hubspot") || [];
   return fields.map(f => {
-    const hull = f.replace(/^traits_/, "");
-    const name = `hull_${hull.replace(/\//g, '_')}`;
-    return { name, hull };
-  });
+    if (_.isString(f)) {
+      return false;
+    }
+    const name = "hull_" + slug(f.name, {
+      replacement: "_",
+      lower: true
+    });
+    return { label: f.name, name, hull: f.hull, default: _.find(DEFAULT_MAPPING, { name: f.name }) };
+  }).filter(_.isObject);
 }
 
 export function getFieldsToHull(ship = {}) {

@@ -2,7 +2,7 @@
   "name": "Hubspot",
   "description": "Sync a Hubspot Channel whenever a User enters or leaves a Segment",
   "picture": "picture.png",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "tags": [
     "outgoing",
     "incoming",
@@ -23,7 +23,34 @@
       "name": "sync_fields_to_hubspot",
       "title": "Custom Fields Sync (Hull to Hubspot)",
       "type": "array",
-      "format": "trait"
+      "format": "table",
+      "items": {
+        "type": "object",
+        "properties": {
+          "hull": {
+            "title": "Hull Field ID",
+            "type": "string",
+            "format": "trait",
+            "options": {
+              "placeholder": "Enter a Hull field id"
+            }
+          },
+          "name": {
+            "title": "Hubspot Field ID",
+            "type": "string",
+            "format": "select",
+            "options" : {
+              "allowCreate": true,
+              "loadOptions" : "/schema/contact_properties"
+            }
+          },
+          "overwrite" : {
+            "type" : "boolean",
+            "title" : "Hull overwrites Hubspot",
+            "default" : false
+          }
+        }
+      }
     },
     {
       "name": "sync_fields_to_hull",
@@ -36,7 +63,11 @@
           "name": {
             "title": "Hubspot Field ID",
             "type": "string",
-            "format": "string"
+            "format": "select",
+            "options" : {
+              "allowCreate": false,
+              "loadOptions" : "/schema/contact_properties"
+            }
           },
           "hull": {
             "title": "Hull Field ID",
