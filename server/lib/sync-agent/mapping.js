@@ -107,7 +107,7 @@ export default class Mapping {
           : value;
       }
 
-      if (/_at$|date$/.test(prop.hull)) {
+      if (/_at$|date$/.test(prop.hull) || hubspotProp.type === "datetime") {
         const dateValue = new Date(value).getTime();
         if (dateValue) value = dateValue;
       }

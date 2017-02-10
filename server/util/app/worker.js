@@ -12,6 +12,9 @@ export default class WorkerApp {
 
     // instrument jobs between 1 and 5 minutes
     setInterval(this.metricJobs.bind(this), _.random(60000, 300000));
+
+    // clean queue between 30 seconds and 1 minute
+    setInterval(this.cleanQueue.bind(this), _.random(30000, 60000));
   }
 
   metricJobs() {
@@ -22,6 +25,13 @@ export default class WorkerApp {
       this.instrumentationAgent.metricVal("ship.queue.waiting", inactiveCount);
       this.instrumentationAgent.metricVal("ship.queue.failed", failedCount);
     });
+  }
+
+  cleanQueue() {
+    return this.queueAdapter.cleanQueue()
+      .then(count => {
+        console.log("cleaned.jobs", count);
+      });
   }
 
   use(middleware) {
