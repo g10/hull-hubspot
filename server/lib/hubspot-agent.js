@@ -37,6 +37,7 @@ export default class HubspotAgent {
               })
               .then(() => retry(err));
           }
+          this.hullClient.logger.error("non recoverable error", err.response);
           return Promise.reject(err);
         });
     }, { retries: 0 })
