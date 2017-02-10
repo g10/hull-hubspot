@@ -70,7 +70,7 @@ export default class KueAdapter {
         jobs = jobs
           .filter(j => moment(j.failed_at, "x").isBefore(moment().subtract(1, "month")))
           .map(j => j.remove());
-        callback(err);
+        callback(err, jobs.length);
       });
     });
   }
