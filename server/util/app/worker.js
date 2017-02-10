@@ -1,6 +1,7 @@
 import Supply from "supply";
 import Promise from "bluebird";
 import _ from "lodash";
+import moment from "moment";
 
 export default class WorkerApp {
   constructor({ queueAdapter, instrumentationAgent, jobs }) {
@@ -12,6 +13,8 @@ export default class WorkerApp {
 
     // instrument jobs between 1 and 5 minutes
     setInterval(this.metricJobs.bind(this), _.random(60000, 300000));
+
+    setInterval(() => this.queueAdapter.cleanQueue(), _.random(30000, 60000));
   }
 
   metricJobs() {

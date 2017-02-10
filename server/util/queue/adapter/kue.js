@@ -1,5 +1,7 @@
 import Promise from "bluebird";
 import kue from "kue";
+import _ from "lodash";
+import moment from "moment";
 
 /**
  * Kue Adapter for queue
@@ -59,6 +61,17 @@ export default class KueAdapter {
   exit() {
     return Promise.fromCallback((callback) => {
       this.queue.shutdown(5000, callback);
+    });
+  }
+
+  cleanQueue() {
+    return Promise.fromCallback(callback => {
+      kue.Job.rangeByState("failed", 0, 10, "asc", (err, jobs) => {
+        jobs = jobs
+          .filter(j => moment(j.failed_at, "x").isBefore(moment().subtract(1, "month")))
+          .map(j => j.remove());
+        callback(err);
+      });
     });
   }
 }
