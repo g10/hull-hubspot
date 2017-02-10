@@ -1,6 +1,5 @@
 import Promise from "bluebird";
 import kue from "kue";
-import _ from "lodash";
 import moment from "moment";
 
 /**

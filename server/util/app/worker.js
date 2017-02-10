@@ -1,7 +1,6 @@
 import Supply from "supply";
 import Promise from "bluebird";
 import _ from "lodash";
-import moment from "moment";
 
 export default class WorkerApp {
   constructor({ queueAdapter, instrumentationAgent, jobs }) {
