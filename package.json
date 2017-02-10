@@ -1,7 +1,7 @@
 {
   "name": "hull-hubspot",
   "description": "Send Notification of User events and segments to Hubspot",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/hull-ships/hull-hubspot",
   "license": "MIT",
   "main": "bin/start",
@@ -26,7 +26,7 @@
     "build:server": "babel server -d build",
     "start": "COMBINED=true node build/web",
     "start:dev": "COMBINED=true babel-watch -L server/web",
-    "test": "npm run test:lint && npm run test:modules",
+    "test": "npm run test:lint",
     "test:lint": "eslint server",
     "test:modules": "npm outdated --depth=0",
     "clean": "./node_modules/.bin/rimraf dist; ./node_modules/.bin/rimraf build",
