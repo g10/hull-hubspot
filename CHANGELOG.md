@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.1
+- [bugfix] handle the datetime field type
+- [maintenance] add automatic queue cleaning
+- [maintenance] add more logging about token problems
+
 ## v0.2.0
 - [feature] enable custom outgoing attributes mapping (can map both to new and existing fields on Hubspot). In case of new field a prefixed `hull_` property is created.
 - [feature] load list of properties to settings select inputs
