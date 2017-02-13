@@ -7,6 +7,7 @@ import UsersController from "./controller/users";
 import FetchAllController from "./controller/fetch-all";
 import SyncController from "./controller/sync";
 import NotifyController from "./controller/notify";
+import * as newJobs from "./jobs";
 
 import InstrumentationAgent from "./util/instrumentation-agent";
 import KueAdapter from "./util/queue/adapter/kue";
@@ -48,6 +49,7 @@ const jobs = {
   syncJob: controllers.syncController.syncJob.bind(controllers.syncController),
   startSyncJob: controllers.syncController.startSyncJob.bind(controllers.syncController),
   checkTokenJob: controllers.monitorController.checkTokenJob.bind(controllers.monitorController),
+  ...newJobs
 };
 
 export default { queueAdapter, controllers, instrumentationAgent, shipCache, jobs };
