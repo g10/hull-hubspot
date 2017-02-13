@@ -46,11 +46,7 @@ export default class UserUpdateStrategy {
       req.hull.client.logger.info("ship is not configured");
       return Promise.resolve();
     }
-    const message = payload.message; // eslint-disable-line no-unused-vars
-    return syncAgent.setupShip()
-      .catch((err) => {
-        req.hull.client.logger.error("Error in creating segments property", err.message);
-      });
+    return req.shipApp.queueAgent.create("shipUpdateJob");
   }
 
   segmentUpdateHandler(payload, { req }) {
