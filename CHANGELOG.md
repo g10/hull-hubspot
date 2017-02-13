@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.2
+- [bugfix] move `ship:update` handler to background job so it doesn't interfere
+with refresh token operation (which triggers the update event) 
+
 ## v0.2.1
 - [bugfix] handle the datetime field type
 - [maintenance] add automatic queue cleaning
