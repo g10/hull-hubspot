@@ -59,7 +59,8 @@ export default class Mapping {
           }
         }
 
-        if (hubspotProp && hubspotProp.type === "enumeration") {
+        if (hubspotProp && hubspotProp.type === "enumeration"
+          && hubspotProp.fieldType === "checkbox") {
           val = val.split(";");
         }
         traits[prop.hull] = val;
