@@ -57,6 +57,10 @@ export default class UsersController {
       }, (err) => {
         req.hull.client.logger.info("Hubspot batch error", err);
         return Promise.reject(err);
+      })
+      .catch(err => {
+        req.hull.client.logger.error("sendUsers.error", err.stack || err);
+        return Promise.reject(err);
       });
   }
 
