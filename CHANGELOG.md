@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.2
+- [maintenance] update dependencies
+- [UI] design updates
+- [tooling] include `npm run ngrok` command
+
 ## v0.2.1
 - [bugfix] handle the datetime field type
 - [maintenance] add automatic queue cleaning

@@ -1,7 +1,7 @@
 {
   "name": "hull-hubspot",
   "description": "Send Notification of User events and segments to Hubspot",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "homepage": "https://github.com/hull-ships/hull-hubspot",
   "license": "MIT",
   "main": "bin/start",
@@ -22,7 +22,7 @@
     "url": "https://github.com/hull-ships/hull-hubspot/issues"
   },
   "scripts": {
-    "ngrok": "ngrok http 5000 --region eu --subdomain hubspot",
+    "ngrok": "ngrok http 8082 --region eu --subdomain hubspot",
     "build": "npm run clean && npm run build:server",
     "build:server": "babel server -d build",
     "start": "COMBINED=true node build/web",
@@ -45,19 +45,19 @@
     "hubspot"
   ],
   "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-eslint": "^7.1.1",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
     "babel-watch": "^2.0.2",
     "eslint": "^3.2.2",
-    "eslint-config-airbnb-base": "^5.0.1",
-    "eslint-plugin-import": "^1.12.0",
+    "eslint-config-airbnb-base": "^11.1.0",
+    "eslint-plugin-import": "^2.2.0",
     "updtr": "^0.2.1"
   },
   "dependencies": {
     "JSONStream": "^1.1.4",
-    "babel-cli": "^6.11.4",
     "babel-core": "^6.13.2",
-    "babel-eslint": "^6.1.2",
-    "babel-preset-es2015": "^6.13.2",
-    "babel-preset-stage-0": "^6.5.0",
     "basic-auth": "^1.0.4",
     "batch-stream": "^0.1.3",
     "bluebird": "^3.4.3",
