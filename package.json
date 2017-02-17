@@ -22,6 +22,7 @@
     "url": "https://github.com/hull-ships/hull-hubspot/issues"
   },
   "scripts": {
+    "ngrok": "ngrok http 5000 --region eu --subdomain hubspot",
     "build": "npm run clean && npm run build:server",
     "build:server": "babel server -d build",
     "start": "COMBINED=true node build/web",
