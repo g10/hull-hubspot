@@ -1,9 +1,16 @@
 # Changelog
 
-## v0.2.2
+## v0.2.4
 - [maintenance] update dependencies
 - [UI] design updates
 - [tooling] include `npm run ngrok` command
+
+## v0.2.3
+- [hotfix] treat the incoming field as an array only when it's enumeration checkbox, other enumeration - select, radio is treated as a signle value field
+
+## v0.2.2
+- [bugfix] move `ship:update` handler to background job so it doesn't interfere
+with refresh token operation (which triggers the update event) 
 
 ## v0.2.1
 - [bugfix] handle the datetime field type
