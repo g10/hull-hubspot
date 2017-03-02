@@ -29,7 +29,10 @@ export default class InstrumentationAgent {
       this.raven = new raven.Client(process.env.SENTRY_URL, {
         release: this.manifest.version
       });
-      this.raven.patchGlobal();
+      this.raven.patchGlobal((logged, err) => {
+        console.error(logged, err.stack || err);
+        process.exit(1);
+      });
     }
   }
 

@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.2.5
+- make sure the process exit after an `uncaughtException`
+
 ## v0.2.4
 - [maintenance] update dependencies
 - [UI] design updates
