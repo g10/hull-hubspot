@@ -45,10 +45,7 @@
     "hubspot"
   ],
   "devDependencies": {
-    "babel-cli": "^6.14.0",
     "babel-eslint": "^7.1.1",
-    "babel-preset-es2015": "^6.3.13",
-    "babel-preset-stage-0": "^6.3.13",
     "babel-watch": "^2.0.2",
     "eslint": "^3.2.2",
     "eslint-config-airbnb-base": "^11.1.0",
@@ -56,6 +53,9 @@
     "updtr": "^0.2.1"
   },
   "dependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
     "JSONStream": "^1.1.4",
     "babel-core": "^6.13.2",
     "basic-auth": "^1.0.4",
