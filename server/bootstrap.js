@@ -16,6 +16,8 @@ if (process.env.LOG_LEVEL) {
   Hull.logger.transports.console.level = process.env.LOG_LEVEL;
 }
 
+Hull.logger.transports.console.json = true;
+
 const instrumentationAgent = new InstrumentationAgent();
 
 const queueAdapter = new KueAdapter(({
