@@ -30,3 +30,6 @@ docker-compose run install
 docker-compose up -d redis
 docker-compose up dev # with autoreloading enabled
 ```
+
+### Testing :
+- create developer account at https://developers.hubspot.com/docs/overview

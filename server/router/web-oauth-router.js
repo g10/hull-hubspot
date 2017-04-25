@@ -1,53 +1,44 @@
 import { Router } from "express";
 import { Strategy as HubspotStrategy } from "passport-hubspot";
+import { oAuthHandler } from "hull/lib/utils";
 import moment from "moment";
-
-import AppMiddleware from "../lib/middleware/app";
 
 export default function (deps) {
   const router = Router();
 
   const {
-    Hull,
-    hostSecret,
     clientID,
     clientSecret,
-    queueAdapter,
-    shipCache,
-    instrumentationAgent
+    cache
   } = deps;
 
-  const { OAuthHandler } = Hull;
-
-  router.use("/auth", OAuthHandler({
-    hostSecret,
-    shipCache,
+  router.use("/auth", oAuthHandler({
     name: "Hubspot",
     Strategy: HubspotStrategy,
     options: {
       clientID,
       clientSecret,
-      scope: ["offline", "contacts-rw", "events-rw"],
-      skipUserProfile: true
+      scope: ["offline", "contacts-rw", "events-rw"]
     },
     isSetup(req, { hull, ship }) {
       if (req.query.reset) return Promise.reject();
       const { token } = ship.private_settings || {};
       if (token) {
         // TODO: we have notices problems with syncing hull segments property
+        // TODO: check if below code works after hull-node upgrade.
         // after a Hubspot resync, there may be a problem with notification
         // subscription. Following two lines fixes that problem.
-        AppMiddleware({ queueAdapter, shipCache, instrumentationAgent })(req, {}, () => {});
+        // AppMiddleware({ queueAdapter, shipCache, instrumentationAgent })(req, {}, () => {});
         req.shipApp.syncAgent.setupShip()
-          .catch((err) => hull.logger.error("Error in creating segments property", err));
+          .catch(err => hull.logger.error("Error in creating segments property", err));
 
-        return hull.get(ship.id).then(s => {
+        return hull.get(ship.id).then((s) => {
           return { settings: s.private_settings };
         });
       }
       return Promise.reject();
     },
-    onLogin: (req, { hull, ship }) => {
+    onLogin: (req, { client, ship }) => {
       req.authParams = { ...req.body, ...req.query };
       const newShip = {
         private_settings: {
@@ -55,12 +46,12 @@ export default function (deps) {
           portal_id: req.authParams.portalId
         }
       };
-      return hull.put(ship.id, newShip)
+      return client.put(ship.id, newShip)
         .then(() => {
-          return shipCache.del(ship.id);
+          return cache.del(ship.id);
         });
     },
-    onAuthorize: (req, { hull, ship }) => {
+    onAuthorize: (req, { client, ship }) => {
       const { refreshToken, accessToken, expiresIn } = (req.account || {});
       const newShip = {
         private_settings: {
@@ -71,9 +62,9 @@ export default function (deps) {
           token_fetched_at: moment().utc().format("x"),
         }
       };
-      return hull.put(ship.id, newShip)
+      return client.put(ship.id, newShip)
         .then(() => {
-          return shipCache.del(ship.id);
+          return cache.del(ship.id);
         });
     },
     views: {

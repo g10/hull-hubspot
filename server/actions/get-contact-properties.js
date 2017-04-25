@@ -6,11 +6,11 @@ export default function getContactProperties(req, res) {
   return hubspotClient.get("/contacts/v2/groups")
     .query({ includeProperties: true })
     .then(({ body: groups }) => {
-      res.json({ options: groups.map(group => {
+      res.json({ options: groups.map((group) => {
         return {
           label: group.displayName,
           options: _.chain(group.properties)
-            .map(prop => {
+            .map((prop) => {
               return {
                 label: prop.label,
                 value: prop.name

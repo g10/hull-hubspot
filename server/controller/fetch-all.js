@@ -9,11 +9,11 @@ export default class FetchAllController {
   fetchAllAction(req, res) {
     const count = 100;
 
-    return req.shipApp.queueAgent.create("fetchAllJob", {
+    return req.hull.enqueue("fetchAllJob", {
       count
     })
     .then(() => {
-      req.shipApp.progressAgent.start();
+      req.hull.shipApp.progressAgent.start();
       res.end("ok");
     });
   }

@@ -42,7 +42,7 @@ export default class ContactProperty {
     const propertiesList = this.getPropertiesList({ segments, properties });
     return this.ensureHullGroup(groups)
       .then(() => this.ensureCustomProperties(propertiesList, groups))
-      .catch(err => {
+      .catch((err) => {
         this.logger.warn("Error in ContactProperty sync", { message: err.message });
       });
   }

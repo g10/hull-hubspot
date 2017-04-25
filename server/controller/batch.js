@@ -9,31 +9,29 @@ export default class BatchController {
    */
   handleBatchExtractAction(req, res) {
     const segmentId = req.query.segment_id || null;
-    return req.shipApp.queueAgent.create("handleBatchExtractJob", {
+    return req.hull.enqueue("handleBatchExtractJob", {
       body: req.body,
       chunkSize: 100,
       segmentId
-    })
-    .then(() => res.end("ok"));
+    }).then(() => res.end("ok"));
   }
 
   /**
    * Parses the extract results and queues chunks for export operations
-   * @param  {String} body
-   * @param  {Number} chunkSize
    * @return {Promise}
+   * @param ctx
+   * @param payload
    */
-  handleBatchExtractJob(req) {
-    const { hullAgent } = req.shipApp;
-    return hullAgent.extract.handle(req.payload.body, req.payload.chunkSize, (usersBatch) => {
-      if (req.payload.segmentId) {
-        usersBatch = usersBatch.map(u => {
-          u.segment_ids = _.uniq(_.concat(u.segment_ids || [], [req.payload.segmentId]));
+  handleBatchExtractJob(ctx, payload) {
+    return ctx.client.extract.handle(payload.body, payload.chunkSize, (usersBatch) => { // todo ask ! hullagent.extract.handle ?
+      if (payload.segmentId) {
+        usersBatch = usersBatch.map((u) => {
+          u.segment_ids = _.uniq(_.concat(u.segment_ids || [], [payload.segmentId]));
           return u;
         });
       }
-      const filteredUsers = usersBatch.filter((user) => hullAgent.userWhitelisted(user) && hullAgent.userComplete(user));
-      return req.shipApp.queueAgent.create("sendUsersJob", {
+      const filteredUsers = usersBatch.filter(user => ctx.shipApp.syncAgent.userWhitelisted(user) && !_.isEmpty(user.email));
+      return ctx.enqueue("sendUsersJob", {
         users: filteredUsers
       });
     });

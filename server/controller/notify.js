@@ -40,32 +40,32 @@ export default class UserUpdateStrategy {
     .add(user);
   }
 
-  shipUpdateHandler(payload, { req }) {
-    const { syncAgent } = req.shipApp;
+  shipUpdateHandler(ctx) {
+    const { syncAgent } = ctx.shipApp;
     if (!syncAgent.isConfigured()) {
-      req.hull.client.logger.info("ship is not configured");
+      ctx.client.logger.info("ship is not configured");
       return Promise.resolve();
     }
-    return req.shipApp.queueAgent.create("shipUpdateJob");
+    return ctx.enqueue("shipUpdateJob");
   }
 
-  segmentUpdateHandler(payload, { req }) {
-    const { syncAgent, hullAgent } = req.shipApp;
+  segmentUpdateHandler(ctx, payload) {
+    const { syncAgent } = ctx.shipApp;
     if (!syncAgent.isConfigured()) {
-      req.hull.client.logger.info("ship is not configured");
+      ctx.client.logger.info("ship is not configured");
       return Promise.resolve();
     }
     const segment = payload.message;
     return syncAgent.setupShip()
       .then(() => {
-        return hullAgent.extract.request({ segment, fields: syncAgent.mapping.getHullTraitsKeys() });
+        return ctx.helpers.requestExtract({ segment, fields: syncAgent.mapping.getHullTraitsKeys() });
       });
   }
 
-  segmentDeleteHandler(payload, { req }) {
-    const { syncAgent, hullAgent } = req.shipApp;
+  segmentDeleteHandler(ctx, payload) {
+    const { syncAgent } = ctx.shipApp;
     if (!syncAgent.isConfigured()) {
-      req.hull.client.logger.info("ship is not configured");
+      ctx.client.logger.info("ship is not configured");
       return Promise.resolve();
     }
     // TODO: if the segment would have `query` param we could trigger an extract
@@ -73,12 +73,12 @@ export default class UserUpdateStrategy {
     const segment = payload.message; // eslint-disable-line no-unused-vars
     return syncAgent.setupShip()
       .then(() => {
-        const segments = req.hull.ship.private_settings.synchronized_segments || [];
+        const segments = ctx.ship.private_settings.synchronized_segments || [];
         if (segments.length === 0) {
-          return hullAgent.extract.request({ fields: syncAgent.mapping.getHullTraitsKeys() });
+          return ctx.helpers.requestExtract({ fields: syncAgent.mapping.getHullTraitsKeys() });
         }
-        return Promise.map(segments, segmentId => {
-          return hullAgent.extract.request({ segment: { id: segmentId }, remove: true, fields: syncAgent.mapping.getHullTraitsKeys() });
+        return Promise.map(segments, (segmentId) => {
+          return ctx.helpers.requestExtract({ segment: { id: segmentId }, remove: true, fields: syncAgent.mapping.getHullTraitsKeys() });
         });
       });
   }

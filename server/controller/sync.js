@@ -5,40 +5,40 @@
 export default class SyncStrategy {
 
   syncAction(req, res, next) {
-    return req.shipApp.queueAgent.create("startSyncJob")
+    return req.hull.enqueue("startSyncJob")
       .then(next, next);
   }
 
-  startSyncJob(req) {
+  startSyncJob(ctx) {
     const count = 100;
-    const lastFetchAt = req.shipApp.hubspotAgent.getLastFetchAt();
-    req.hull.client.logger.info("syncAction.lastFetchAt", lastFetchAt);
-    return req.shipApp.queueAgent.create("syncJob", {
+    const lastFetchAt = ctx.shipApp.hubspotAgent.getLastFetchAt();
+    ctx.client.logger.info("syncAction.lastFetchAt", lastFetchAt);
+    return ctx.enqueue("syncJob", {
       lastFetchAt,
       count
     })
-    .then(() => req.shipApp.hubspotAgent.setLastFetchAt());
+      .then(() => ctx.shipApp.hubspotAgent.setLastFetchAt());
   }
 
-  syncJob(req) {
-    const { hubspotAgent, syncAgent } = req.shipApp;
-    const lastFetchAt = req.payload.lastFetchAt;
-    const count = req.payload.count || 100;
-    const offset = req.payload.offset || 0;
-    const page = req.payload.page || 1;
-    req.shipApp.instrumentationAgent.metricVal("ship.incoming.fetch.page", page, req.hull.client.configuration());
-    req.hull.client.logger.info("syncJob.getRecentContacts", { lastFetchAt, count, offset, page });
+  syncJob(ctx, payload) {
+    const { hubspotAgent, syncAgent } = ctx.shipApp;
+    const lastFetchAt = payload.lastFetchAt;
+    const count = payload.count || 100;
+    const offset = payload.offset || 0;
+    const page = payload.page || 1;
+    ctx.metric.value("ship.incoming.fetch.page", page);
+    ctx.client.logger.info("syncJob.getRecentContacts", { lastFetchAt, count, offset, page });
     return hubspotAgent.getRecentContacts(syncAgent.mapping.getHubspotPropertiesKeys(), lastFetchAt, count, offset)
       .then((res) => {
         const promises = [];
         if (res.body["has-more"] && res.body.contacts.length > 0) {
-          promises.push(req.shipApp.queueAgent.create("syncJob", {
+          promises.push(ctx.enqueue("syncJob", {
             lastFetchAt, count, page: (page + 1), offset: res.body["vid-offset"]
           }));
         }
 
         if (res.body.contacts.length > 0) {
-          promises.push(req.shipApp.queueAgent.create("saveContactsJob", {
+          promises.push(ctx.enqueue("saveContactsJob", {
             contacts: res.body.contacts
           }));
         }
@@ -46,4 +46,5 @@ export default class SyncStrategy {
         return Promise.all(promises);
       });
   }
+
 }

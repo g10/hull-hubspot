@@ -28,6 +28,12 @@
     "CLIENT_SECRET" : {
       "description" : "oAuth Client Secret",
       "required": true
+    },
+    "HUBSPOT_TOKEN_REFRESH_ADVANCE": {
+      "description": "Defines how long hubspot token is valid before it will expire"
+    },
+    "COMBINED": {
+      "description": "Indicates if Worker should be started with application."
     }
   },
   "scripts": {},
