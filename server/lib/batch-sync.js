@@ -8,14 +8,14 @@ export default class BatchSyncHandler {
   static exit() {
     console.log("BatchSyncHandler.exit");
     if (!BatchSyncHandler.exiting) {
-      const exiting = Promise.all(_.map(HANDLERS, (h) => h.flush()));
+      const exiting = Promise.all(_.map(HANDLERS, h => h.flush()));
       BatchSyncHandler.exiting = exiting;
       return exiting;
     }
     return Promise.resolve([]);
   }
 
-  static getHandler(args) {
+  static getHandler(args) { // todo czy tego mozna sie pozbyc ?
     const name = args.ns + args.ship.id;
     return HANDLERS[name] = HANDLERS[name] || new BatchSyncHandler(args); // eslint-disable-line no-return-assign
   }

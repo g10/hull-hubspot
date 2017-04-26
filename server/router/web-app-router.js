@@ -5,7 +5,6 @@ import RequireConfiguration from "../lib/middleware/require-configuration";
 import AppMiddleware from "../lib/middleware/app";
 import * as actions from "../actions";
 
-
 export default function (deps) {
   const router = Router();
   const {
@@ -18,12 +17,10 @@ export default function (deps) {
 
   router.use(AppMiddleware());
 
-  router.use("/batch", RequireConfiguration, batchHandler(batchController.handleBatchExtractJob, {}));
-
-
   router.post("/fetchAll", RequireConfiguration, fetchAllController.fetchAllAction);
   router.post("/sync", RequireConfiguration, syncController.syncAction);
 
+  router.use("/batch", RequireConfiguration, batchHandler(batchController.handleBatchExtractJob, {}));
   router.use("/notify", notifHandler({
     userHandlerOptions: {
       groupTraits: false

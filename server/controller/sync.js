@@ -4,12 +4,12 @@
  */
 export default class SyncStrategy {
 
-  syncAction(req, res, next) {
+  syncAction = (req, res, next) => {
     return req.hull.enqueue("startSyncJob")
       .then(next, next);
-  }
+  };
 
-  startSyncJob(ctx) {
+  static startSyncJob(ctx) {
     const count = 100;
     const lastFetchAt = ctx.shipApp.hubspotAgent.getLastFetchAt();
     ctx.client.logger.info("syncAction.lastFetchAt", lastFetchAt);
@@ -20,7 +20,7 @@ export default class SyncStrategy {
       .then(() => ctx.shipApp.hubspotAgent.setLastFetchAt());
   }
 
-  syncJob(ctx, payload) {
+  static syncJob(ctx, payload) {
     const { hubspotAgent, syncAgent } = ctx.shipApp;
     const lastFetchAt = payload.lastFetchAt;
     const count = payload.count || 100;

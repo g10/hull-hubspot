@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 export default function getContactProperties(req, res) {
-  const { hubspotClient, hullClient } = req.shipApp;
+  const { hubspotClient } = req.hull.shipApp;
 
   return hubspotClient.get("/contacts/v2/groups")
     .query({ includeProperties: true })
@@ -21,7 +21,7 @@ export default function getContactProperties(req, res) {
       })
       });
     }).catch((err) => {
-      hullClient.logger.error(err);
+      req.hull.client.logger.error(err);
       res.json({ options: [] });
     });
 }

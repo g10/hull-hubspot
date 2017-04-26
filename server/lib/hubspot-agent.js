@@ -118,6 +118,7 @@ export default class HubspotAgent {
   * time if older that the lastImportTime. If there are any contacts modified since
   * that time queues import of them and getting next chunk from hubspot API.
   * @see http://developers.hubspot.com/docs/methods/contacts/get_recently_updated_contacts
+  * @param properties
   * @param  {Date} lastImportTime
   * @param  {Number} [count=100]
   * @param  {Number} [offset=0]

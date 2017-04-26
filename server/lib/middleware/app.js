@@ -14,7 +14,7 @@ export default function () {
     const hubspotClient = new HubspotClient(req.hull);
     const hubspotAgent = new HubspotAgent(req.hull.client, hubspotClient, req.hull.ship, req.hull.metric, req.hull.helpers);
     const syncAgent = new SyncAgent(hubspotAgent, req.hull);
-    const progressAgent = new ProgressAgent(req.hull.client);
+    const progressAgent = new ProgressAgent(req.hull);
 
     req.hull.shipApp = {
       hubspotClient,

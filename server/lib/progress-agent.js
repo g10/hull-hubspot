@@ -1,9 +1,8 @@
 import moment from "moment";
 
 export default class ProgressAgent {
-  constructor(helpers, hullClient) {
+  constructor({ helpers }) {
     this.helpers = helpers;
-    this.hullClient = hullClient;
   }
 
   start() {

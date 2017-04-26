@@ -25,7 +25,7 @@ export default function KueRouter({ hostSecret }, queue) {
   const router = Router();
 
   router.use(auth(hostSecret));
-  router.use("/_api", queue.adapter.app);
+  router.use("/_api", queue.adapter.app); // todo undefined :(
   router.use("/", ui.app);
 
   return router;

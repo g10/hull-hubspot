@@ -1,14 +1,14 @@
 import Promise from "bluebird";
 import _ from "lodash";
 
-import BatchSyncHandler from "../util/handler/batch-sync";
+import BatchSyncHandler from "../lib/batch-sync";
 
 export default class UserUpdateStrategy {
-  userUpdateHandler(payload, { req }) {
-    const { syncAgent, hullAgent } = req.shipApp;
+  static userUpdateHandler(ctx, payload) {
+    const { syncAgent } = ctx.shipApp;
     const message = payload.message;
     if (!syncAgent.isConfigured()) {
-      req.hull.client.logger.info("ship is not configured");
+      ctx.client.logger.info("ship is not configured");
       return Promise.resolve();
     }
 
@@ -22,25 +22,25 @@ export default class UserUpdateStrategy {
 
     user.segment_ids = _.uniq(_.concat(user.segment_ids || [], segments.map(s => s.id)));
 
-    if (!hullAgent.userWhitelisted(user) || !hullAgent.userComplete(user)) {
+    if (!syncAgent.userWhitelisted(user) || !_.isEmpty(user.email)) {
       return Promise.resolve();
     }
 
     return BatchSyncHandler.getHandler({
-      hull: req.hull,
-      ship: req.hull.ship,
+      hull: ctx,
+      ship: ctx.ship,
       ns: "user_update",
       options: {
         maxSize: 100,
         throttle: 30000
       }
     }).setCallback((users) => {
-      return req.shipApp.queueAgent.create("sendUsersJob", { users });
+      return ctx.enqueue("sendUsersJob", { users });
     })
     .add(user);
   }
 
-  shipUpdateHandler(ctx) {
+  static shipUpdateHandler(ctx) {
     const { syncAgent } = ctx.shipApp;
     if (!syncAgent.isConfigured()) {
       ctx.client.logger.info("ship is not configured");
@@ -49,7 +49,7 @@ export default class UserUpdateStrategy {
     return ctx.enqueue("shipUpdateJob");
   }
 
-  segmentUpdateHandler(ctx, payload) {
+  static segmentUpdateHandler(ctx, payload) {
     const { syncAgent } = ctx.shipApp;
     if (!syncAgent.isConfigured()) {
       ctx.client.logger.info("ship is not configured");
@@ -62,7 +62,7 @@ export default class UserUpdateStrategy {
       });
   }
 
-  segmentDeleteHandler(ctx, payload) {
+  static segmentDeleteHandler(ctx, payload) {
     const { syncAgent } = ctx.shipApp;
     if (!syncAgent.isConfigured()) {
       ctx.client.logger.info("ship is not configured");

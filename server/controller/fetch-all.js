@@ -6,7 +6,7 @@ export default class FetchAllController {
    * public facing method
    * @return {Promise}
    */
-  fetchAllAction(req, res) {
+  fetchAllAction = (req, res) => {
     const count = 100;
 
     return req.hull.enqueue("fetchAllJob", {
@@ -16,7 +16,7 @@ export default class FetchAllController {
       req.hull.shipApp.progressAgent.start();
       res.end("ok");
     });
-  }
+  };
 
   /**
    * Job which performs fetchAll operations queues itself and the import job
@@ -24,29 +24,29 @@ export default class FetchAllController {
    * @param  {Number} [offset=0]
    * @return {Promise}
    */
-  fetchAllJob(req) {
-    const { hubspotAgent, syncAgent } = req.shipApp;
-    const count = req.payload.count;
-    const offset = req.payload.offset || 0;
-    const progress = req.payload.progress || 0;
+  static fetchAllJob(ctx, payload) {
+    const { hubspotAgent, syncAgent } = ctx.shipApp;
+    const count = payload.count;
+    const offset = payload.offset || 0;
+    const progress = payload.progress || 0;
 
     return hubspotAgent.getContacts(syncAgent.mapping.getHubspotPropertiesKeys(), count, offset)
       .then((data) => {
         const promises = [];
         const newProgress = progress + data.body.contacts.length;
-        req.shipApp.progressAgent.update(newProgress, data.body["has-more"]);
+        ctx.shipApp.progressAgent.update(newProgress, data.body["has-more"]);
         if (data.body["has-more"]) {
-          promises.push(req.shipApp.queueAgent.create("fetchAllJob", {
+          promises.push(ctx.enqueue("fetchAllJob", {
             count,
             offset: data.body["vid-offset"],
             progress: newProgress
           }));
         } else {
-          req.hull.client.logger.info("fetchAllJob.finished");
+          ctx.client.logger.info("fetchAllJob.finished");
         }
 
         if (data.body.contacts.length > 0) {
-          promises.push(req.shipApp.queueAgent.create("saveContactsJob", {
+          promises.push(ctx.enqueue("saveContactsJob", {
             contacts: data.body.contacts
           }));
         }

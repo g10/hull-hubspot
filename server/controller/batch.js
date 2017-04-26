@@ -7,11 +7,11 @@ export default class BatchController {
    * @param  {Object} res
    * @return {Promise}
    */
-  handleBatchExtractAction(req, res) {
+  static handleBatchExtractAction(req, res) {
     const segmentId = req.query.segment_id || null;
     return req.hull.enqueue("handleBatchExtractJob", {
       body: req.body,
-      chunkSize: 100,
+      batchSize: 100,
       segmentId
     }).then(() => res.end("ok"));
   }
@@ -22,8 +22,8 @@ export default class BatchController {
    * @param ctx
    * @param payload
    */
-  handleBatchExtractJob(ctx, payload) {
-    return ctx.client.extract.handle(payload.body, payload.chunkSize, (usersBatch) => { // todo ask ! hullagent.extract.handle ?
+  static batchExtractJobHandler(ctx, payload) {
+    return (usersBatch) => {
       if (payload.segmentId) {
         usersBatch = usersBatch.map((u) => {
           u.segment_ids = _.uniq(_.concat(u.segment_ids || [], [payload.segmentId]));
@@ -34,6 +34,14 @@ export default class BatchController {
       return ctx.enqueue("sendUsersJob", {
         users: filteredUsers
       });
+    };
+  }
+
+  static handleBatchExtractJob(ctx, payload) {
+    return ctx.client.utils.extract.handle({
+      body: payload.body,
+      batchSize: payload.batchSize,
+      handler: this.batchExtractJobHandler(ctx, payload)
     });
   }
 }

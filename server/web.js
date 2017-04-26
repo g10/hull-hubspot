@@ -4,7 +4,7 @@ import Worker from "./worker";
 import bootstrap from "./bootstrap";
 import WebAppRouter from "./router/web-app-router";
 import WebOauthRouter from "./router/web-oauth-router";
-import WebKueRouter from "./util/router/kue";
+import WebKueRouter from "./router/kue";
 
 const { connector, controllers, queue } = bootstrap;
 

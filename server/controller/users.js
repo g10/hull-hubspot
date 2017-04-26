@@ -12,7 +12,7 @@ export default class UsersController {
    * @param  {Array} users users from Hull
    * @return {Promise}
    */
-  sendUsersJob(ctx, payload) {
+  static sendUsersJob(ctx, payload) {
     const users = (payload.users || []).filter(u => !_.isEmpty(u.email));
 
     if (users.length === 0) {
@@ -70,7 +70,7 @@ export default class UsersController {
    * @return {Promise}
    * @param ctx
    */
-  saveContactsJob(ctx, payload) {
+  static saveContactsJob(ctx, payload) {
     const contacts = payload.contacts;
     ctx.metric.value("ship.incoming.users", contacts.length, ctx.client.configuration());
     return ctx.shipApp.syncAgent.setupShip()
