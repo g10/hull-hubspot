@@ -20,7 +20,8 @@ export default function (deps) {
       clientSecret,
       scope: ["offline", "contacts-rw", "events-rw"]
     },
-    isSetup(req, { hull, ship }) {
+    isSetup(req) {
+      const { client, ship } = req.hull;
       if (req.query.reset) return Promise.reject();
       const { token } = ship.private_settings || {};
       if (token) {
@@ -30,15 +31,16 @@ export default function (deps) {
         // subscription. Following two lines fixes that problem.
         // AppMiddleware({ queueAdapter, shipCache, instrumentationAgent })(req, {}, () => {});
         req.hull.shipApp.syncAgent.setupShip()
-          .catch(err => hull.logger.error("Error in creating segments property", err));
+          .catch(err => client.logger.error("Error in creating segments property", err));
 
-        return hull.get(ship.id).then((s) => {
+        return client.get(ship.id).then((s) => {
           return { settings: s.private_settings };
         });
       }
       return Promise.reject();
     },
-    onLogin: (req, { client, ship }) => {
+    onLogin: (req) => {
+      const { client, ship } = req.hull;
       req.authParams = { ...req.body, ...req.query };
       const newShip = {
         private_settings: {
@@ -51,7 +53,8 @@ export default function (deps) {
           return cache.del(ship.id);
         });
     },
-    onAuthorize: (req, { client, ship }) => {
+    onAuthorize: (req) => {
+      const { client, ship } = req.hull;
       const { refreshToken, accessToken, expiresIn } = (req.account || {});
       const newShip = {
         private_settings: {

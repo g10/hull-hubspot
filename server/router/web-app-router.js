@@ -20,7 +20,7 @@ export default function (deps) {
   router.post("/fetchAll", RequireConfiguration, fetchAllController.fetchAllAction);
   router.post("/sync", RequireConfiguration, syncController.syncAction);
 
-  router.use("/batch", RequireConfiguration, batchHandler(batchController.handleBatchExtractJob, {}));
+  router.use("/batch", RequireConfiguration, batchController.handleBatchExtractAction, batchHandler(batchController.handleBatchExtractJob, {}));
   router.use("/notify", notifHandler({
     userHandlerOptions: {
       groupTraits: false

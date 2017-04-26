@@ -8,8 +8,7 @@ export default class BatchController {
    * @return {Promise}
    */
   static handleBatchExtractAction(req, res, next) {
-    const segmentId = req.query.segment_id || null;
-    req.hull.query.segment_id = segmentId;
+    req.hull.query.segment_id = req.query.segment_id || null;
     next();
   }
 
