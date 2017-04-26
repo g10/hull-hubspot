@@ -4,10 +4,10 @@
  */
 export default class SyncStrategy {
 
-  syncAction = (req, res, next) => {
+  static syncAction(req, res, next) {
     return req.hull.enqueue("startSyncJob")
       .then(next, next);
-  };
+  }
 
   static startSyncJob(ctx) {
     const count = 100;

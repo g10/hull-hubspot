@@ -28,8 +28,8 @@
     "start": "COMBINED=true node build/web",
     "start:dev": "COMBINED=true babel-watch -L server/web",
     "test": "npm run test:lint && npm run test:units",
-    "test:lint": "./node_modules/.bin/eslint server",
-    "test:units": "NODE_ENV=test ./node_modules/.bin/mocha -R spec ./tests/index",
+    "test:lint": "eslint server",
+    "test:units": "NODE_ENV=test mocha -R spec ./tests/index",
     "clean": "./node_modules/.bin/rimraf dist; ./node_modules/.bin/rimraf build",
     "update": "./node_modules/.bin/updtr",
     "postinstall": "npm run build"

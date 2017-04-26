@@ -33,3 +33,4 @@ docker-compose up dev # with autoreloading enabled
 
 ### Testing :
 - create developer account at https://developers.hubspot.com/docs/overview
+- from developer's account dashboard you should obtain CLIENT_ID and CLIENT_SECRET and paste it to .env file

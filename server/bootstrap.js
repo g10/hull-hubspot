@@ -9,7 +9,14 @@ import SyncController from "./controller/sync";
 import NotifyController from "./controller/notify";
 import * as newJobs from "./jobs";
 
-const { LOG_LEVEL, SHIP_CACHE_MAX = 100, SHIP_CACHE_TTL = 60, KUE_PREFIX = "hull-hubspot", REDIS_URL = "127.0.0.1", SECRET = "1234", PORT = 8082 } = process.env;
+const {
+  LOG_LEVEL,
+  SHIP_CACHE_MAX = 100,
+  SHIP_CACHE_TTL = 60,
+  KUE_PREFIX = "hull-hubspot",
+  REDIS_URL = "127.0.0.1",
+  SECRET = "1234",
+  PORT = 8082 } = process.env;
 
 if (LOG_LEVEL) {
   Hull.logger.transports.console.level = LOG_LEVEL;
