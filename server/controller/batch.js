@@ -7,13 +7,10 @@ export default class BatchController {
    * @param  {Object} res
    * @return {Promise}
    */
-  static handleBatchExtractAction(req, res) {
+  static handleBatchExtractAction(req, res, next) {
     const segmentId = req.query.segment_id || null;
-    return req.hull.enqueue("handleBatchExtractJob", {
-      body: req.body,
-      batchSize: 100,
-      segmentId
-    }).then(() => res.end("ok"));
+    req.hull.query.segment_id = segmentId;
+    next();
   }
 
   /**
@@ -24,7 +21,7 @@ export default class BatchController {
    */
   static batchExtractJobHandler(ctx, payload) {
     return (usersBatch) => {
-      if (payload.segmentId) {
+      if (ctx.query.segment_id) {
         usersBatch = usersBatch.map((u) => {
           u.segment_ids = _.uniq(_.concat(u.segment_ids || [], [payload.segmentId]));
           return u;
