@@ -15,7 +15,7 @@ export default class BatchSyncHandler {
     return Promise.resolve([]);
   }
 
-  static getHandler(args) { // todo czy tego mozna sie pozbyc ?
+  static getHandler(args) {
     const name = args.ns + args.ship.id;
     return HANDLERS[name] = HANDLERS[name] || new BatchSyncHandler(args); // eslint-disable-line no-return-assign
   }
