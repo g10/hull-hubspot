@@ -17,11 +17,11 @@ export default function (deps) {
 
   router.use(AppMiddleware());
 
-  router.post("/fetchAll", RequireConfiguration, fetchAllController.fetchAllAction);
+  router.post("/fetchAll", RequireConfiguration, fetchAllController.fetchAllAction, responseMiddleware());
   router.post("/sync", RequireConfiguration, syncController.syncAction, responseMiddleware());
 
-  router.use("/batch", batchHandler(batchController.batchExtractJobHandler));
-  router.use("/notify", notifHandler({
+  router.use("/batch", RequireConfiguration, batchHandler(batchController.batchExtractJobHandler));
+  router.use("/notify", RequireConfiguration, notifHandler({
     userHandlerOptions: {
       groupTraits: false
     },
@@ -33,13 +33,13 @@ export default function (deps) {
     }
   }));
 
-  router.post("/monitor/checkToken", RequireConfiguration, monitorController.checkTokenAction);
+  router.post("/monitor/checkToken", RequireConfiguration, monitorController.checkTokenAction, responseMiddleware());
 
-  router.get("/schema/contact_properties", cors(), RequireConfiguration, actions.getContactProperties);
+  router.get("/schema/contact_properties", cors(), RequireConfiguration, actions.getContactProperties, responseMiddleware());
 
-  router.post("/migrate", (req, res, next) => {
+  router.post("/migrate", RequireConfiguration, (req, res, next) => {
     req.shipApp.syncAgent.migrateSettings().then(next, next);
-  });
+  }, responseMiddleware());
 
   return router;
 }
