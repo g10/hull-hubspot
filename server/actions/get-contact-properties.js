@@ -1,6 +1,8 @@
+/* @flow */
+import { Request, Response } from "express";
 import _ from "lodash";
 
-export default function getContactProperties(req, res) {
+export default function getContactProperties(req: Request, res: Response) {
   const { hubspotClient } = req.hull.shipApp;
 
   return hubspotClient.get("/contacts/v2/groups")

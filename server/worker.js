@@ -1,8 +1,9 @@
+/* @flow */
 import { helpersMiddleware } from "hull/lib/utils";
 
 import AppMiddleware from "./lib/middleware/app";
 
-module.exports = function worker(options = {}) {
+module.exports = function worker(options: any = {}) {
   const { connector, jobs } = options;
   connector.worker(jobs)
     .use(helpersMiddleware()) // workaround over bug in hull-node

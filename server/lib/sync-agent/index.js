@@ -3,10 +3,11 @@ import _ from "lodash";
 
 import ContactProperty from "./contact-property";
 import Mapping from "./mapping";
+import HubspotAgent from "../hubspot-agent";
 
 export default class SyncAgent {
 
-  constructor(hubspotAgent, ctx) {
+  constructor(hubspotAgent: HubspotAgent, ctx) {
     const { client, ship, metric, helpers, segments } = ctx;
     this.hubspotAgent = hubspotAgent;
     this.client = client;

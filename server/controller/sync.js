@@ -1,10 +1,13 @@
+/* @flow */
+import { Request, Response, Next } from "express";
+
 /**
  * Handles operation for automatic sync changes of hubspot profiles
  * to hull users.
  */
 export default class SyncStrategy {
 
-  static syncAction(req, res, next) {
+  static syncAction(req: Request, res: Response, next: Next) {
     return req.hull.enqueue("startSyncJob")
       .then(next, next);
   }

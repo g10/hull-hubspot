@@ -1,9 +1,10 @@
+/* @flow */
 import { Router } from "express";
 import { Strategy as HubspotStrategy } from "passport-hubspot";
 import { oAuthHandler } from "hull/lib/utils";
 import moment from "moment";
 
-export default function (deps) {
+export default function (deps: any) {
   const router = Router();
 
   const {

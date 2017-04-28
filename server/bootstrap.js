@@ -1,3 +1,4 @@
+/* @flow */
 import Hull from "hull";
 import { Cache, Queue } from "hull/lib/infra";
 

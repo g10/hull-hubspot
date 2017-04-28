@@ -1,3 +1,4 @@
+/* @flow */
 import { Router } from "express";
 import cors from "cors";
 import { notifHandler, batchHandler, responseMiddleware } from "hull/lib/utils";
@@ -5,7 +6,7 @@ import RequireConfiguration from "../lib/middleware/require-configuration";
 import AppMiddleware from "../lib/middleware/app";
 import * as actions from "../actions";
 
-export default function (deps) {
+export default function (deps: any) {
   const router = Router();
   const {
     batchController,

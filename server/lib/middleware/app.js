@@ -1,10 +1,13 @@
+/* @flow */
+import { Request, Response, Next } from "express";
+
 import HubspotClient from "../hubspot-client";
 import HubspotAgent from "../hubspot-agent";
 import SyncAgent from "../sync-agent";
 import ProgressAgent from "../progress-agent";
 
 export default function () {
-  return function middleware(req, res, next) {
+  return function middleware(req: Request, res: Response, next: Next) {
     req.hull.shipApp = req.hull.shipApp || {};
 
     if (!req.hull || !req.hull.ship) {

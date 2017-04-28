@@ -27,9 +27,10 @@
     "build:server": "babel server -d build",
     "start": "COMBINED=true node build/web",
     "start:dev": "COMBINED=true babel-watch -L server/web",
-    "test": "npm run test:lint && npm run test:units",
+    "test": "npm run test:lint && npm run test:units && npm run test:flow",
     "test:lint": "eslint server",
     "test:units": "NODE_ENV=test mocha -R spec ./tests/index",
+    "test:flow": "flow check",
     "clean": "./node_modules/.bin/rimraf dist; ./node_modules/.bin/rimraf build",
     "update": "./node_modules/.bin/updtr",
     "postinstall": "npm run build"
@@ -46,6 +47,7 @@
   ],
   "devDependencies": {
     "babel-eslint": "^7.1.1",
+    "babel-preset-flow": "^6.23.0",
     "babel-watch": "^2.0.2",
     "eslint": "^3.2.2",
     "eslint-config-airbnb-base": "^11.1.0",
