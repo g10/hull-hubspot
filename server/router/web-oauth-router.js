@@ -8,8 +8,7 @@ export default function (deps) {
 
   const {
     clientID,
-    clientSecret,
-    cache
+    clientSecret
   } = deps;
 
   router.use("/auth", oAuthHandler({
@@ -40,35 +39,23 @@ export default function (deps) {
       return Promise.reject();
     },
     onLogin: (req) => {
-      const { client, ship } = req.hull;
+      const { helpers } = req.hull;
       req.authParams = { ...req.body, ...req.query };
       const newShip = {
-        private_settings: {
-          ...ship.private_settings,
-          portal_id: req.authParams.portalId
-        }
+        portal_id: req.authParams.portalId
       };
-      return client.put(ship.id, newShip)
-        .then(() => {
-          return cache.del(ship.id);
-        });
+      return helpers.updateSettings(newShip);
     },
     onAuthorize: (req) => {
-      const { client, ship } = req.hull;
+      const { helpers } = req.hull;
       const { refreshToken, accessToken, expiresIn } = (req.account || {});
       const newShip = {
-        private_settings: {
-          ...ship.private_settings,
-          refresh_token: refreshToken,
-          token: accessToken,
-          expires_in: expiresIn,
-          token_fetched_at: moment().utc().format("x"),
-        }
+        refresh_token: refreshToken,
+        token: accessToken,
+        expires_in: expiresIn,
+        token_fetched_at: moment().utc().format("x"),
       };
-      return client.put(ship.id, newShip)
-        .then(() => {
-          return cache.del(ship.id);
-        });
+      return helpers.updateSettings(newShip);
     },
     views: {
       login: "login.html",

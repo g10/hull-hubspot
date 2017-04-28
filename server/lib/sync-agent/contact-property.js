@@ -67,7 +67,7 @@ export default class ContactProperty {
                   .then((...props) => this.logger.info("ContactProperty.ensureCustomProperties", _.map(props[0], p => p.name)));
   }
 
-  static shouldUpdateProperty(currentValue, newValue) {
+  shouldUpdateProperty(currentValue, newValue) {
     if (newValue.name === "hull_segments") {
       const currentSegmentNames = (currentValue.options || []).map(o => o.label).sort();
       const newSegmentNames = (newValue.options || []).map(o => o.label).sort();
@@ -128,7 +128,7 @@ export default class ContactProperty {
     };
   }
 
-  static optionsHash(name, i) {
+  optionsHash(name, i) {
     return {
       hidden: false,
       description: null,

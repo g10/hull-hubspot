@@ -27,19 +27,16 @@ export default class UsersController {
 
     return ctx.shipApp.syncAgent.setupShip()
       .then(({ hubspotProperties }) => {
-        return ctx.segments
-        .then((segments) => {
-          const body = users.map((user) => {
-            const properties = ctx.shipApp.syncAgent.mapping.getHubspotProperties(segments, hubspotProperties, user);
-            ctx.client.logger.debug("outgoing.user", { email: user.email, properties });
-            return {
-              email: user.email,
-              properties
-            };
-          });
-          ctx.metric.value("ship.outgoing.users", body.length);
-          return ctx.shipApp.hubspotAgent.batchUsers(body);
+        const body = users.map((user) => {
+          const properties = ctx.shipApp.syncAgent.mapping.getHubspotProperties(ctx.segments, hubspotProperties, user);
+          ctx.client.logger.debug("outgoing.user", { email: user.email, properties });
+          return {
+            email: user.email,
+            properties
+          };
         });
+        ctx.metric.value("ship.outgoing.users", body.length);
+        return ctx.shipApp.hubspotAgent.batchUsers(body);
       })
       .then((res) => {
         if (res === null) {

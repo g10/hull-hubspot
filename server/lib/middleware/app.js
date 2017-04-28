@@ -10,7 +10,6 @@ export default function () {
     if (!req.hull || !req.hull.ship) {
       return next();
     }
-
     const hubspotClient = new HubspotClient(req.hull);
     const hubspotAgent = new HubspotAgent(req.hull.client, hubspotClient, req.hull.ship, req.hull.metric, req.hull.helpers);
     const syncAgent = new SyncAgent(hubspotAgent, req.hull);

@@ -1,43 +1,33 @@
 import Promise from "bluebird";
 import _ from "lodash";
 
-import BatchSyncHandler from "../lib/batch-sync";
-
 export default class UserUpdateStrategy {
-  static userUpdateHandler(ctx, payload) {
+  static userUpdateHandler(ctx, messages) {
     const { syncAgent } = ctx.shipApp;
-    const message = payload.message;
     if (!syncAgent.isConfigured()) {
       ctx.client.logger.info("ship is not configured");
       return Promise.resolve();
     }
 
-    const { user, changes = {}, segments = [] } = message;
+    const users = messages.reduce((usersArr, message) => {
+      const { user, changes = {}, segments = [] } = message;
 
-    if (_.get(changes, "user['traits_hubspot/fetched_at'][1]", false)
-      && _.isEmpty(_.get(changes, "segments"))
-    ) {
-      return Promise.resolve();
-    }
-
-    user.segment_ids = _.uniq(_.concat(user.segment_ids || [], segments.map(s => s.id)));
-
-    if (!syncAgent.userWhitelisted(user) || !_.isEmpty(user.email)) {
-      return Promise.resolve();
-    }
-
-    return BatchSyncHandler.getHandler({
-      hull: ctx,
-      ship: ctx.ship,
-      ns: "user_update",
-      options: {
-        maxSize: 100,
-        throttle: 30000
+      if (_.get(changes, "user['traits_hubspot/fetched_at'][1]", false)
+        && _.isEmpty(_.get(changes, "segments"))
+      ) {
+        return usersArr;
       }
-    }).setCallback((users) => {
-      return ctx.enqueue("sendUsersJob", { users });
-    })
-    .add(user);
+
+      user.segment_ids = _.uniq(_.concat(user.segment_ids || [], segments.map(s => s.id)));
+      if (!syncAgent.userWhitelisted(user) || _.isEmpty(user.email)) {
+        return usersArr;
+      }
+
+      usersArr.push(user);
+      return usersArr;
+    }, []);
+
+    return ctx.enqueue("sendUsersJob", { users });
   }
 
   static shipUpdateHandler(ctx) {

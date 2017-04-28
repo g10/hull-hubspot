@@ -6,7 +6,7 @@ export default class FetchAllController {
    * public facing method
    * @return {Promise}
    */
-  fetchAllAction = (req, res) => {
+  static fetchAllAction(req, res) {
     const count = 100;
 
     return req.hull.enqueue("fetchAllJob", {
@@ -16,7 +16,7 @@ export default class FetchAllController {
       req.hull.shipApp.progressAgent.start();
       res.end("ok");
     });
-  };
+  }
 
   /**
    * Job which performs fetchAll operations queues itself and the import job

@@ -34,7 +34,7 @@ export default class Mapping {
    * @param  {Object} prop
    * @return {Boolean}
    */
-  static findHubspotProp(hubspotProperties, prop) {
+  findHubspotProp(hubspotProperties, prop) {
     return _.find(_.flatten(hubspotProperties.map(g => g.properties)), { name: prop.name })
       || _.find(_.flatten(hubspotProperties.map(g => g.properties)), { name: prop.name.replace(/^hull_/, "") });
   }
@@ -144,7 +144,7 @@ export default class Mapping {
    * @param  {Object} hubspotUser
    * @return {Object}
    */
-  static getIdentFromHubspot(hubspotUser) {
+  getIdentFromHubspot(hubspotUser) {
     const ident = {};
 
     if (_.get(hubspotUser, "properties.email.value")) {

@@ -18,16 +18,16 @@ import ClientMock from "./mocks/client-mock";
 const assert = require("assert");
 
 const controllers = {
-  batchController: new BatchController(),
-  monitorController: new MonitorController(),
-  fetchAllController: new FetchAllController(),
-  usersController: new UsersController(),
-  notifyController: new NotifyController(),
-  syncController: new SyncController()
+  batchController: BatchController,
+  monitorController: MonitorController,
+  fetchAllController: FetchAllController,
+  usersController: UsersController,
+  notifyController: NotifyController,
+  syncController: SyncController
 };
 const app = express();
 
-const connector = new Hull.Connector({ hostSecret: 1234, port: 8080 });
+const connector = new Hull.Connector({ hostSecret: 1234, port: 8070 });
 const clientID = 123;
 const clientSecret = "123";
 connector.setupApp(app);
@@ -80,7 +80,7 @@ describe("Server", () => {
       let body = "";
 
       request
-        .get("http://127.0.0.1:8080/schema/contact_properties")
+        .get("http://127.0.0.1:8070/schema/contact_properties")
         .on("response", (response) => {
           assert(response.statusCode === 200);
           hubspotMock.done();
