@@ -1,7 +1,7 @@
 /* @flow */
 import express from "express";
 
-import Worker from "./worker";
+import WorkerJobs from "./worker-jobs";
 import bootstrap from "./bootstrap";
 import WebAppRouter from "./router/web-app-router";
 import WebOauthRouter from "./router/web-oauth-router";
@@ -13,7 +13,7 @@ const clientID = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 
 if (process.env.COMBINED) {
-  Worker(bootstrap);
+  WorkerJobs(bootstrap);
 }
 
 const app = express();
