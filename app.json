@@ -28,6 +28,9 @@
     "CLIENT_SECRET" : {
       "description" : "oAuth Client Secret",
       "required": true
+    },
+    "HUBSPOT_FETCH_OVERLAP_SEC": {
+      "description": "Number of seconds every fetch operation will overlap with next fetch job"
     }
   },
   "scripts": {},

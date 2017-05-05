@@ -7,7 +7,7 @@ import NotifHandler from "../lib/hull/notif-handler";
 import ParseMessageMiddleware from "../lib/middleware/parse-message";
 import AppMiddleware from "../lib/middleware/app";
 import RequireConfiguration from "../util/middleware/require-configuration";
-import responseMiddleware from "../util/middleware/response.js";
+import responseMiddleware from "../util/middleware/response";
 import * as actions from "../actions";
 
 
