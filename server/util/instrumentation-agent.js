@@ -9,7 +9,7 @@ export default class InstrumentationAgent {
   constructor() {
     this.nr = null;
     this.raven = null;
-    this.manifest = require(`${process.cwd()}/manifest.json`); // eslint-disable-line global-require
+    this.manifest = require(`${process.cwd()}/manifest.json`); // eslint-disable-line global-require,import/no-dynamic-require
 
     if (process.env.NEW_RELIC_LICENSE_KEY) {
       this.nr = require("newrelic"); // eslint-disable-line global-require

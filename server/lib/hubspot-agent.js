@@ -115,15 +115,16 @@ export default class HubspotAgent {
 
   /**
   * Get most recent contacts and filters out these who last modification
-  * time if older that the lastImportTime. If there are any contacts modified since
+  * time if older that the lastFetchAt. If there are any contacts modified since
   * that time queues import of them and getting next chunk from hubspot API.
   * @see http://developers.hubspot.com/docs/methods/contacts/get_recently_updated_contacts
-  * @param  {Date} lastImportTime
+  * @param  {Date} lastFetchAt
+  * @param  {Date} stopFetchAt
   * @param  {Number} [count=100]
   * @param  {Number} [offset=0]
   * @return {Promise -> Array}
   */
-  getRecentContacts(properties, lastImportTime, count = 100, offset = 0) {
+  getRecentContacts(properties, lastFetchAt, stopFetchAt, count = 100, offset = 0) {
     return this.retryUnauthorized(() => {
       return this.hubspotClient
         .get("/contacts/v1/lists/recently_updated/contacts/recent")
@@ -135,9 +136,10 @@ export default class HubspotAgent {
     })
     .then((res) => {
       res.body.contacts = res.body.contacts.filter((c) => {
-        return moment(c.properties.lastmodifieddate.value, "x")
-          .milliseconds(0)
-          .isAfter(lastImportTime);
+        const time = moment(c.properties.lastmodifieddate.value, "x")
+          .milliseconds(0);
+        return time.isAfter(lastFetchAt)
+          && time.subtract(process.env.HUBSPOT_FETCH_OVERLAP_SEC || 10, "seconds").isBefore(stopFetchAt);
       });
       return res;
     });
@@ -162,7 +164,7 @@ export default class HubspotAgent {
   * It tries to get the data from user's information, if not available
   * defaults to one hour from now.
   *
-  * @return {Promise -> lastImportTime (ISO 8601)} 2016-08-04T12:51:46Z
+  * @return {String} 2016-08-04T12:51:46Z
   */
   getLastFetchAt() {
     const defaultValue = moment().subtract(1, "hour").format();
@@ -170,9 +172,10 @@ export default class HubspotAgent {
     return lastFetchAt;
   }
 
-  setLastFetchAt() {
-    return this.hullAgent.updateShipSettings({
-      last_fetch_at: moment().format()
-    });
+  /**
+   * @return {String}
+   */
+  getStopFetchAt() {
+    return moment().format();
   }
 }

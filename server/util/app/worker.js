@@ -65,7 +65,7 @@ export default class WorkerApp {
               req.hull.client.logger.error(err.message);
               return Promise.reject(err);
             }
-            req.hull.client.logger.info("dispatch", { id: job.id, name: jobName });
+            req.hull.client.logger.debug("dispatch", { id: job.id, name: jobName });
             this.instrumentationAgent.metricInc(`ship.job.${jobName}.start`, 1, req.hull.client.configuration());
             return this.jobs[jobName].call(job, req, res);
           })
