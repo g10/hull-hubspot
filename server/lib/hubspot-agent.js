@@ -139,7 +139,7 @@ export default class HubspotAgent {
         const time = moment(c.properties.lastmodifieddate.value, "x")
           .milliseconds(0);
         return time.isAfter(lastFetchAt)
-          && time.subtract( || 10, "seconds").isBefore(stopFetchAt);
+          && time.subtract(process.env.HUBSPOT_FETCH_OVERLAP_SEC || 10, "seconds").isBefore(stopFetchAt);
       });
       return res;
     });
