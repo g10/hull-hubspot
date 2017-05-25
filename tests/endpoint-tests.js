@@ -77,25 +77,16 @@ const hubspotMock =
 describe("Server", () => {
   describe("for /schema/contact_properties", () => {
     it("should return status OK with data from hubspot", (done) => {
-      let body = "";
-
       request
-        .get("http://127.0.0.1:8070/schema/contact_properties")
-        .on("response", (response) => {
-          assert(response.statusCode === 200);
+        .get("http://127.0.0.1:8070/schema/contact_properties", (error, response, body) => {
           hubspotMock.done();
-        })
-        .on("data", (data) => {
-          body += data;
+          assert(response.statusCode === 200);
+          const parsedBody = JSON.parse(body).options[0];
+          assert(parsedBody.label === "display");
+          assert(parsedBody.options[0].label === "coke");
+          assert(parsedBody.options[0].value === "shortName");
+          done();
         });
-
-      setTimeout(() => {
-        const parsedBody = JSON.parse(body).options[0];
-        assert(parsedBody.label === "display");
-        assert(parsedBody.options[0].label === "coke");
-        assert(parsedBody.options[0].value === "shortName");
-        done();
-      }, 100);
     });
   });
 });
