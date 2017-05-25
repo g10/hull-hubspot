@@ -1,13 +1,12 @@
 import moment from "moment";
 
 export default class ProgressAgent {
-  constructor(hullAgent, hullClient) {
-    this.hullAgent = hullAgent;
-    this.hullClient = hullClient;
+  constructor({ helpers }) {
+    this.helpers = helpers;
   }
 
   start() {
-    return this.hullAgent.updateShipSettings({
+    return this.helpers.updateSettings({
       last_fetch_started_at: moment().utc().format(),
       is_fetch_completed: false,
       fetch_count: 0
@@ -15,7 +14,7 @@ export default class ProgressAgent {
   }
 
   update(newProgress, hasMore = false) {
-    return this.hullAgent.updateShipSettings({
+    return this.helpers.updateSettings({
       fetch_count: newProgress,
       is_fetch_completed: hasMore
     });

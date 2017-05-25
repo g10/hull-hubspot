@@ -1,5 +1,6 @@
-import CacheManager from "cache-manager";
+/* @flow */
 import Hull from "hull";
+import { Cache, Queue } from "hull/lib/infra";
 
 import BatchController from "./controller/batch";
 import MonitorController from "./controller/monitor";
@@ -9,49 +10,51 @@ import SyncController from "./controller/sync";
 import NotifyController from "./controller/notify";
 import * as newJobs from "./jobs";
 
-import InstrumentationAgent from "./util/instrumentation-agent";
-import KueAdapter from "./util/queue/adapter/kue";
+const {
+  LOG_LEVEL,
+  SHIP_CACHE_MAX = 100,
+  SHIP_CACHE_TTL = 60,
+  KUE_PREFIX = "hull-hubspot",
+  REDIS_URL = "127.0.0.1",
+  SECRET = "1234",
+  PORT = 8082 } = process.env;
 
-if (process.env.LOG_LEVEL) {
-  Hull.logger.transports.console.level = process.env.LOG_LEVEL;
+if (LOG_LEVEL) {
+  Hull.logger.transports.console.level = LOG_LEVEL;
 }
+Hull.logger.transports.console.stringify = true;
 
-Hull.logger.transports.console.json = true;
-
-const instrumentationAgent = new InstrumentationAgent();
-
-const queueAdapter = new KueAdapter(({
-  prefix: process.env.KUE_PREFIX || "hull-hubspot",
-  redis: process.env.REDIS_URL
-}));
-
-const cacheManager = CacheManager.caching({
+const cache = new Cache({
   store: "memory",
-  max: process.env.SHIP_CACHE_MAX || 100,
-  ttl: process.env.SHIP_CACHE_TTL || 60
+  max: SHIP_CACHE_MAX,
+  ttl: SHIP_CACHE_TTL
 });
 
-const shipCache = new Hull.ShipCache(cacheManager, process.env.SHIP_CACHE_PREFIX || "hull-hubspot");
+const queue = new Queue("kue", {
+  prefix: KUE_PREFIX,
+  redis: REDIS_URL
+});
+
+const connector = new Hull.Connector({ cache, queue, hostSecret: SECRET, port: PORT });
 
 const controllers = {
-  batchController: new BatchController(),
-  monitorController: new MonitorController(),
-  fetchAllController: new FetchAllController(),
-  usersController: new UsersController(),
-  notifyController: new NotifyController(),
-  syncController: new SyncController()
+  batchController: BatchController,
+  monitorController: MonitorController,
+  fetchAllController: FetchAllController,
+  usersController: UsersController,
+  notifyController: NotifyController,
+  syncController: SyncController
 };
 
-// FIXME: change to job per file arch
 const jobs = {
-  handleBatchExtractJob: controllers.batchController.handleBatchExtractJob.bind(controllers.batchController),
-  fetchAllJob: controllers.fetchAllController.fetchAllJob.bind(controllers.fetchAllController),
-  saveContactsJob: controllers.usersController.saveContactsJob.bind(controllers.usersController),
-  sendUsersJob: controllers.usersController.sendUsersJob.bind(controllers.usersController),
-  syncJob: controllers.syncController.syncJob.bind(controllers.syncController),
-  startSyncJob: controllers.syncController.startSyncJob.bind(controllers.syncController),
-  checkTokenJob: controllers.monitorController.checkTokenJob.bind(controllers.monitorController),
+  handleBatchExtractJob: controllers.batchController.handleBatchExtractJob,
+  fetchAllJob: controllers.fetchAllController.fetchAllJob,
+  saveContactsJob: controllers.usersController.saveContactsJob,
+  sendUsersJob: controllers.usersController.sendUsersJob,
+  syncJob: controllers.syncController.syncJob,
+  startSyncJob: controllers.syncController.startSyncJob,
+  checkTokenJob: controllers.monitorController.checkTokenJob,
   ...newJobs
 };
 
-export default { queueAdapter, controllers, instrumentationAgent, shipCache, jobs };
+export default { connector, controllers, jobs, queue, cache };

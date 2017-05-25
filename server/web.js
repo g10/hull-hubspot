@@ -1,55 +1,27 @@
-import Hull from "hull";
-import raven from "raven";
+/* @flow */
+import express from "express";
 
+import WorkerJobs from "./worker-jobs";
 import bootstrap from "./bootstrap";
-import BatchSyncHandler from "./util/handler/batch-sync";
-import WebApp from "./util/app/web";
 import WebAppRouter from "./router/web-app-router";
 import WebOauthRouter from "./router/web-oauth-router";
-import WebStaticRouter from "./util/router/static";
-import WebKueRouter from "./util/router/kue";
+import WebKueRouter from "./router/kue";
 
-const { queueAdapter, controllers, instrumentationAgent, shipCache } = bootstrap;
+const { connector, controllers, queue } = bootstrap;
 
-const hostSecret = process.env.SECRET || "1234";
 const clientID = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
-const port = process.env.PORT || 8082;
 
 if (process.env.COMBINED) {
-  require("./worker"); // eslint-disable-line global-require
+  WorkerJobs(bootstrap);
 }
 
-const app = WebApp();
+const app = express();
 
-if (instrumentationAgent.raven) {
-  app.use(raven.middleware.express.requestHandler(instrumentationAgent.raven));
-}
+connector.setupApp(app);
 
-app.use("/", WebAppRouter({ ...controllers, Hull, hostSecret, queueAdapter, shipCache, instrumentationAgent }))
-  .use("/", WebStaticRouter({ Hull }))
-  .use("/", WebOauthRouter({ Hull, hostSecret, clientID, clientSecret, shipCache, instrumentationAgent }))
-  .use("/kue", WebKueRouter({ shipConfig: { hostSecret }, queueAdapter }));
+app.use("/", WebAppRouter({ ...controllers }))
+  .use("/", WebOauthRouter({ clientID, clientSecret }))
+  .use("/kue", WebKueRouter({ hostSecret: process.env.SECRET }, queue));
 
-if (instrumentationAgent.raven) {
-  app.use(raven.middleware.express.errorHandler(instrumentationAgent.raven));
-}
-
-app.listen(port, () => {
-  Hull.logger.info("webApp.listen", port);
-});
-
-function exitNow() {
-  console.warn("Exiting now !");
-  process.exit(0);
-}
-
-function handleExit() {
-  console.log("Exiting... waiting 30 seconds workers to flush");
-  setTimeout(exitNow, 30000);
-  BatchSyncHandler.exit()
-    .then(exitNow);
-}
-
-process.on("SIGINT", handleExit);
-process.on("SIGTERM", handleExit);
+connector.startApp(app);

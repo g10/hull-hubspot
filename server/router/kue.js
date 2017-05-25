@@ -1,6 +1,8 @@
+/* @flow */
 import { Router } from "express";
 import basicAuth from "basic-auth";
 import ui from "kue-ui";
+import { Queue } from "hull/lib/utils";
 
 ui.setup({
   apiURL: "/kue/_api", // IMPORTANT: specify the api url
@@ -21,11 +23,11 @@ function auth(pass) {
   };
 }
 
-export default function KueRouter({ shipConfig, queueAdapter }) {
+export default function KueRouter({ hostSecret }: any, queue: Queue) {
   const router = Router();
 
-  router.use(auth(shipConfig.hostSecret));
-  router.use("/_api", queueAdapter.app);
+  router.use(auth(hostSecret));
+  router.use("/_api", queue.adapter.app);
   router.use("/", ui.app);
 
   return router;

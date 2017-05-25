@@ -31,6 +31,12 @@
     },
     "HUBSPOT_FETCH_OVERLAP_SEC": {
       "description": "Number of seconds every fetch operation will overlap with next fetch job"
+    },
+    "HUBSPOT_TOKEN_REFRESH_ADVANCE": {
+      "description": "Defines how long hubspot token is valid before it will expire"
+    },
+    "COMBINED": {
+      "description": "Indicates if Worker should be started with application."
     }
   },
   "scripts": {},

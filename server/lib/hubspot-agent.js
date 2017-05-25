@@ -6,12 +6,12 @@ import promiseRetry from "promise-retry";
 
 export default class HubspotAgent {
 
-  constructor(hullAgent, hullClient, hubspotClient, ship, instrumentationAgent) {
-    this.hullAgent = hullAgent;
-    this.hullClient = hullClient;
+  constructor(client, hubspotClient, ship, metric, helpers) {
+    this.client = client;
     this.hubspotClient = hubspotClient;
     this.ship = ship;
-    this.instrumentationAgent = instrumentationAgent;
+    this.metric = metric;
+    this.helpers = helpers;
   }
 
   isConfigured() {
@@ -25,11 +25,11 @@ export default class HubspotAgent {
    * @param {Promise} promise
    */
   retryUnauthorized(promise) {
-    return promiseRetry(retry => {
+    return promiseRetry((retry) => {
       return promise()
-        .catch(err => {
+        .catch((err) => {
           if (err.response.unauthorized) {
-            this.hullClient.logger.info("retrying query", _.get(err, "response.body"));
+            this.client.logger.info("retrying query", _.get(err, "response.body"));
             return this.checkToken({ force: true })
               .then(() => {
                 this.hubspotClient.ship = this.ship;
@@ -37,11 +37,11 @@ export default class HubspotAgent {
               })
               .then(() => retry(err));
           }
-          this.hullClient.logger.error("non recoverable error", err.response);
+          this.client.logger.error("non recoverable error", err.response);
           return Promise.reject(err);
         });
     }, { retries: 0 })
-    .catch(err => {
+    .catch((err) => {
       const simplifiedErr = new Error(_.get(err.response, "body.message"));
       simplifiedErr.extra = JSON.stringify(_.get(err.response, "body") || {});
       return Promise.reject(simplifiedErr);
@@ -51,7 +51,7 @@ export default class HubspotAgent {
   checkToken({ force = false } = {}) {
     let { token_fetched_at, expires_in } = this.ship.private_settings;
     if (!token_fetched_at || !expires_in) {
-      this.hullClient.logger.error("checkToken: Ship private settings lack token information");
+      this.client.logger.error("checkToken: Ship private settings lack token information");
       token_fetched_at = moment().utc().format("x");
       expires_in = 0;
     }
@@ -59,7 +59,7 @@ export default class HubspotAgent {
     const expiresAt = moment(token_fetched_at, "x").add(expires_in, "seconds");
     const willExpireIn = expiresAt.diff(moment(), "seconds");
     const willExpireSoon = willExpireIn <= (process.env.HUBSPOT_TOKEN_REFRESH_ADVANCE || 600); // 10 minutes
-    this.hullClient.logger.info("access_token", {
+    this.client.logger.info("access_token", {
       fetched_at: moment(token_fetched_at, "x").format(),
       expires_in,
       expires_at: expiresAt.format(),
@@ -69,12 +69,12 @@ export default class HubspotAgent {
     });
     if (willExpireSoon || force) {
       return this.hubspotClient.refreshAccessToken()
-        .catch(refreshErr => {
-          this.hullClient.logger.error("Error in refreshAccessToken", refreshErr);
+        .catch((refreshErr) => {
+          this.client.logger.error("Error in refreshAccessToken", refreshErr);
           return Promise.reject(refreshErr);
         })
         .then((res) => {
-          return this.hullAgent.updateShipSettings({
+          return this.helpers.updateSettings({
             expires_in: res.body.expires_in,
             token_fetched_at: moment().utc().format("x"),
             token: res.body.access_token
@@ -99,7 +99,7 @@ export default class HubspotAgent {
   */
   getContacts(properties, count = 100, offset = 0) {
     if (count > 100) {
-      return this.hullClient.logger.error("getContact gets maximum of 100 contacts at once", count);
+      return this.client.logger.error("getContact gets maximum of 100 contacts at once", count);
     }
 
     return this.retryUnauthorized(() => {
@@ -118,8 +118,13 @@ export default class HubspotAgent {
   * time if older that the lastFetchAt. If there are any contacts modified since
   * that time queues import of them and getting next chunk from hubspot API.
   * @see http://developers.hubspot.com/docs/methods/contacts/get_recently_updated_contacts
+<<<<<<< HEAD
   * @param  {Date} lastFetchAt
   * @param  {Date} stopFetchAt
+=======
+  * @param properties
+  * @param  {Date} lastImportTime
+>>>>>>> 1957a1f9578ec4aa772c5e33e3e9c7534b9c87cd
   * @param  {Number} [count=100]
   * @param  {Number} [offset=0]
   * @return {Promise -> Array}
@@ -168,8 +173,7 @@ export default class HubspotAgent {
   */
   getLastFetchAt() {
     const defaultValue = moment().subtract(1, "hour").format();
-    const lastFetchAt = _.get(this.hullAgent.getShipSettings(), "last_fetch_at", defaultValue);
-    return lastFetchAt;
+    return _.get(this.client.utils.properties.get(), "last_fetch_at", defaultValue);
   }
 
   /**
