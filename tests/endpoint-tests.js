@@ -12,7 +12,6 @@ import SyncController from "../server/controller/sync";
 import NotifyController from "../server/controller/notify";
 import WebAppRouter from "../server/router/web-app-router";
 import WebOauthRouter from "../server/router/web-oauth-router";
-import WebKueRouter from "../server/router/kue";
 import ClientMock from "./mocks/client-mock";
 
 const assert = require("assert");
@@ -52,9 +51,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/", WebAppRouter({ ...controllers }))
-  .use("/", WebOauthRouter({ clientID, clientSecret }))
-  .use("/kue", WebKueRouter({ hostSecret: 1234 }, connector.queue));
-
+  .use("/", WebOauthRouter({ clientID, clientSecret }));
 
 connector.startApp(app);
 

@@ -31,6 +31,7 @@ export default class UsersController {
         const body = users.map((user) => {
           const properties = ctx.shipApp.syncAgent.mapping.getHubspotProperties(ctx.segments, hubspotProperties, user);
           ctx.client.logger.debug("outgoing.user", { email: user.email, properties });
+          ctx.client.logger.info("outgoing.user.success", { email: user.email });
           return {
             email: user.email,
             properties
