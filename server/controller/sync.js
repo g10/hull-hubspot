@@ -16,7 +16,7 @@ export default class SyncStrategy {
     const count = 100;
     const lastFetchAt = ctx.shipApp.hubspotAgent.getLastFetchAt();
     const stopFetchAt = ctx.shipApp.hubspotAgent.getStopFetchAt();
-    ctx.client.logger.info("syncAction.lastFetchAt", lastFetchAt);
+    ctx.client.logger.debug("syncAction.lastFetchAt", { lastFetchAt, stopFetchAt });
     return ctx.enqueue("syncJob", {
       lastFetchAt,
       stopFetchAt,
@@ -29,13 +29,13 @@ export default class SyncStrategy {
 
   static syncJob(ctx, payload) {
     const { hubspotAgent, syncAgent } = ctx.shipApp;
-    const { lastFetchAt, stopFetchAt } = payload.lastFetchAt;
+    const { lastFetchAt, stopFetchAt } = payload;
 
     const count = payload.count || 100;
     const offset = payload.offset || 0;
     const page = payload.page || 1;
     ctx.metric.value("ship.incoming.fetch.page", page);
-    ctx.client.logger.info("syncJob.getRecentContacts", { lastFetchAt, stopFetchAt, count, offset, page });
+    ctx.client.logger.debug("syncJob.getRecentContacts", { lastFetchAt, stopFetchAt, count, offset, page });
     return hubspotAgent.getRecentContacts(syncAgent.mapping.getHubspotPropertiesKeys(), lastFetchAt, stopFetchAt, count, offset)
       .then((res) => {
         const promises = [];
