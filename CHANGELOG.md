@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.2.6
+- adds `fetchStopAt` param to the fetch operation, so every job will fetch users updated since previous call and till the time the job was called, then it stops - it should prevent looping. For the reliability there is a new env var called `HUBSPOT_FETCH_OVERLAP_SEC` to control number of seconds each job will go ahead of it's stop time to make sure no user will be skipped in between jobs
+- adjusts eslint config
+- fixes logging levels
+
 ## v0.2.5
 - make sure the process exit after an `uncaughtException`
 
