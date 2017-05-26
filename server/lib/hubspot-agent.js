@@ -173,7 +173,7 @@ export default class HubspotAgent {
   */
   getLastFetchAt() {
     const defaultValue = moment().subtract(1, "hour").format();
-    return _.get(this.client.utils.properties.get(), "last_fetch_at", defaultValue);
+    return _.get(this.ship.private_settings, "last_fetch_at", defaultValue);
   }
 
   /**
