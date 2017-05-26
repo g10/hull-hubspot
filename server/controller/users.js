@@ -1,3 +1,4 @@
+/* @flow */
 import _ from "lodash";
 import Promise from "bluebird";
 
@@ -12,36 +13,34 @@ export default class UsersController {
    * @param  {Array} users users from Hull
    * @return {Promise}
    */
-  sendUsersJob(req) {
-    const users = (req.payload.users || []).filter(u => !_.isEmpty(u.email));
+  static sendUsersJob(ctx, payload) {
+    const users = (payload.users || []).filter(u => !_.isEmpty(u.email));
 
     if (users.length === 0) {
-      return req.hull.client.logger.log("skip sendUsersJob - empty users list");
+      return ctx.client.logger.log("skip sendUsersJob - empty users list");
     }
 
-    req.hull.client.logger.log("sendUsersJob", { count_users: users.length });
+    ctx.client.logger.log("sendUsersJob", { count_users: users.length });
 
     if (users.length > 100) {
-      req.hull.client.logger.warn("sendUsersJob works best for under 100 users at once", users.length);
+      ctx.client.logger.warn("sendUsersJob works best for under 100 users at once", users.length);
     }
 
-    return req.shipApp.syncAgent.setupShip()
+    return ctx.shipApp.syncAgent.setupShip()
       .then(({ hubspotProperties }) => {
-        return req.shipApp.hullAgent.getSegments()
-        .then(segments => {
-          const body = users.map((user) => {
-            const properties = req.shipApp.syncAgent.mapping.getHubspotProperties(segments, hubspotProperties, user);
-            req.hull.client.logger.debug("outgoing.user", { email: user.email, properties });
-            return {
-              email: user.email,
-              properties
-            };
-          });
-          req.shipApp.instrumentationAgent.metricVal("ship.outgoing.users", body.length, req.hull.client.configuration());
-          return req.shipApp.hubspotAgent.batchUsers(body);
+        const body = users.map((user) => {
+          const properties = ctx.shipApp.syncAgent.mapping.getHubspotProperties(ctx.segments, hubspotProperties, user);
+          ctx.client.logger.debug("outgoing.user", { email: user.email, properties });
+          ctx.client.logger.info("outgoing.user.success", { email: user.email });
+          return {
+            email: user.email,
+            properties
+          };
         });
+        ctx.metric.value("ship.outgoing.users", body.length);
+        return ctx.shipApp.hubspotAgent.batchUsers(body);
       })
-      .then(res => {
+      .then((res) => {
         if (res === null) {
           return Promise.resolve();
         }
@@ -55,11 +54,11 @@ export default class UsersController {
         console.warn("Error in sendUsersJob", { statusCode, body });
         return Promise.reject(new Error("Error in create/update batch"));
       }, (err) => {
-        req.hull.client.logger.info("Hubspot batch error", err);
+        ctx.client.logger.info("Hubspot batch error", err);
         return Promise.reject(err);
       })
-      .catch(err => {
-        req.hull.client.logger.error("sendUsers.error", err.stack || err);
+      .catch((err) => {
+        ctx.client.logger.error("sendUsers.error", err.stack || err);
         return Promise.reject(err);
       });
   }
@@ -67,15 +66,15 @@ export default class UsersController {
   /**
    * creates or updates users
    * @see https://www.hull.io/docs/references/api/#endpoint-traits
-   * @param  {Array} Hubspot contacts
    * @return {Promise}
+   * @param ctx
    */
-  saveContactsJob(req) {
-    const contacts = req.payload.contacts;
-    req.shipApp.instrumentationAgent.metricVal("ship.incoming.users", contacts.length, req.hull.client.configuration());
-    return req.shipApp.syncAgent.setupShip()
+  static saveContactsJob(ctx, payload) {
+    const contacts = payload.contacts;
+    ctx.metric.value("ship.incoming.users", contacts.length, ctx.client.configuration());
+    return ctx.shipApp.syncAgent.setupShip()
       .then(({ hubspotProperties }) => {
-        return req.shipApp.syncAgent.saveContacts(hubspotProperties, contacts);
+        return ctx.shipApp.syncAgent.saveContacts(hubspotProperties, contacts);
       });
   }
 }

@@ -1,30 +1,29 @@
-import Hull from "hull";
+/* @flow */
+import { Connector } from "hull";
 
-import bootstrap from "./bootstrap";
-import WorkerApp from "./util/app/worker";
 import AppMiddleware from "./lib/middleware/app";
 
-const { queueAdapter, instrumentationAgent, shipCache, jobs } = bootstrap;
+import BatchController from "./controller/batch";
+import MonitorController from "./controller/monitor";
+import UsersController from "./controller/users";
+import FetchAllController from "./controller/fetch-all";
+import SyncController from "./controller/sync";
+import * as newJobs from "./jobs";
 
-const hostSecret = process.env.SECRET || "1234";
+export default function workerJobs(connector: Connector) {
+  const jobs = {
+    handleBatchExtractJob: BatchController.handleBatchExtractJob,
+    fetchAllJob: FetchAllController.fetchAllJob,
+    saveContactsJob: UsersController.saveContactsJob,
+    sendUsersJob: UsersController.sendUsersJob,
+    syncJob: SyncController.syncJob,
+    startSyncJob: SyncController.startSyncJob,
+    checkTokenJob: MonitorController.checkTokenJob,
+    ...newJobs
+  };
 
-new WorkerApp({ queueAdapter, instrumentationAgent, jobs })
-  .use(Hull.Middleware({ hostSecret, shipCache, clientConfig: { flushAt: 100, flushAfter: 500 } }))
-  .use(AppMiddleware({ queueAdapter, shipCache, instrumentationAgent }))
-  .process();
+  connector.worker(jobs)
+    .use(AppMiddleware());
 
-Hull.logger.info("workerApp.process");
-
-function exitNow() {
-  console.warn("Exiting now !");
-  process.exit(0);
+  return connector;
 }
-
-function handleExit() {
-  console.log("Exiting... waiting 30 seconds workers to flush");
-  setTimeout(exitNow, 30000);
-  queueAdapter.exit().then(exitNow);
-}
-
-process.on("SIGINT", handleExit);
-process.on("SIGTERM", handleExit);

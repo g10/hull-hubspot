@@ -1,7 +1,7 @@
 version: '2'
 services:
     npm:
-        image: node:5
+        image: node:6
         env_file: .env
         entrypoint: npm
         command: run start:dev
