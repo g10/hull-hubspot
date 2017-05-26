@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.0
+- upgrade to hull-node@0.11.0
+- rewrite main files structure
+- adds basic testing
+
 ## v0.2.6
 - adds `fetchStopAt` param to the fetch operation, so every job will fetch users updated since previous call and till the time the job was called, then it stops - it should prevent looping. For the reliability there is a new env var called `HUBSPOT_FETCH_OVERLAP_SEC` to control number of seconds each job will go ahead of it's stop time to make sure no user will be skipped in between jobs
 - adjusts eslint config
