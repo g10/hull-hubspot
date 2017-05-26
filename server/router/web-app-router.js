@@ -22,7 +22,7 @@ export default function (deps: any) {
   router.post("/sync", RequireConfiguration, syncController.syncAction, responseMiddleware());
 
   router.use("/batch", RequireConfiguration, batchHandler(batchController.batchExtractJobHandler));
-  router.use("/notify", RequireConfiguration, notifHandler({
+  router.use("/notify", notifHandler({
     userHandlerOptions: {
       groupTraits: false
     },

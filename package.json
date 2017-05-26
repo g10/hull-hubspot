@@ -26,7 +26,7 @@
     "build": "npm run clean && npm run build:server",
     "build:server": "babel server -d build",
     "start": "COMBINED=true node build/web",
-    "start:dev": "COMBINED=true babel-watch -L server/web",
+    "start:dev": "COMBINED=true babel-watch -L server",
     "test": "npm run test:lint && npm run test:units && npm run test:flow",
     "test:lint": "eslint server",
     "test:units": "NODE_ENV=test mocha -R spec ./tests/index",

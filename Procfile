@@ -1,2 +1,2 @@
-web: node --optimize_for_size --max_old_space_size=$MEMORY_AVAILABLE -r newrelic build/web
-worker: node --optimize_for_size --max_old_space_size=$MEMORY_AVAILABLE -r newrelic build/worker
+web: SERVER=true node --optimize_for_size --max_old_space_size=$MEMORY_AVAILABLE -r newrelic build
+worker: WORKER=true node --optimize_for_size --max_old_space_size=$MEMORY_AVAILABLE -r newrelic build
