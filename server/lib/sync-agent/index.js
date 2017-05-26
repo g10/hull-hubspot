@@ -3,18 +3,22 @@ import _ from "lodash";
 
 import ContactProperty from "./contact-property";
 import Mapping from "./mapping";
+import HubspotAgent from "../hubspot-agent";
 
 export default class SyncAgent {
 
-  constructor(hullAgent, hubspotAgent, ship, instrumentationAgent) {
-    this.hullAgent = hullAgent;
+  constructor(hubspotAgent: HubspotAgent, ctx) {
+    const { client, ship, metric, helpers, segments } = ctx;
     this.hubspotAgent = hubspotAgent;
+    this.client = client;
     this.hubspotClient = hubspotAgent.hubspotClient;
     this.ship = ship;
-    this.instrumentationAgent = instrumentationAgent;
-    this.logger = hullAgent.hullClient.logger;
+    this.metric = metric;
+    this.helpers = helpers;
+    this.logger = client.logger;
+    this.segments = segments;
 
-    this.contactProperty = new ContactProperty(this.hubspotClient, { logger: this.hullAgent.hullClient.logger });
+    this.contactProperty = new ContactProperty(this.hubspotClient, { logger: this.logger });
     this.mapping = new Mapping(ship);
   }
 
@@ -42,7 +46,7 @@ export default class SyncAgent {
       return Promise.resolve("ok");
     }
 
-    const newSettings = mapping.map(hullTrait => {
+    const newSettings = mapping.map((hullTrait) => {
       if (_.isObject(hullTrait)) {
         return hullTrait;
       }
@@ -59,7 +63,7 @@ export default class SyncAgent {
       return Promise.resolve("ok");
     }
 
-    return this.hullAgent.updateShipSettings({
+    return this.helpers.updateSettings({
       sync_fields_to_hubspot: newSettings
     });
   }
@@ -71,11 +75,11 @@ export default class SyncAgent {
   syncContactProperties() {
     const customProps = this.mapping.map.to_hubspot;
     return Promise.all([
-      this.hullAgent.getSegments(),
+      this.segments,
       this.hubspotAgent.retryUnauthorized(() => {
         return this.hubspotClient.get("/contacts/v2/groups").query({ includeProperties: true });
       }),
-      this.hullAgent.getAvailableProperties()
+      this.client.utils.properties.get()
     ]).then(([segments = [], groupsResponse = {}, hullProperties = {}]) => {
       const groups = (groupsResponse && groupsResponse.body) || [];
       const properties = _.reduce(customProps, (props, customProp) => {
@@ -101,8 +105,9 @@ export default class SyncAgent {
   /**
    * creates or updates users
    * @see https://www.hull.io/docs/references/api/#endpoint-traits
-   * @param  {Array} Hubspot contacts
    * @return {Promise}
+   * @param hubspotProperties
+   * @param contacts
    */
   saveContacts(hubspotProperties, contacts) {
     this.logger.info("saveContacts", contacts.length);
@@ -113,7 +118,16 @@ export default class SyncAgent {
       }
       const ident = this.mapping.getIdentFromHubspot(c);
       this.logger.debug("incoming.user", { ident, traits });
-      return this.hullAgent.hullClient.as(ident).traits(traits);
+      this.logger.info("incoming.user.success", { ident });
+      return this.client.asUser(ident).traits(traits);
     }));
+  }
+
+  userWhitelisted(user) {
+    const segmentIds = _.get(this.ship, "private_settings.synchronized_segments", []);
+    if (segmentIds.length === 0) {
+      return true;
+    }
+    return _.intersection(segmentIds, user.segment_ids).length > 0;
   }
 }

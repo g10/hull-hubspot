@@ -13,7 +13,7 @@ export default class Mapping {
    * @return {Array}
    */
   getHubspotPropertiesKeys() {
-    return this.map.to_hull.map((prop) => prop.name);
+    return this.map.to_hull.map(prop => prop.name);
   }
 
   /**
@@ -22,7 +22,7 @@ export default class Mapping {
    * @return {Array}
    */
   getHullTraitsKeys() {
-    return this.map.to_hubspot.map((prop) => prop.hull);
+    return this.map.to_hubspot.map(prop => prop.hull);
   }
 
 
@@ -127,7 +127,7 @@ export default class Mapping {
     }, []);
 
     const userSegments = userData.segment_ids || [];
-    const segmentNames = userSegments.map(segmentId => {
+    const segmentNames = userSegments.map((segmentId) => {
       return _.trim(_.get(_.find(segments, { id: segmentId }), "name"));
     });
 
