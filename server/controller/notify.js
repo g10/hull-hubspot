@@ -39,20 +39,20 @@ export default class UserUpdateStrategy {
     return ctx.enqueue("shipUpdateJob");
   }
 
-  static segmentUpdateHandler(ctx, payload) {
+  static segmentUpdateHandler(ctx, message) {
     const { syncAgent } = ctx.shipApp;
     if (!syncAgent.isConfigured()) {
       ctx.client.logger.info("ship is not configured");
       return Promise.resolve();
     }
-    const segment = payload.message;
+    const segment = message;
     return syncAgent.setupShip()
       .then(() => {
         return ctx.helpers.requestExtract({ segment, fields: syncAgent.mapping.getHullTraitsKeys() });
       });
   }
 
-  static segmentDeleteHandler(ctx, payload) {
+  static segmentDeleteHandler(ctx) {
     const { syncAgent } = ctx.shipApp;
     if (!syncAgent.isConfigured()) {
       ctx.client.logger.info("ship is not configured");
@@ -60,7 +60,6 @@ export default class UserUpdateStrategy {
     }
     // TODO: if the segment would have `query` param we could trigger an extract
     // for deleted segment, for now we need to trigger an extract for all userbase
-    const segment = payload.message; // eslint-disable-line no-unused-vars
     return syncAgent.setupShip()
       .then(() => {
         const segments = ctx.ship.private_settings.synchronized_segments || [];

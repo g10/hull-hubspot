@@ -2,7 +2,7 @@
 import Hull from "hull";
 import { Cache, Queue } from "hull/lib/infra";
 import express from "express";
-import redisStore from "cache-manager-redis-store";
+import redisStore from "cache-manager-redis";
 
 import server from "./server";
 import worker from "./worker";
