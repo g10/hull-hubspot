@@ -12,9 +12,6 @@ export default class Minihubspot extends Minibase {
     this.app.get("/contacts/v2/groups", (req, res) => {
       res.json([]);
     });
-    this.app.post("/contacts/v1/contact/batch/", (req, res) => {
-      res.status(202).end();
-    });
   }
 
   fakeUsers(count) {
