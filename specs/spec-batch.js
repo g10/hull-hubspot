@@ -33,8 +33,8 @@ describe("Hubspot", function test() {
       res.status(202).end();
     });
     minihull.fakeUsers(1);
-    minihull.sendBatchToFirstShip()
-    .then((res) => {
+    minihull.sendBatchToFirstShip().then(() => {});
+    minihubspot.on("incoming.request.7", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.eq("/contacts/v1/contact/batch/?access_token=hubspotABC&auditId=Hull");
       expect(lastReq.body).to.be.an("array");
@@ -60,8 +60,8 @@ describe("Hubspot", function test() {
       });
     });
     minihull.fakeUsers(1);
-    minihull.sendBatchToFirstShip()
-    .then((res) => {
+    minihull.sendBatchToFirstShip().then(() => {});
+    minihubspot.on("incoming.request.7", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.eq("/contacts/v1/contact/batch/?access_token=hubspotABC&auditId=Hull");
       expect(lastReq.body).to.be.an("array");

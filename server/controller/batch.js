@@ -13,6 +13,7 @@ export default class BatchController {
       title: "batch",
       text: `User count: ${users.length}`
     });
+    console.log("BATCH!!!");
     const filteredUsers = users.filter(user => ctx.shipApp.syncAgent.userWhitelisted(user) && !_.isEmpty(user.email));
     return ctx.enqueue("sendUsersJob", {
       users: filteredUsers
