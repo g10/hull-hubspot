@@ -5,7 +5,6 @@ import queueUiRouter from "hull/lib/infra/queue/ui-router";
 import WebAppRouter from "./router/web-app-router";
 import WebOauthRouter from "./router/web-oauth-router";
 
-import BatchController from "./controller/batch";
 import MonitorController from "./controller/monitor";
 import UsersController from "./controller/users";
 import FetchAllController from "./controller/fetch-all";
@@ -18,7 +17,6 @@ export default function server(app: express, { queue }: Object): express {
   const hostSecret = process.env.SECRET;
 
   const controllers = {
-    batchController: BatchController,
     monitorController: MonitorController,
     fetchAllController: FetchAllController,
     usersController: UsersController,

@@ -9,7 +9,6 @@ import * as actions from "../actions";
 export default function (deps: any) {
   const router = Router();
   const {
-    batchController,
     monitorController,
     fetchAllController,
     notifyController,
@@ -21,7 +20,7 @@ export default function (deps: any) {
   router.post("/fetchAll", RequireConfiguration, fetchAllController.fetchAllAction, responseMiddleware());
   router.post("/sync", RequireConfiguration, syncController.syncAction, responseMiddleware());
 
-  router.use("/batch", RequireConfiguration, batchHandler(batchController.batchExtractJobHandler));
+  router.use("/batch", RequireConfiguration, batchHandler(actions.handleBatch));
   router.use("/notify", notifHandler({
     userHandlerOptions: {
       groupTraits: false
