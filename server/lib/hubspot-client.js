@@ -15,7 +15,7 @@ export default class HubspotClient {
   attach(req) {
     const accessToken = this.ship.private_settings.token;
     return req
-      .use(prefixPlugin("https://api.hubapi.com"))
+      .use(prefixPlugin(process.env.OVERRIDE_HUBSPOT_URL || "https://api.hubapi.com"))
       .use(superagentPromisePlugin)
       .query({ access_token: accessToken })
       .on("request", (reqData) => {

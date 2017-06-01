@@ -1,6 +1,8 @@
 /* @flow */
 import { Request, Response, Next } from "express";
 
+import Users from "./users";
+
 /**
  * Handles operation for automatic sync changes of hubspot profiles
  * to hull users.
@@ -17,14 +19,16 @@ export default class SyncStrategy {
     const lastFetchAt = ctx.shipApp.hubspotAgent.getLastFetchAt();
     const stopFetchAt = ctx.shipApp.hubspotAgent.getStopFetchAt();
     ctx.client.logger.debug("syncAction.lastFetchAt", { lastFetchAt, stopFetchAt });
-    return ctx.enqueue("syncJob", {
-      lastFetchAt,
-      stopFetchAt,
-      count
-    })
-    .then(() => ctx.helpers.updateSettings({
+
+    return ctx.helpers.updateSettings({
       last_fetch_at: stopFetchAt
-    }));
+    }).then(() => {
+      return SyncStrategy.syncJob(ctx, {
+        lastFetchAt,
+        stopFetchAt,
+        count
+      });
+    });
   }
 
   static syncJob(ctx, payload) {
@@ -46,9 +50,7 @@ export default class SyncStrategy {
         }
 
         if (res.body.contacts.length > 0) {
-          promises.push(ctx.enqueue("saveContactsJob", {
-            contacts: res.body.contacts
-          }));
+          promises.push(Users.saveContactsJob(ctx, { contacts: res.body.contacts }));
         }
 
         return Promise.all(promises);

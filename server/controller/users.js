@@ -54,7 +54,19 @@ export default class UsersController {
         console.warn("Error in sendUsersJob", { statusCode, body });
         return Promise.reject(new Error("Error in create/update batch"));
       }, (err) => {
-        ctx.client.logger.info("Hubspot batch error", err);
+        try {
+          const parsedErrorInfo = JSON.parse(err.extra);
+          if (parsedErrorInfo.status === "error"
+            && parsedErrorInfo.invalidEmails) {
+            ctx.metric.event({
+              title: "Invalid email in batch",
+              text: JSON.stringify(parsedErrorInfo.invalidEmails)
+            });
+            return Promise.resolve();
+          }
+        } catch (e) {} // eslint-disable-line no-empty
+
+        ctx.client.logger.error("Hubspot batch error", err);
         return Promise.reject(err);
       })
       .catch((err) => {

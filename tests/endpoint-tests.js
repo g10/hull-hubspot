@@ -4,7 +4,6 @@ import express from "express";
 import nock from "nock";
 import request from "request";
 
-import BatchController from "../server/controller/batch";
 import MonitorController from "../server/controller/monitor";
 import UsersController from "../server/controller/users";
 import FetchAllController from "../server/controller/fetch-all";
@@ -17,7 +16,6 @@ import ClientMock from "./mocks/client-mock";
 const assert = require("assert");
 
 const controllers = {
-  batchController: BatchController,
   monitorController: MonitorController,
   fetchAllController: FetchAllController,
   usersController: UsersController,
