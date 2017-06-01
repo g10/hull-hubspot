@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.1
+- rewrites calls in sync operation to avoid putting to much work and data into queue
+- log but resolve user updates batches which include invalid email
+- changes the babeljs preset to match nodejs version
+- adds first end-to-end testing
+
 ## v0.3.0
 - upgrade to hull-node@0.11.0
 - rewrite main files structure
