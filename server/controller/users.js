@@ -31,7 +31,6 @@ export default class UsersController {
         const body = users.map((user) => {
           const properties = ctx.shipApp.syncAgent.mapping.getHubspotProperties(ctx.segments, hubspotProperties, user);
           ctx.client.logger.debug("outgoing.user", { email: user.email, properties });
-          ctx.client.logger.info("outgoing.user.success", { email: user.email });
           return {
             email: user.email,
             properties
@@ -54,18 +53,30 @@ export default class UsersController {
         console.warn("Error in sendUsersJob", { statusCode, body });
         return Promise.reject(new Error("Error in create/update batch"));
       }, (err) => {
+        let parsedErrorInfo = {};
         try {
-          const parsedErrorInfo = JSON.parse(err.extra);
-          if (parsedErrorInfo.status === "error"
-            && parsedErrorInfo.invalidEmails) {
-            ctx.metric.event({
-              title: "Invalid email in batch",
-              text: JSON.stringify(parsedErrorInfo.invalidEmails)
-            });
-            return Promise.resolve();
-          }
+          parsedErrorInfo = JSON.parse(err.extra);
         } catch (e) {} // eslint-disable-line no-empty
+        if (parsedErrorInfo.status === "error") {
+          ctx.metric.event({
+            title: "Errors found processing batch update",
+            text: err.extra
+          });
+          const errorIndexes = parsedErrorInfo.failureMessages.map(failure => failure.index);
 
+          const successes = users
+            .filter((value, index) => !_.includes(errorIndexes, index));
+          const errors = parsedErrorInfo.failureMessages
+            .map((value) => {
+              return {
+                user: users[value.index],
+                error: value
+              };
+            });
+          successes.map(user => ctx.client.logger.info("outgoing.user.success", { ..._.pick(user, "email", "id", "external_id") }));
+          errors.map(data => ctx.client.logger.info("outgoing.user.error", { ..._.pick(data.user, "email", "id", "external_id"), error: data.error }));
+          return Promise.resolve("ok");
+        }
         ctx.client.logger.error("Hubspot batch error", err);
         return Promise.reject(err);
       })

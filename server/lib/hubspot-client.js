@@ -20,7 +20,7 @@ export default class HubspotClient {
       .query({ access_token: accessToken })
       .on("request", (reqData) => {
         this.metric.increment("ship.service_api.call", 1);
-        this.client.logger.info("hubspotClient.req", reqData.url);
+        this.client.logger.debug("hubspotClient.req", reqData.url);
       });
   }
 
