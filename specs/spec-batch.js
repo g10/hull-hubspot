@@ -86,7 +86,6 @@ describe("Hubspot", function test() {
     });
 
     minihubspot.on("incoming.request.8", (req) => {
-      console.log("incoming.request.8", req.url);
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.equal("/contacts/v1/contact/batch/?access_token=hubspotABC&auditId=Hull");
       expect(lastReq.body).to.be.an("array");
