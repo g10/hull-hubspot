@@ -37,48 +37,56 @@ export default class UsersController {
           };
         });
         ctx.metric.value("ship.outgoing.users", body.length);
-        return ctx.shipApp.hubspotAgent.batchUsers(body);
-      })
-      .then((res) => {
-        if (res === null) {
-          return Promise.resolve();
-        }
+        return ctx.shipApp.hubspotAgent.batchUsers(body)
+        .then((res) => {
+          if (res === null) {
+            return Promise.resolve();
+          }
 
-        const { statusCode, body } = res;
-
-        if (statusCode === 202) {
-          return Promise.resolve();
-        }
-
-        console.warn("Error in sendUsersJob", { statusCode, body });
-        return Promise.reject(new Error("Error in create/update batch"));
-      }, (err) => {
-        let parsedErrorInfo = {};
-        try {
-          parsedErrorInfo = JSON.parse(err.extra);
-        } catch (e) {} // eslint-disable-line no-empty
-        if (parsedErrorInfo.status === "error") {
-          ctx.metric.event({
-            title: "Errors found processing batch update",
-            text: err.extra
-          });
-          const errorIndexes = parsedErrorInfo.failureMessages.map(failure => failure.index);
-
-          const successes = users
-            .filter((value, index) => !_.includes(errorIndexes, index));
-          const errors = parsedErrorInfo.failureMessages
-            .map((value) => {
-              return {
-                user: users[value.index],
-                error: value
-              };
+          if (res.statusCode === 202) {
+            users.map(u => ctx.client.logger.info("outgoing.user.success", _.pick(u, "email", "id", "external_id")));
+            return Promise.resolve();
+          }
+          return Promise.reject(new Error("Error in create/update batch"));
+        }, (err) => {
+          let parsedErrorInfo = {};
+          try {
+            parsedErrorInfo = JSON.parse(err.extra);
+          } catch (e) {} // eslint-disable-line no-empty
+          if (parsedErrorInfo.status === "error") {
+            ctx.metric.event({
+              title: "Errors found processing batch update",
+              text: err.extra
             });
-          successes.map(user => ctx.client.logger.info("outgoing.user.success", { ..._.pick(user, "email", "id", "external_id") }));
-          errors.map(data => ctx.client.logger.info("outgoing.user.error", { ..._.pick(data.user, "email", "id", "external_id"), error: data.error }));
-          return Promise.resolve("ok");
-        }
-        ctx.client.logger.error("Hubspot batch error", err);
-        return Promise.reject(err);
+            const errors = parsedErrorInfo.failureMessages
+              .map((value) => {
+                return {
+                  user: users[value.index],
+                  error: value
+                };
+              });
+            errors.map(data => ctx.client.logger.info("outgoing.user.error", { ..._.pick(data.user, "email", "id", "external_id"), error: data.error }));
+
+            const retryBody = body
+              .filter((entry, index) => {
+                return !_.find(parsedErrorInfo.failureMessages, { index });
+              });
+
+            if (retryBody.length > 0) {
+              return ctx.shipApp.hubspotAgent.batchUsers(retryBody)
+                .then(res => {
+                  if (res.statusCode === 202) {
+                    retryBody.map(u => ctx.client.logger.info("outgoing.user.success", { email: u.email }));
+                    return Promise.resolve("ok");
+                  }
+                  return Promise.reject(new Error("Error in create/update batch"));
+                });
+            }
+            return Promise.resolve("ok");
+          }
+          ctx.client.logger.error("Hubspot batch error", err);
+          return Promise.reject(err);
+        });
       })
       .catch((err) => {
         ctx.client.logger.error("sendUsers.error", err.stack || err);

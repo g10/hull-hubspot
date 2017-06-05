@@ -45,9 +45,10 @@ describe("Hubspot", function test() {
     });
   });
 
-  it.only("should handle errors", (done) => {
+  it("should handle errors and retry valid users", (done) => {
     minihull.fakeUsers(3);
     minihubspot.stubPost("/contacts/v1/contact/batch")
+      .onFirstCall()
       .callsFake((req, res) => {
         res.status(500).json({
           status: "error",
@@ -69,14 +70,29 @@ describe("Hubspot", function test() {
             }
           }]
         });
+      })
+      .onSecondCall()
+      .callsFake((req, res) => {
+        res.status(202).end();
       });
     minihull.sendBatchToFirstShip().then(() => {});
     minihubspot.on("incoming.request.7", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
-      expect(lastReq.url).to.be.eq("/contacts/v1/contact/batch/?access_token=hubspotABC&auditId=Hull");
+      expect(lastReq.url).to.be.equal("/contacts/v1/contact/batch/?access_token=hubspotABC&auditId=Hull");
       expect(lastReq.body).to.be.an("array");
       expect(lastReq.body[0]).to.have.property("email");
       expect(lastReq.body[0]).to.have.property("properties");
+      expect(lastReq.body.length).to.be.equal(3);
+    });
+
+    minihubspot.on("incoming.request.8", (req) => {
+      console.log("incoming.request.8", req.url);
+      const lastReq = minihubspot.requests.get("incoming").last().value();
+      expect(lastReq.url).to.be.equal("/contacts/v1/contact/batch/?access_token=hubspotABC&auditId=Hull");
+      expect(lastReq.body).to.be.an("array");
+      expect(lastReq.body[0]).to.have.property("email");
+      expect(lastReq.body[0]).to.have.property("properties");
+      expect(lastReq.body.length).to.be.equal(1);
       done();
     });
   });
