@@ -1,7 +1,7 @@
 {
   "name": "hull-hubspot",
   "description": "Send Notification of User events and segments to Hubspot",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "homepage": "https://github.com/hull-ships/hull-hubspot",
   "license": "MIT",
   "main": "bin/start",
@@ -54,7 +54,7 @@
     "eslint-config-airbnb-base": "^11.1.0",
     "eslint-plugin-import": "^2.2.0",
     "flow-bin": "^0.46.0",
-    "minihull": "^0.0.4",
+    "minihull": "^0.0.7",
     "mocha": "^2.5.2",
     "updtr": "^0.2.1"
   },

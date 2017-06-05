@@ -23,7 +23,7 @@ export default class SyncAgent {
   }
 
   isConfigured() {
-    return !_.isEmpty(this.ship.private_settings.token);
+    return this.ship.private_settings && !_.isEmpty(this.ship.private_settings.token);
   }
 
   /**

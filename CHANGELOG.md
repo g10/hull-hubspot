@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.2
+- improves outgoing users error logging and fixes success message
+
 ## v0.3.1
 - rewrites calls in sync operation to avoid putting to much work and data into queue
 - log but resolve user updates batches which include invalid email
