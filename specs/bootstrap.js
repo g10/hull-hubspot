@@ -1,10 +1,10 @@
-import { Connector } from "hull";
-import express from "express";
+const Connector = require("hull").Connector;
+const express = require("express");
 
-import server from "../server/server";
-import worker from "../server/worker";
+const server = require("../server/server").default;
+const worker = require("../server/worker").default;
 
-export default function bootstrap() {
+module.exports = function bootstrap() {
   const app = express();
   const connector = new Connector({ hostSecret: "1234", port: 8000, clientConfig: { protocol: "http" } });
   connector.setupApp(app);

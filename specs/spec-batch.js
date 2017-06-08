@@ -1,8 +1,8 @@
-import Minihull from "minihull";
-import { expect } from "chai";
+const Minihull = require("minihull");
+const expect = require("chai").expect;
 
-import Minihubspot from "./minihubspot";
-import bootstrap from "./bootstrap";
+const Minihubspot = require("./minihubspot");
+const bootstrap = require("./bootstrap");
 
 process.env.CLIENT_ID = "123";
 process.env.CLIENT_SECRET = "abc";
