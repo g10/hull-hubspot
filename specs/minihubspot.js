@@ -1,8 +1,9 @@
-import Minibase from "minihull/src/minibase";
+const Minibase = require("minihull/src/minibase");
 
-export default class Minihubspot extends Minibase {
+class Minihubspot extends Minibase {
   constructor(options = {}) {
     super(options);
+    // Minibase.prototype.constructor(options);
     this.db.defaults({ contacts: [] }).write();
     this.app.get("/contacts/v1/lists/all/contacts/all", (req, res) => {
       res.json({
@@ -28,3 +29,5 @@ export default class Minihubspot extends Minibase {
     }).write();
   }
 }
+
+module.exports = Minihubspot;
