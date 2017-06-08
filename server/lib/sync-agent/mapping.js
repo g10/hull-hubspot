@@ -1,4 +1,6 @@
 import _ from "lodash";
+import moment from "moment";
+
 import { getMap } from "./mapping-data";
 
 export default class Mapping {
@@ -115,6 +117,11 @@ export default class Mapping {
 
       if (_.isArray(value)) {
         value = value.join(";");
+      }
+
+      if (value && hubspotProp && hubspotProp.type === "date") {
+        value = moment(value).hours(0).minutes(0).seconds(0)
+          .format("x");
       }
 
       if (!_.isNil(value) && value !== "" && prop.read_only !== false) {
