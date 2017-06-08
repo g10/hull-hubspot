@@ -3,7 +3,6 @@ const Minibase = require("minihull/src/minibase");
 class Minihubspot extends Minibase {
   constructor(options = {}) {
     super(options);
-    // Minibase.prototype.constructor(options);
     this.db.defaults({ contacts: [] }).write();
     this.app.get("/contacts/v1/lists/all/contacts/all", (req, res) => {
       res.json({

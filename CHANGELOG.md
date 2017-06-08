@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.3
+- switch back to es2015 babel preset and ignore specs which had class super call issue
+
 ## v0.3.2
 - improves outgoing users error logging and fixes success message
 
