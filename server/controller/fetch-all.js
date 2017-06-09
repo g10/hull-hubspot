@@ -1,5 +1,7 @@
 import Promise from "bluebird";
 
+import Users from "./users";
+
 export default class FetchAllController {
 
   /**
@@ -30,13 +32,15 @@ export default class FetchAllController {
     const offset = payload.offset || 0;
     const progress = payload.progress || 0;
 
+    // TODO: pick up from job progress previous offset
     return hubspotAgent.getContacts(syncAgent.mapping.getHubspotPropertiesKeys(), count, offset)
       .then((data) => {
+        // TODO: save offset to job progress
         const promises = [];
         const newProgress = progress + data.body.contacts.length;
         ctx.shipApp.progressAgent.update(newProgress, data.body["has-more"]);
         if (data.body["has-more"]) {
-          promises.push(ctx.enqueue("fetchAllJob", {
+          promises.push(FetchAllController.fetchAllJob(ctx, {
             count,
             offset: data.body["vid-offset"],
             progress: newProgress
@@ -46,7 +50,7 @@ export default class FetchAllController {
         }
 
         if (data.body.contacts.length > 0) {
-          promises.push(ctx.enqueue("saveContactsJob", {
+          promises.push(Users.saveContactsJob(ctx, {
             contacts: data.body.contacts
           }));
         }

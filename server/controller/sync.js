@@ -15,7 +15,7 @@ export default class SyncStrategy {
   }
 
   static startSyncJob(ctx) {
-    const count = 100;
+    const count = process.env.FETCH_CONTACTS_COUNT || 100;
     const lastFetchAt = ctx.shipApp.hubspotAgent.getLastFetchAt();
     const stopFetchAt = ctx.shipApp.hubspotAgent.getStopFetchAt();
     ctx.client.logger.debug("syncAction.lastFetchAt", { lastFetchAt, stopFetchAt });
@@ -44,7 +44,7 @@ export default class SyncStrategy {
       .then((res) => {
         const promises = [];
         if (res.body["has-more"] && res.body.contacts.length > 0) {
-          promises.push(ctx.enqueue("syncJob", {
+          promises.push(SyncStrategy.syncJob(ctx, {
             lastFetchAt, stopFetchAt, count, page: (page + 1), offset: res.body["vid-offset"]
           }));
         }
