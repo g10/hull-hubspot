@@ -1,7 +1,8 @@
 # Changelog
 
-## v0.3.3
+## v0.3.4
 - in case the corresponding Hubspot Contact Property is type of date - cast datetime value to a date - zero hours, minutes and seconds
+- fetch and sync users in one job instead of queuing everything as a separate job
 
 ## v0.3.3
 - switch back to es2015 babel preset and ignore specs which had class super call issue
