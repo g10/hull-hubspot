@@ -4,8 +4,9 @@ import moment from "moment";
 import { getMap } from "./mapping-data";
 
 export default class Mapping {
-  constructor(ship) {
+  constructor(ship, logger) {
     this.ship = ship;
+    this.logger = logger;
     this.map = getMap(ship);
   }
 
@@ -47,10 +48,11 @@ export default class Mapping {
    * @return {Object}          Hull user traits
    */
   getHullTraits(hubspotProperties, userData) {
+    const userIdent = _.pick(userData, "id", "external_id", "email");
     const hullTraits = _.reduce(this.map.to_hull, (traits, prop) => {
       const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
       if (!hubspotProp) {
-        console.log("getHullTraits.hubspotProp.notfound", prop);
+        this.logger.warning("incoming.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
       }
       if (userData.properties && _.has(userData.properties, prop.name)) {
         let val = _.get(userData, `properties[${prop.name}].value`);
@@ -92,11 +94,12 @@ export default class Mapping {
    * @return {Array}           Hubspot properties array
    */
   getHubspotProperties(segments, hubspotProperties, userData) {
+    const userIdent = _.pick(userData, "id", "external_id", "email");
     const contactProps = _.reduce(this.map.to_hubspot, (props, prop) => {
       const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
 
       if (!hubspotProp) {
-        console.log("getHubspotProperties.hubspotProp.notfound", prop);
+        this.logger.warning("outgoing.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
         return props;
       }
 
@@ -120,8 +123,13 @@ export default class Mapping {
       }
 
       if (value && hubspotProp && hubspotProp.type === "date") {
-        value = moment(value).hours(0).minutes(0).seconds(0)
-          .format("x");
+        // try to parse the date/time to date only
+        if (moment(value).isValid()) {
+          value = moment(value).hours(0).minutes(0).seconds(0)
+            .format("x");
+        } else {
+          this.logger.warning("outgoing.user.warning", { ...userIdent, warning: "cannot parse datetime trait to date", prop });
+        }
       }
 
       if (!_.isNil(value) && value !== "" && prop.read_only !== false) {
