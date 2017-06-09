@@ -19,7 +19,7 @@ export default class SyncAgent {
     this.segments = segments;
 
     this.contactProperty = new ContactProperty(this.hubspotClient, { logger: this.logger });
-    this.mapping = new Mapping(ship);
+    this.mapping = new Mapping(ship, client.logger);
   }
 
   isConfigured() {
