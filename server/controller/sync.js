@@ -56,8 +56,7 @@ export default class SyncStrategy {
           lastModifiedDate = _(res.body.contacts)
             .map(c => _.get(c, "properties.lastmodifieddate.value"))
             .uniq()
-            .nth(-2)
-            .value();
+            .nth(-2);
 
           if (res.body["vid-offset"] === res.body.contacts[0].vid) {
             ctx.client.logger.warn("fetch.users.warning", { warning: "vidOffset moved to the top of the recent contacts list" });
