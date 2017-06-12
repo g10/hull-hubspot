@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.5
+- hotfix and make sure that the fields mapping configuration is correct
+
+## v0.3.4
+- remove hours, minutes and seconds from datetime in case the hubspot property has type == "date"
+
 ## v0.3.3
 - in case the corresponding Hubspot Contact Property is type of date - cast datetime value to a date - zero hours, minutes and seconds
 

@@ -52,7 +52,7 @@ export default class Mapping {
     const hullTraits = _.reduce(this.map.to_hull, (traits, prop) => {
       const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
       if (!hubspotProp) {
-        this.logger.warn("incoming.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
+        this.logger.debug("incoming.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
       }
       if (userData.properties && _.has(userData.properties, prop.name)) {
         let val = _.get(userData, `properties[${prop.name}].value`);
@@ -99,7 +99,7 @@ export default class Mapping {
       const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
 
       if (!hubspotProp) {
-        this.logger.warn("outgoing.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
+        this.logger.debug("outgoing.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
         return props;
       }
 
