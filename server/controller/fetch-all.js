@@ -35,26 +35,32 @@ export default class FetchAllController {
     // TODO: pick up from job progress previous offset
     return hubspotAgent.getContacts(syncAgent.mapping.getHubspotPropertiesKeys(), count, offset)
       .then((data) => {
-        // TODO: save offset to job progress
-        const promises = [];
         const newProgress = progress + data.body.contacts.length;
+        const info = {
+          hasMore: data.body["has-more"],
+          vidOffset: data.body["vid-offset"],
+          newProgress
+        };
+        // TODO: save offset to job progress
+        ctx.client.logger.info("fetch.users.progress", { users: newProgress });
         ctx.shipApp.progressAgent.update(newProgress, data.body["has-more"]);
-        if (data.body["has-more"]) {
-          promises.push(FetchAllController.fetchAllJob(ctx, {
-            count,
-            offset: data.body["vid-offset"],
-            progress: newProgress
-          }));
-        } else {
-          ctx.client.logger.info("fetchAllJob.finished");
-        }
 
         if (data.body.contacts.length > 0) {
-          promises.push(Users.saveContactsJob(ctx, {
+          return Users.saveContactsJob(ctx, {
             contacts: data.body.contacts
-          }));
+          }).then(() => info);
         }
-        return Promise.all(promises);
+        return Promise.resolve(info);
+      })
+      .then(({ hasMore, vidOffset, newProgress }) => {
+        if (hasMore) {
+          return FetchAllController.fetchAllJob(ctx, {
+            count,
+            offset: vidOffset,
+            progress: newProgress
+          });
+        }
+        return ctx.client.logger.info("fetch.users.finished");
       });
   }
 }
