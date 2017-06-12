@@ -4,7 +4,7 @@ import Promise from "bluebird";
 export default function handleBatch(ctx, messages) {
   const users = messages.map(m => {
     const segmentIds = m.segments.map(s => s.id);
-    m.user.segment_ids = (m.user.segment_ids || []).concat(segmentIds);
+    m.user.segment_ids = _.compact(_.uniq((m.user.segment_ids || []).concat(segmentIds)));
     return m.user;
   });
   const filteredUsers = users.filter(user => ctx.shipApp.syncAgent.userWhitelisted(user) && !_.isEmpty(user.email));
