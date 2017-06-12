@@ -15,7 +15,7 @@ export default class SyncStrategy {
   }
 
   static startSyncJob(ctx) {
-    const count = process.env.FETCH_CONTACTS_COUNT || 100;
+    const count = parseInt(process.env.FETCH_CONTACTS_COUNT, 10) || 100;
     const lastFetchAt = ctx.shipApp.hubspotAgent.getLastFetchAt();
     const stopFetchAt = ctx.shipApp.hubspotAgent.getStopFetchAt();
     ctx.client.logger.debug("syncAction.lastFetchAt", { lastFetchAt, stopFetchAt });
@@ -40,21 +40,26 @@ export default class SyncStrategy {
     const page = payload.page || 1;
     ctx.metric.value("ship.incoming.fetch.page", page);
     ctx.client.logger.debug("syncJob.getRecentContacts", { lastFetchAt, stopFetchAt, count, offset, page });
+    ctx.client.logger.info("fetch.incoming.users", { users: (page * count) });
     return hubspotAgent.getRecentContacts(syncAgent.mapping.getHubspotPropertiesKeys(), lastFetchAt, stopFetchAt, count, offset)
       .then((res) => {
-        const promises = [];
-        if (res.body["has-more"] && res.body.contacts.length > 0) {
-          promises.push(SyncStrategy.syncJob(ctx, {
-            lastFetchAt, stopFetchAt, count, page: (page + 1), offset: res.body["vid-offset"]
-          }));
-        }
-
+        const info = {
+          usersCount: res.body.contacts.length,
+          hasMore: res.body["has-more"],
+          vidOffset: res.body["vid-offset"]
+        };
         if (res.body.contacts.length > 0) {
-          promises.push(Users.saveContactsJob(ctx, { contacts: res.body.contacts }));
+          return Users.saveContactsJob(ctx, { contacts: res.body.contacts })
+            .then(() => info);
         }
-
-        return Promise.all(promises);
+        return Promise.resolve(info);
+      }).then(({ usersCount, hasMore, vidOffset }) => {
+        if (hasMore && usersCount > 0) {
+          return SyncStrategy.syncJob(ctx, {
+            lastFetchAt, stopFetchAt, count, page: (page + 1), offset: vidOffset
+          });
+        }
+        return Promise.resolve("done");
       });
   }
-
 }
