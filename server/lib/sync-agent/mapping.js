@@ -52,7 +52,11 @@ export default class Mapping {
     const hullTraits = _.reduce(this.map.to_hull, (traits, prop) => {
       const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
       if (!hubspotProp) {
+<<<<<<< HEAD
         this.logger.warn("incoming.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
+=======
+        this.logger.debug("incoming.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
+>>>>>>> 13c57deee6bb9a0db9a0b72fe122f2bb892aaf33
       }
       if (userData.properties && _.has(userData.properties, prop.name)) {
         let val = _.get(userData, `properties[${prop.name}].value`);
@@ -99,7 +103,11 @@ export default class Mapping {
       const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
 
       if (!hubspotProp) {
+<<<<<<< HEAD
         this.logger.warn("outgoing.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
+=======
+        this.logger.debug("outgoing.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
+>>>>>>> 13c57deee6bb9a0db9a0b72fe122f2bb892aaf33
         return props;
       }
 
@@ -128,7 +136,11 @@ export default class Mapping {
           value = moment(value).hours(0).minutes(0).seconds(0)
             .format("x");
         } else {
+<<<<<<< HEAD
           this.logger.warn("outgoing.user.warning", { ...userIdent, warning: "cannot parse datetime trait to date", prop });
+=======
+          this.logger.warning("outgoing.user.warning", { ...userIdent, warning: "cannot parse datetime trait to date", prop });
+>>>>>>> 13c57deee6bb9a0db9a0b72fe122f2bb892aaf33
         }
       }
 

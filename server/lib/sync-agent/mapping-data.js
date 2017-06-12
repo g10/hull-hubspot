@@ -60,6 +60,11 @@ export function getFieldsToHubspot(ship: any = {}) {
     if (_.isString(f)) {
       return false;
     }
+
+    if (!f.name) {
+      return false;
+    }
+
     const name = "hull_" + slug(f.name, {
       replacement: "_",
       lower: true
