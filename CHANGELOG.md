@@ -1,7 +1,10 @@
 # Changelog
 
+## v0.3.5
+- hotfix and make sure that the fields mapping configuration is correct
+
 ## v0.3.4
-- parse remove hours, minutes and seconds from datetime in case the hubspot property has type == "date"
+- remove hours, minutes and seconds from datetime in case the hubspot property has type == "date"
 
 ## v0.3.3
 - switch back to es2015 babel preset and ignore specs which had class super call issue
