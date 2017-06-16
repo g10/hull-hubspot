@@ -2,6 +2,7 @@
 
 ## v0.3.6
 - fetch and sync users in one job instead of queuing everything as a separate job
+- add a separete worked for `fetchAll` operations
 
 ## v0.3.5
 - hotfix and make sure that the fields mapping configuration is correct

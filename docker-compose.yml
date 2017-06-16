@@ -12,6 +12,18 @@ services:
             - .:/app
         links:
             - redis
+    npm-fetch:
+        image: node:6
+        env_file: .env
+        entrypoint: npm
+        command: run start:dev
+        working_dir: /app
+        volumes:
+            - .:/app
+        links:
+            - redis
+        environment:
+            - "FETCH_JOBS_ONLY=true"
     redis:
         image: redis:3
         ports:
