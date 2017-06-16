@@ -44,6 +44,6 @@ if (process.env.SERVER || process.env.COMBINED) {
 
 if (process.env.WORKER || process.env.COMBINED) {
   worker(connector);
-  connector.startWorker();
+  connector.startWorker(process.env.QUEUE_NAME);
 }
 

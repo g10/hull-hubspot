@@ -23,7 +23,7 @@ services:
         links:
             - redis
         environment:
-            - "FETCH_JOBS_ONLY=true"
+            - "QUEUE_NAME=fetch"
     redis:
         image: redis:3
         ports:

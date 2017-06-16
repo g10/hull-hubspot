@@ -13,6 +13,8 @@ export default class FetchAllController {
 
     return req.hull.enqueue("fetchAllJob", {
       count
+    }, {
+      queueName: "fetch"
     })
     .then(() => {
       req.hull.shipApp.progressAgent.start();
