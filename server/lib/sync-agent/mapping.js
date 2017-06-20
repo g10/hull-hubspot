@@ -128,7 +128,7 @@ export default class Mapping {
           value = moment(value).hours(0).minutes(0).seconds(0)
             .format("x");
         } else {
-          this.logger.warning("outgoing.user.warning", { ...userIdent, warning: "cannot parse datetime trait to date", prop });
+          this.logger.warn("outgoing.user.warning", { ...userIdent, warning: "cannot parse datetime trait to date", prop });
         }
       }
 

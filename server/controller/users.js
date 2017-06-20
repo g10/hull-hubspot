@@ -89,7 +89,7 @@ export default class UsersController {
         });
       })
       .catch((err) => {
-        ctx.client.logger.error("sendUsers.error", err.stack || err);
+        ctx.client.logger.error("sendUsers.error", (err && err.stack) || err);
         return Promise.reject(err);
       });
   }
