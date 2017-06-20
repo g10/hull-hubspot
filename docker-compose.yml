@@ -12,18 +12,6 @@ services:
             - .:/app
         links:
             - redis
-    npm-fetch:
-        image: node:6
-        env_file: .env
-        entrypoint: npm
-        command: run start:dev
-        working_dir: /app
-        volumes:
-            - .:/app
-        links:
-            - redis
-        environment:
-            - "QUEUE_NAME=fetch"
     redis:
         image: redis:3
         ports:
