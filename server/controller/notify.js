@@ -49,6 +49,10 @@ export default class UserUpdateStrategy {
     return syncAgent.setupShip()
       .then(() => {
         return ctx.helpers.requestExtract({ segment, fields: syncAgent.mapping.getHullTraitsKeys() });
+      })
+      .catch((err) => {
+        ctx.client.logger.error("requestExtract.error", err);
+        return Promise.resolve("err");
       });
   }
 
@@ -69,6 +73,10 @@ export default class UserUpdateStrategy {
         return Promise.map(segments, (segmentId) => {
           return ctx.helpers.requestExtract({ segment: { id: segmentId }, remove: true, fields: syncAgent.mapping.getHullTraitsKeys() });
         });
+      })
+      .catch((err) => {
+        ctx.client.logger.error("requestExtract.error", err);
+        return Promise.resolve("err");
       });
   }
 }

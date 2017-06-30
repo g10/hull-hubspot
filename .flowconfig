@@ -1,5 +1,6 @@
 [ignore]
 .*/node_modules/.*/\(lib\|test\|examples\).*\.json$
+.*/node_modules/documentation/.*
 [include]
 
 [libs]
