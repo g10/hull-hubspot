@@ -17,10 +17,10 @@ export default class UsersController {
     const users = (payload.users || []).filter(u => !_.isEmpty(u.email));
 
     if (users.length === 0) {
-      return ctx.client.logger.log("skip sendUsersJob - empty users list");
+      return ctx.client.logger.warn("skip sendUsersJob - empty users list");
     }
 
-    ctx.client.logger.log("sendUsersJob", { count_users: users.length });
+    ctx.client.logger.warn("sendUsersJob", { count_users: users.length });
 
     if (users.length > 100) {
       ctx.client.logger.warn("sendUsersJob works best for under 100 users at once", users.length);
@@ -44,7 +44,7 @@ export default class UsersController {
           }
 
           if (res.statusCode === 202) {
-            users.map(u => ctx.client.logger.info("outgoing.user.success", _.pick(u, "email", "id", "external_id")));
+            users.map(u => ctx.client.logger.info("outgoing.user.success", { email: u.email, hull_id: u.id, external_id: u.external_id }));
             return Promise.resolve();
           }
           return Promise.reject(new Error("Error in create/update batch"));
@@ -65,7 +65,7 @@ export default class UsersController {
                   error: value
                 };
               });
-            errors.map(data => ctx.client.logger.info("outgoing.user.error", { ..._.pick(data.user, "email", "id", "external_id"), error: data.error }));
+            errors.map(data => ctx.client.logger.error("outgoing.user.error", { ..._.pick(data.user, "email", "id", "external_id"), error: data.error }));
 
             const retryBody = body
               .filter((entry, index) => {
@@ -76,7 +76,7 @@ export default class UsersController {
               return ctx.shipApp.hubspotAgent.batchUsers(retryBody)
                 .then(res => {
                   if (res.statusCode === 202) {
-                    retryBody.map(u => ctx.client.logger.info("outgoing.user.success", { email: u.email }));
+                    retryBody.map(u => ctx.client.logger.info("outgoing.user.success", { email: u.email, hull_id: u.id, external_id: u.external_id }));
                     return Promise.resolve("ok");
                   }
                   return Promise.reject(new Error("Error in create/update batch"));
