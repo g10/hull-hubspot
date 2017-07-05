@@ -48,11 +48,11 @@ export default class Mapping {
    * @return {Object}          Hull user traits
    */
   getHullTraits(hubspotProperties, userData) {
-    const userIdent = _.pick(userData, "id", "external_id", "email");
+    const userIdent = { hull_id: userData.id, external_id: userData.external_id, email: userData.email };
     const hullTraits = _.reduce(this.map.to_hull, (traits, prop) => {
       const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
       if (!hubspotProp) {
-        this.logger.debug("incoming.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
+        this.logger.warn("incoming.user.warning", { userIdent, warning: "cannot find mapped hubspot property", prop });
       }
       if (userData.properties && _.has(userData.properties, prop.name)) {
         let val = _.get(userData, `properties[${prop.name}].value`);
@@ -94,12 +94,12 @@ export default class Mapping {
    * @return {Array}           Hubspot properties array
    */
   getHubspotProperties(segments, hubspotProperties, userData) {
-    const userIdent = _.pick(userData, "id", "external_id", "email");
+    const userIdent = { hull_id: userData.id, external_id: userData.external_id, email: userData.email };
     const contactProps = _.reduce(this.map.to_hubspot, (props, prop) => {
       const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
 
       if (!hubspotProp) {
-        this.logger.debug("outgoing.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
+        this.logger.warn("outgoing.user.warning", { userIdent, warning: "cannot find mapped hubspot property", prop });
         return props;
       }
 
@@ -128,7 +128,7 @@ export default class Mapping {
           value = moment(value).hours(0).minutes(0).seconds(0)
             .format("x");
         } else {
-          this.logger.warn("outgoing.user.warning", { ...userIdent, warning: "cannot parse datetime trait to date", prop });
+          this.logger.warn("outgoing.user.warning", { userIdent, warning: "cannot parse datetime trait to date", prop });
         }
       }
 
