@@ -37,6 +37,4 @@ docker-compose up dev # with autoreloading enabled
 
 ### Logs :
   
-  Specific logs messages for Hubspot Connector :
-    - `fetch.users.progress` - when fetching users from hubspot
-    - `fetch.users.finished` - when fetching users finished  
+  Specific logs messages for Hubspot Connector :  

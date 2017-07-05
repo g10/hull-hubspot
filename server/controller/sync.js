@@ -21,6 +21,7 @@ export default class SyncStrategy {
     const stopFetchAt = ctx.shipApp.hubspotAgent.getStopFetchAt();
     let lastModifiedDate;
     ctx.client.logger.debug("syncAction.lastFetchAt", { lastFetchAt, stopFetchAt });
+    ctx.client.logger.info("incoming.job.start", { jobName: "sync", type: "user", lastFetchAt, stopFetchAt });
 
     return ctx.helpers.updateSettings({
       last_fetch_at: stopFetchAt
@@ -44,7 +45,7 @@ export default class SyncStrategy {
     const page = payload.page || 1;
     ctx.metric.value("ship.incoming.fetch.page", page);
     ctx.client.logger.debug("syncJob.getRecentContacts", { lastFetchAt, stopFetchAt, count, offset, page });
-    ctx.client.logger.info("fetch.users.progress", { users: (page * count) });
+    ctx.client.logger.info("incoming.job.progress", { jobName: "sync", progress: (page * count), stepName: "sync-recent-contacts" });
     return hubspotAgent.getRecentContacts(syncAgent.mapping.getHubspotPropertiesKeys(), lastFetchAt, stopFetchAt, count, offset)
       .then((res) => {
         const info = {
@@ -59,7 +60,7 @@ export default class SyncStrategy {
             .nth(-2);
 
           if (res.body["vid-offset"] === res.body.contacts[0].vid) {
-            ctx.client.logger.warn("fetch.users.warning", { warning: "vidOffset moved to the top of the recent contacts list" });
+            ctx.client.logger.warn("incoming.job.warning", { warnings: "vidOffset moved to the top of the recent contacts list" });
             // TODO: call the `syncJob` with timeOffset instead of the vidOffset
           }
           return Users.saveContactsJob(ctx, { contacts: res.body.contacts })
@@ -72,6 +73,7 @@ export default class SyncStrategy {
             lastFetchAt, stopFetchAt, count, page: (page + 1), offset: vidOffset, lastModifiedDate
           });
         }
+        ctx.client.logger.info("incoming.job.success", { jobName: "sync" });
         return Promise.resolve("done");
       });
   }

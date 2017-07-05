@@ -17,7 +17,7 @@ export default class UsersController {
     const users = (payload.users || []).filter(u => !_.isEmpty(u.email));
 
     if (users.length === 0) {
-      return ctx.client.logger.warn("skip sendUsersJob - empty users list");
+      return ctx.client.logger.debug("skip sendUsersJob - empty users list");
     }
 
     ctx.client.logger.debug("sendUsersJob", { count_users: users.length });
@@ -65,7 +65,7 @@ export default class UsersController {
                   error: value
                 };
               });
-            errors.map(data => ctx.client.logger.error("outgoing.user.error", { ..._.pick(data.user, "email", "id", "external_id"), errors: data.error }));
+            errors.map(data => ctx.client.logger.error("outgoing.user.error", { email: data.email, hull_id: data.id, external_id: data.external_id, errors: data.error }));
 
             const retryBody = body
               .filter((entry, index) => {
