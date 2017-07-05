@@ -119,7 +119,7 @@ export default class SyncAgent {
       const ident = this.mapping.getIdentFromHubspot(c);
       this.logger.debug("incoming.user", { ident, traits });
       return this.client.asUser(ident).traits(traits)
-        .logger.info("incoming.user.success");
+        .logger.info("incoming.user.success", { ident, traits });
     }));
   }
 

@@ -60,7 +60,7 @@ export default class SyncStrategy {
             .nth(-2);
 
           if (res.body["vid-offset"] === res.body.contacts[0].vid) {
-            ctx.client.logger.warn("incoming.job.warning", { warnings: "vidOffset moved to the top of the recent contacts list" });
+            ctx.client.logger.warn("incoming.job.warning", { jobName: "sync", warnings: "vidOffset moved to the top of the recent contacts list" });
             // TODO: call the `syncJob` with timeOffset instead of the vidOffset
           }
           return Users.saveContactsJob(ctx, { contacts: res.body.contacts })
