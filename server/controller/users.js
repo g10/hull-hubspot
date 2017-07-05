@@ -20,7 +20,7 @@ export default class UsersController {
       return ctx.client.logger.warn("skip sendUsersJob - empty users list");
     }
 
-    ctx.client.logger.warn("sendUsersJob", { count_users: users.length });
+    ctx.client.logger.debug("sendUsersJob", { count_users: users.length });
 
     if (users.length > 100) {
       ctx.client.logger.warn("sendUsersJob works best for under 100 users at once", users.length);
@@ -65,7 +65,7 @@ export default class UsersController {
                   error: value
                 };
               });
-            errors.map(data => ctx.client.logger.error("outgoing.user.error", { ..._.pick(data.user, "email", "id", "external_id"), error: data.error }));
+            errors.map(data => ctx.client.logger.error("outgoing.user.error", { ..._.pick(data.user, "email", "id", "external_id"), errors: data.error }));
 
             const retryBody = body
               .filter((entry, index) => {
