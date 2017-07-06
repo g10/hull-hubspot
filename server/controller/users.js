@@ -44,7 +44,7 @@ export default class UsersController {
           }
 
           if (res.statusCode === 202) {
-            users.map(u => ctx.client.logger.info("outgoing.user.success", { userIdent: { email: u.email, hull_id: u.id, external_id: u.external_id } }));
+            users.map(u => ctx.client.asUser(_.pick(u, ["email", "id", "external_id"])).logger.info("outgoing.user.success"));
             return Promise.resolve();
           }
           return Promise.reject(new Error("Error in create/update batch"));
@@ -65,7 +65,7 @@ export default class UsersController {
                   error: value
                 };
               });
-            errors.map(data => ctx.client.logger.error("outgoing.user.error", { email: data.email, hull_id: data.id, external_id: data.external_id, errors: data.error }));
+            errors.map(data => ctx.client.asUser(_.pick(data, ["email", "id", "external_id"])).logger.error("outgoing.user.error", { errors: data.error }));
 
             const retryBody = body
               .filter((entry, index) => {
@@ -76,7 +76,7 @@ export default class UsersController {
               return ctx.shipApp.hubspotAgent.batchUsers(retryBody)
                 .then(res => {
                   if (res.statusCode === 202) {
-                    retryBody.map(u => ctx.client.logger.info("outgoing.user.success", { userIdent: { email: u.email, hull_id: u.id, external_id: u.external_id } }));
+                    retryBody.map(u => ctx.client.asUser(_.pick(u, ["email", "id", "external_id"])).logger.info("outgoing.user.success"));
                     return Promise.resolve("ok");
                   }
                   return Promise.reject(new Error("Error in create/update batch"));
