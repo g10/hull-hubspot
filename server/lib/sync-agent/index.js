@@ -122,7 +122,7 @@ export default class SyncAgent {
       return asUser.traits(traits)
         .then(
           () => asUser.logger.info("incoming.user.success", { traits }),
-          () => asUser.logger.error("incoming.user.error", { traits })
+          (error) => asUser.logger.error("incoming.user.error", { traits, errors: error })
         );
     }));
   }
