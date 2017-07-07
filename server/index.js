@@ -14,7 +14,8 @@ const {
   REDIS_URL = "127.0.0.1",
   CACHE_REDIS_URL = "127.0.0.1",
   SECRET = "1234",
-  PORT = 8082
+  PORT = 8082,
+  OVERRIDE_FIREHOSE_URL
 } = process.env;
 
 if (LOG_LEVEL) {
@@ -33,7 +34,15 @@ const queue = new Queue("kue", {
 });
 
 const app = express();
-const connector = new Hull.Connector({ cache, queue, hostSecret: SECRET, port: PORT });
+const connector = new Hull.Connector({
+  cache,
+  queue,
+  hostSecret: SECRET,
+  port: PORT,
+  clientConfig: {
+    firehoseUrl: OVERRIDE_FIREHOSE_URL
+  }
+});
 
 connector.setupApp(app);
 
