@@ -5,7 +5,7 @@ export default class UserUpdateStrategy {
   static userUpdateHandler(ctx, messages) {
     const { syncAgent } = ctx.shipApp;
     if (!syncAgent.isConfigured()) {
-      ctx.client.logger.info("ship is not configured");
+      ctx.client.logger.error("connector.configuration.error", { errors: "connector is not configured" });
       return Promise.resolve();
     }
 
@@ -33,7 +33,7 @@ export default class UserUpdateStrategy {
   static shipUpdateHandler(ctx) {
     const { syncAgent } = ctx.shipApp;
     if (!syncAgent.isConfigured()) {
-      ctx.client.logger.info("ship is not configured");
+      ctx.client.logger.error("connector.configuration.error", { errors: "connector is not configured" });
       return Promise.resolve();
     }
     return ctx.enqueue("shipUpdateJob");
@@ -42,7 +42,7 @@ export default class UserUpdateStrategy {
   static segmentUpdateHandler(ctx, message) {
     const { syncAgent } = ctx.shipApp;
     if (!syncAgent.isConfigured()) {
-      ctx.client.logger.info("ship is not configured");
+      ctx.client.logger.error("connector.configuration.error", { errors: "connector is not configured" });
       return Promise.resolve();
     }
     const segment = message;
@@ -59,7 +59,7 @@ export default class UserUpdateStrategy {
   static segmentDeleteHandler(ctx) {
     const { syncAgent } = ctx.shipApp;
     if (!syncAgent.isConfigured()) {
-      ctx.client.logger.info("ship is not configured");
+      ctx.client.logger.error("connector.configuration.error", { errors: "connector is not configured" });
       return Promise.resolve();
     }
     // TODO: if the segment would have `query` param we could trigger an extract

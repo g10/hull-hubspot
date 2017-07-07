@@ -4,9 +4,10 @@ import moment from "moment";
 import { getMap } from "./mapping-data";
 
 export default class Mapping {
-  constructor(ship, logger) {
+  constructor(ship, client) {
     this.ship = ship;
-    this.logger = logger;
+    this.client = client;
+    this.logger = client.logger;
     this.map = getMap(ship);
   }
 
@@ -48,11 +49,10 @@ export default class Mapping {
    * @return {Object}          Hull user traits
    */
   getHullTraits(hubspotProperties, userData) {
-    const userIdent = _.pick(userData, "id", "external_id", "email");
     const hullTraits = _.reduce(this.map.to_hull, (traits, prop) => {
       const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
       if (!hubspotProp) {
-        this.logger.debug("incoming.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
+        this.client.asUser(_.pick(userData, ["id", "external_id", "email"])).logger.warn("incoming.user.warning", { warning: "cannot find mapped hubspot property", prop });
       }
       if (userData.properties && _.has(userData.properties, prop.name)) {
         let val = _.get(userData, `properties[${prop.name}].value`);
@@ -94,12 +94,12 @@ export default class Mapping {
    * @return {Array}           Hubspot properties array
    */
   getHubspotProperties(segments, hubspotProperties, userData) {
-    const userIdent = _.pick(userData, "id", "external_id", "email");
     const contactProps = _.reduce(this.map.to_hubspot, (props, prop) => {
       const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
+      const userIdent = _.pick(userData, ["id", "external_id", "email"]);
 
       if (!hubspotProp) {
-        this.logger.debug("outgoing.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
+        this.client.asUser(userIdent).logger.warn("outgoing.user.warning", { warning: "cannot find mapped hubspot property", prop });
         return props;
       }
 
@@ -128,7 +128,7 @@ export default class Mapping {
           value = moment(value).hours(0).minutes(0).seconds(0)
             .format("x");
         } else {
-          this.logger.warn("outgoing.user.warning", { ...userIdent, warning: "cannot parse datetime trait to date", prop });
+          this.client.asUser(userIdent).logger.warn("outgoing.user.warning", { warning: "cannot parse datetime trait to date", prop });
         }
       }
 

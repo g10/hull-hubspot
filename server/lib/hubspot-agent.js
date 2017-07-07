@@ -29,7 +29,7 @@ export default class HubspotAgent {
       return promise()
         .catch((err) => {
           if (err.response.unauthorized) {
-            this.client.logger.info("retrying query", _.get(err, "response.body"));
+            this.client.logger.debug("retrying query", _.get(err, "response.body"));
             return this.checkToken({ force: true })
               .then(() => {
                 this.hubspotClient.ship = this.ship;
@@ -59,7 +59,7 @@ export default class HubspotAgent {
     const expiresAt = moment(token_fetched_at, "x").add(expires_in, "seconds");
     const willExpireIn = expiresAt.diff(moment(), "seconds");
     const willExpireSoon = willExpireIn <= (process.env.HUBSPOT_TOKEN_REFRESH_ADVANCE || 600); // 10 minutes
-    this.client.logger.info("access_token", {
+    this.client.logger.debug("access_token", {
       fetched_at: moment(token_fetched_at, "x").format(),
       expires_in,
       expires_at: expiresAt.format(),

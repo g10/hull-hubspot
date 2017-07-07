@@ -34,6 +34,7 @@ export default class FetchAllController {
     const offset = payload.offset || 0;
     const progress = payload.progress || 0;
 
+    ctx.client.logger.info("incoming.job.start", { jobName: "fetch-all", type: "user" });
     // TODO: pick up from job progress previous offset
     return hubspotAgent.getContacts(syncAgent.mapping.getHubspotPropertiesKeys(), count, offset)
       .then((data) => {
@@ -44,7 +45,7 @@ export default class FetchAllController {
           newProgress
         };
         // TODO: save offset to job progress
-        ctx.client.logger.info("fetch.users.progress", { users: newProgress });
+        ctx.client.logger.info("incoming.job.progress", { jobName: "fetch-all", progress: newProgress, stepName: "fetch-all-progress" });
         ctx.shipApp.progressAgent.update(newProgress, data.body["has-more"]);
 
         if (data.body.contacts.length > 0) {
@@ -62,7 +63,7 @@ export default class FetchAllController {
             progress: newProgress
           });
         }
-        return ctx.client.logger.info("fetch.users.finished");
+        return ctx.client.logger.info("incoming.job.success", { jobName: "fetch-all" });
       });
   }
 }

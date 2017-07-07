@@ -19,7 +19,7 @@ export default class SyncAgent {
     this.segments = segments;
 
     this.contactProperty = new ContactProperty(this.hubspotClient, { logger: this.logger });
-    this.mapping = new Mapping(ship, client.logger);
+    this.mapping = new Mapping(ship, client);
   }
 
   isConfigured() {
@@ -110,16 +110,20 @@ export default class SyncAgent {
    * @param contacts
    */
   saveContacts(hubspotProperties, contacts) {
-    this.logger.info("saveContacts", contacts.length);
+    this.logger.debug("saveContacts", contacts.length);
     return Promise.all(contacts.map((c) => {
       const traits = this.mapping.getHullTraits(hubspotProperties, c);
       if (!traits.email) {
-        return "";
+        return this.client.asUser(traits).logger.info("incoming.user.skip");
       }
       const ident = this.mapping.getIdentFromHubspot(c);
       this.logger.debug("incoming.user", { ident, traits });
-      this.logger.info("incoming.user.success", { ident });
-      return this.client.asUser(ident).traits(traits);
+      const asUser = this.client.asUser(ident);
+      return asUser.traits(traits)
+        .then(
+          () => asUser.logger.info("incoming.user.success", { traits }),
+          (error) => asUser.logger.error("incoming.user.error", { traits, errors: error })
+        );
     }));
   }
 
