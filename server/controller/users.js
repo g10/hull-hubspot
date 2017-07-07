@@ -54,10 +54,6 @@ export default class UsersController {
             parsedErrorInfo = JSON.parse(err.extra);
           } catch (e) {} // eslint-disable-line no-empty
           if (parsedErrorInfo.status === "error") {
-            ctx.metric.event({
-              title: "Errors found processing batch update",
-              text: err.extra
-            });
             const errors = parsedErrorInfo.failureMessages
               .map((value) => {
                 return {
