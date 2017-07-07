@@ -96,9 +96,10 @@ export default class Mapping {
   getHubspotProperties(segments, hubspotProperties, userData) {
     const contactProps = _.reduce(this.map.to_hubspot, (props, prop) => {
       const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
+      const userIdent = { hull_id: userData.id, external_id: userData.external_id, email: userData.email };
 
       if (!hubspotProp) {
-        this.logger.warn("outgoing.user.warning", { hull_id: userData.id, external_id: userData.external_id, email: userData.email, warning: "cannot find mapped hubspot property", prop });
+        this.logger.warn("outgoing.user.warning", { ...userIdent, warning: "cannot find mapped hubspot property", prop });
         return props;
       }
 
@@ -127,7 +128,7 @@ export default class Mapping {
           value = moment(value).hours(0).minutes(0).seconds(0)
             .format("x");
         } else {
-          this.logger.warn("outgoing.user.warning", { hull_id: userData.id, external_id: userData.external_id, email: userData.email, warning: "cannot parse datetime trait to date", prop });
+          this.logger.warn("outgoing.user.warning", { ...userIdent, warning: "cannot parse datetime trait to date", prop });
         }
       }
 
