@@ -31,7 +31,7 @@ export default function (deps: any) {
         // subscription. Following two lines fixes that problem.
         // AppMiddleware({ queueAdapter, shipCache, instrumentationAgent })(req, {}, () => {});
         req.hull.shipApp.syncAgent.setupShip()
-          .catch(err => client.logger.error("connector.configuration.error", { errors: { message: "Error in creating segments property", err } }));
+          .catch(err => client.logger.error("connector.configuration.error", { errors: ["Error in creating segments property", err] }));
 
         return client.get(ship.id).then((s) => {
           return { settings: s.private_settings };

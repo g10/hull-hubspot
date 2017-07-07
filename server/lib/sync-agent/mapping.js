@@ -4,9 +4,10 @@ import moment from "moment";
 import { getMap } from "./mapping-data";
 
 export default class Mapping {
-  constructor(ship, logger) {
+  constructor(ship, client) {
     this.ship = ship;
-    this.logger = logger;
+    this.client = client;
+    this.logger = client.logger;
     this.map = getMap(ship);
   }
 
@@ -51,7 +52,7 @@ export default class Mapping {
     const hullTraits = _.reduce(this.map.to_hull, (traits, prop) => {
       const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
       if (!hubspotProp) {
-        this.logger.warn("incoming.user.warning", { hull_id: userData.id, external_id: userData.external_id, email: userData.email, warning: "cannot find mapped hubspot property", prop });
+        this.client.asUser(_.pick(userData, ["id", "external_id", "email"])).logger.warn("incoming.user.warning", { warning: "cannot find mapped hubspot property", prop });
       }
       if (userData.properties && _.has(userData.properties, prop.name)) {
         let val = _.get(userData, `properties[${prop.name}].value`);
