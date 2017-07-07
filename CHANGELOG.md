@@ -2,8 +2,9 @@
 
 ## v0.3.7
 - fix segment parsing
-- upgrade hull-node to 0.11.7 -> new firehose
+- upgrade hull-node to 0.11.8 -> new firehose
 - handle requestExtract errors
+- update logging convention
 
 ## v0.3.6
 - upgrade hull-node to 0.11.3
