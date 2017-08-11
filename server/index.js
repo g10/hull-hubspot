@@ -11,7 +11,7 @@ const {
   LOG_LEVEL,
   SHIP_CACHE_TTL = 180,
   KUE_PREFIX = "hull-hubspot",
-  REDIS_URL = "redis://127.0.0.1",
+  REDIS_URL = "127.0.0.1",
   CACHE_REDIS_URL = "127.0.0.1",
   SECRET = "1234",
   PORT = 8082,
