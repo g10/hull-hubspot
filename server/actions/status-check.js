@@ -26,7 +26,7 @@ export default function (req: Request, res: Response) {
     pushMessage("Missing portal id.");
   }
 
-  if (_.isEmpty(_.get(ship, "private_settings.sync_fields_to_hull", []))) {
+  if (_.isEmpty(_.get(ship, "private_settings.sync_fields_to_hubspot", []))) {
     pushMessage("No fields are going to be sent from hull to hubspot because of missing configuration.");
   }
 
