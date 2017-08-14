@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.8
+- adds status endpoint
+- adds hull_summary message to "*.user.erro" log messages
+
 ## v0.3.7
 - fix segment parsing
 - upgrade hull-node to 0.11.8 -> new firehose
