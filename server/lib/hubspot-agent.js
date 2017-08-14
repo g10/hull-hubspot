@@ -44,6 +44,7 @@ export default class HubspotAgent {
     .catch((err) => {
       const simplifiedErr = new Error(_.get(err.response, "body.message"));
       simplifiedErr.extra = JSON.stringify(_.get(err.response, "body") || {});
+      simplifiedErr.msg = _.get(err, "message", "");
       return Promise.reject(simplifiedErr);
     });
   }
