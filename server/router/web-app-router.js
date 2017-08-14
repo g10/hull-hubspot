@@ -41,7 +41,7 @@ export default function (deps: any) {
     req.shipApp.syncAgent.migrateSettings().then(next, next);
   }, responseMiddleware());
 
-  router.get("/status", actions.statusCheck);
+  router.all("/status", actions.statusCheck);
 
   return router;
 }
