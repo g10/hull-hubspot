@@ -29,7 +29,7 @@ const cache = new Cache({
   ttl: SHIP_CACHE_TTL
 });
 
-const kueAdapter = KueAdapter({
+const kueAdapter = new KueAdapter({
   prefix: KUE_PREFIX,
   redis: REDIS_URL
 });
