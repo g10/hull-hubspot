@@ -1,6 +1,7 @@
 /* @flow */
 import Hull from "hull";
 import { Cache, Queue } from "hull/lib/infra";
+import KueAdapter from "hull/lib/infra/queue/adapter/kue";
 import express from "express";
 import redisStore from "cache-manager-redis";
 
@@ -28,10 +29,11 @@ const cache = new Cache({
   ttl: SHIP_CACHE_TTL
 });
 
-const queue = new Queue("kue", {
+const kueAdapter = KueAdapter({
   prefix: KUE_PREFIX,
   redis: REDIS_URL
 });
+const queue = new Queue(kueAdapter);
 
 const app = express();
 const connector = new Hull.Connector({
