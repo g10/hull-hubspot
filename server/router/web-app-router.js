@@ -1,7 +1,7 @@
 /* @flow */
 import { Router } from "express";
 import cors from "cors";
-import { notifHandler, batchHandler, responseMiddleware } from "hull/lib/utils";
+import { notifHandler, responseMiddleware } from "hull/lib/utils";
 import requireConfiguration from "../lib/middleware/require-configuration";
 import appMiddleware from "../lib/middleware/app";
 import * as actions from "../actions";
@@ -20,7 +20,12 @@ export default function (deps: any) {
   router.post("/fetchAll", requireConfiguration, fetchAllController.fetchAllAction, responseMiddleware());
   router.post("/sync", requireConfiguration, syncController.syncAction, responseMiddleware());
 
-  router.use("/batch", requireConfiguration, batchHandler(actions.handleBatch));
+  router.use("/batch", requireConfiguration, notifHandler({
+    handlers: {
+      "user:update": actions.handleBatch,
+    }
+  }));
+
   router.use("/notify", notifHandler({
     userHandlerOptions: {
       groupTraits: false
