@@ -65,6 +65,6 @@ export default function (req: Request, res: Response) {
 
   Promise.all(promises).then(() => {
     res.json({ status, messages });
-    return client.put(ship.id, { status, status_messages: messages });
+    return client.put(`${ship.id}/status`, { status, messages });
   });
 }
