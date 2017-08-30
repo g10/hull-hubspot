@@ -1,6 +1,6 @@
 /* @flow */
 import { Router } from "express";
-import { Strategy as HubspotStrategy } from "passport-hubspot";
+import { Strategy as HubspotStrategy } from "passport-hubspot-oauth2.0";
 import { oAuthHandler } from "hull/lib/utils";
 import moment from "moment";
 
@@ -18,7 +18,7 @@ export default function (deps: any) {
     options: {
       clientID,
       clientSecret,
-      scope: ["offline", "contacts-rw", "events-rw"]
+      scope: ["oauth", "contacts", "timeline"]
     },
     isSetup(req) {
       const { client, ship } = req.hull;

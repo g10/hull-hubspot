@@ -17,7 +17,7 @@ export default class HubspotClient {
     return req
       .use(prefixPlugin(process.env.OVERRIDE_HUBSPOT_URL || "https://api.hubapi.com"))
       .use(superagentPromisePlugin)
-      .query({ access_token: accessToken })
+      .set("Authorization", `Bearer ${accessToken}`)
       .on("request", (reqData) => {
         this.metric.increment("ship.service_api.call", 1);
         this.client.logger.debug("hubspotClient.req", reqData.url);
@@ -50,6 +50,8 @@ export default class HubspotClient {
       .send({
         refresh_token: refreshToken,
         client_id: process.env.CLIENT_ID,
+        client_secret: process.env.CLIENT_SECRET,
+        redirect_uri: "",
         grant_type: "refresh_token"
       });
   }
