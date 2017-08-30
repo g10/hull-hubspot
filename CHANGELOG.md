@@ -2,7 +2,7 @@
 
 ## v0.3.8
 - adds status endpoint
-- adds hull_summary message to "*.user.erro" log messages
+- adds hull_summary message to "*.user.error" log messages
 
 ## v0.3.7
 - fix segment parsing
