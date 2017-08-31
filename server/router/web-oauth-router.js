@@ -3,6 +3,7 @@ import { Router } from "express";
 import { Strategy as HubspotStrategy } from "passport-hubspot-oauth2.0";
 import { oAuthHandler } from "hull/lib/utils";
 import moment from "moment";
+import Promise from "bluebird";
 
 export default function (deps: any) {
   const router = Router();
@@ -22,7 +23,7 @@ export default function (deps: any) {
     },
     isSetup(req) {
       const { client, ship } = req.hull;
-      if (req.query.reset) return Promise.reject();
+      if (req.query.reset) return Promise.reject(new Error("Requested reset"));
       const { token } = ship.private_settings || {};
       if (token) {
         // TODO: we have notices problems with syncing hull segments property
@@ -37,26 +38,28 @@ export default function (deps: any) {
           return { settings: s.private_settings };
         });
       }
-      return Promise.reject();
+      return Promise.reject(new Error("Not authorized"));
     },
     onLogin: (req) => {
-      const { helpers } = req.hull;
       req.authParams = { ...req.body, ...req.query };
-      const newShip = {
-        portal_id: req.authParams.portalId
-      };
-      return helpers.updateSettings(newShip);
+      return Promise.resolve();
     },
     onAuthorize: (req) => {
       const { helpers } = req.hull;
-      const { refreshToken, accessToken, expiresIn } = (req.account || {});
-      const newShip = {
-        refresh_token: refreshToken,
-        token: accessToken,
-        expires_in: expiresIn,
-        token_fetched_at: moment().utc().format("x"),
-      };
-      return helpers.updateSettings(newShip);
+      const { refreshToken, accessToken } = (req.account || {});
+      const { expiresIn } = req.account.params;
+      return req.hull.shipApp.hubspotClient.get(`/oauth/v1/access-tokens/${accessToken}`)
+        .then(res => {
+          const portalId = res.body.hub_id;
+          const newShip = {
+            portal_id: portalId,
+            refresh_token: refreshToken,
+            token: accessToken,
+            expires_in: expiresIn,
+            token_fetched_at: moment().utc().format("x"),
+          };
+          return helpers.updateSettings(newShip);
+        });
     },
     views: {
       login: "login.html",

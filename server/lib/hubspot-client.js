@@ -45,7 +45,7 @@ export default class HubspotClient {
       return Promise.reject(new Error("Refresh token is not set."));
     }
     this.metric.increment("ship.service_api.call", 1);
-    return this.attach(this.req.post("/auth/v1/refresh"))
+    return this.attach(this.req.post("/oauth/v1/token"))
       .set("Content-Type", "application/x-www-form-urlencoded")
       .send({
         refresh_token: refreshToken,
