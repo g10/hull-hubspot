@@ -3,7 +3,6 @@
 ## v0.3.8
 - adds status endpoint
 - adds hull_summary message to "*.user.error" log messages
-- upgrade hull-node to 0.12.3 -> replace batchHandler with notifHandler and change queue adapter loading
 
 ## v0.3.7
 - fix segment parsing
