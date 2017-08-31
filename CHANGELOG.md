@@ -1,6 +1,7 @@
 # Changelog
 
 ## v0.3.8
+- upgrade oauth strategy to v2.0
 - adds status endpoint
 - adds hull_summary message to "*.user.error" log messages
 
