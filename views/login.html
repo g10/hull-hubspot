@@ -15,13 +15,6 @@
             <h5 class="uppercase text-accented underlined mb-1">Connect to <%= name %></h5>
             <p class="text-muted mb-1">Give Hull permission to access your <%= name %> Account</p>
             <form action="<%=urls.login%>" target="_blank" method="post" accept-charset="utf-8">
-              <div class="text-left">
-                <div class="input-group">
-                  <div class="input-group-addon">portal Id</div>                
-                  <input class="form-control" type="text" name="portalId" value="<%=ship.private_settings.portalId%>" placeholder="0000000" required>
-                </div>
-                <p class="help-block"> Found in the Upper Right of your hubspot dashboard</p>
-              </div>
               <button type="submit" target="_blank" id='login' class='btn btn-rounded btn-block btn-primary'>Continue with <%= name %></a>
             </form>
           </div>

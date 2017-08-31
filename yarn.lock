@@ -3495,13 +3495,13 @@ parseurl@~1.3.0, parseurl@~1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/parseurl/-/parseurl-1.3.1.tgz#c8ab8c9223ba34888aa64a297b28853bec18da56"
 
-passport-hubspot@unity/passport-hubspot:
-  version "0.1.0"
-  resolved "https://codeload.github.com/unity/passport-hubspot/tar.gz/d4acc46b2576193b6e25c878cb57b6b294451fc9"
+passport-hubspot-oauth2.0@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/passport-hubspot-oauth2.0/-/passport-hubspot-oauth2.0-1.0.2.tgz#70cf9ff314fe6f2ea33e7941979c483850e689c0"
   dependencies:
-    passport-oauth2 "^1.1.2"
+    passport-oauth2 "1.x.x"
 
-passport-oauth2@^1.1.2:
+passport-oauth2@1.x.x:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/passport-oauth2/-/passport-oauth2-1.4.0.tgz#f62f81583cbe12609be7ce6f160b9395a27b86ad"
   dependencies:
@@ -4667,6 +4667,15 @@ type-is@~1.6.15, type-is@~1.6.6:
 typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
+
+uglify-js@^2.4.19:
+  version "2.8.29"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.29.tgz#29c5733148057bb4e1f75df35b7a9cb72e6a59dd"
+  dependencies:
+    source-map "~0.5.1"
+    yargs "~3.10.0"
+  optionalDependencies:
+    uglify-to-browserify "~1.0.0"
 
 uglify-js@^2.6.1:
   version "2.8.27"
