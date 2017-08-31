@@ -3501,13 +3501,7 @@ passport-hubspot-oauth2.0@^1.0.2:
   dependencies:
     passport-oauth2 "1.x.x"
 
-passport-hubspot@unity/passport-hubspot:
-  version "0.1.0"
-  resolved "https://codeload.github.com/unity/passport-hubspot/tar.gz/d4acc46b2576193b6e25c878cb57b6b294451fc9"
-  dependencies:
-    passport-oauth2 "^1.1.2"
-
-passport-oauth2@1.x.x, passport-oauth2@^1.1.2:
+passport-oauth2@1.x.x:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/passport-oauth2/-/passport-oauth2-1.4.0.tgz#f62f81583cbe12609be7ce6f160b9395a27b86ad"
   dependencies:
