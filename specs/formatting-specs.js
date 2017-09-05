@@ -67,7 +67,7 @@ describe("Hubspot properties formatting", function test() {
     });
     minihubspot.on("incoming.request#5", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
-      expect(lastReq.url).to.be.eq("/contacts/v1/contact/batch/?access_token=hubspotABC&auditId=Hull");
+      expect(lastReq.url).to.be.eq("/contacts/v1/contact/batch/?auditId=Hull");
       expect(lastReq.body).to.be.an("array");
       expect(lastReq.body[0]).to.have.property("email");
       expect(lastReq.body[0]).to.have.property("properties");

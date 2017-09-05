@@ -53,5 +53,16 @@ docker-compose up dev # with autoreloading enabled
     - Error in refreshAccessToken - logged when encountered some problems while refreshing hubspot access token
     - getContact gets maximum of 100 contacts at once - logged when contacts list from hubspot exceeds 100 objects
     
-  
+### Status : 
+
+  * `Hubspot is not properly configured {error}` - when hubspot configuration is invalid. See {error} for details.
+  * `Missing API token` - when api token is undefined
+  * `Missing refresh token` - when api refresh token is undefined
+  * `Missing portal id` - when portal id is undefined
+  * `No fields are going to be sent from hull to hubspot because of missing configuration` - when no Custom Fields Sync (Hull to Hubspot) are defined
+  * `No fields are going to be sent from hubspot to hull because of missing configuration` - when no Custom Fields Sync (Hubspot to Hull) are defined
+  * `No segments will be synchronized because of missing configuration` - when no Segments in connector's settings are defined
+  * `Got Zero results when fetching contacts` - when trying to fetch users and got no results
+  * `Could not get response from Hubspot due to error {error}` - when integration with hubspot fails
+  * `Connector is missing configuration` - when hubspotAgent is undefined 
   

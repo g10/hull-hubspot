@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.8
+- upgrade oauth strategy to v2.0
+- adds status endpoint
+- adds hull_summary message to "*.user.error" log messages
+
 ## v0.3.7
 - fix segment parsing
 - upgrade hull-node to 0.11.8 -> new firehose

@@ -1,9 +1,9 @@
 /* @flow */
 import { Router } from "express";
 import cors from "cors";
-import { notifHandler, batchHandler, responseMiddleware } from "hull/lib/utils";
-import RequireConfiguration from "../lib/middleware/require-configuration";
-import AppMiddleware from "../lib/middleware/app";
+import { notifHandler, responseMiddleware } from "hull/lib/utils";
+import requireConfiguration from "../lib/middleware/require-configuration";
+import appMiddleware from "../lib/middleware/app";
 import * as actions from "../actions";
 
 export default function (deps: any) {
@@ -15,12 +15,17 @@ export default function (deps: any) {
     syncController
   } = deps;
 
-  router.use(AppMiddleware());
+  router.use(appMiddleware());
 
-  router.post("/fetchAll", RequireConfiguration, fetchAllController.fetchAllAction, responseMiddleware());
-  router.post("/sync", RequireConfiguration, syncController.syncAction, responseMiddleware());
+  router.post("/fetchAll", requireConfiguration, fetchAllController.fetchAllAction, responseMiddleware());
+  router.post("/sync", requireConfiguration, syncController.syncAction, responseMiddleware());
 
-  router.use("/batch", RequireConfiguration, batchHandler(actions.handleBatch));
+  router.use("/batch", requireConfiguration, notifHandler({
+    handlers: {
+      "user:update": actions.handleBatch,
+    }
+  }));
+
   router.use("/notify", notifHandler({
     userHandlerOptions: {
       groupTraits: false
@@ -33,13 +38,15 @@ export default function (deps: any) {
     }
   }));
 
-  router.post("/monitor/checkToken", RequireConfiguration, monitorController.checkTokenAction, responseMiddleware());
+  router.post("/monitor/checkToken", requireConfiguration, monitorController.checkTokenAction, responseMiddleware());
 
-  router.get("/schema/contact_properties", cors(), RequireConfiguration, actions.getContactProperties, responseMiddleware());
+  router.get("/schema/contact_properties", cors(), requireConfiguration, actions.getContactProperties, responseMiddleware());
 
-  router.post("/migrate", RequireConfiguration, (req, res, next) => {
+  router.post("/migrate", requireConfiguration, (req, res, next) => {
     req.shipApp.syncAgent.migrateSettings().then(next, next);
   }, responseMiddleware());
+
+  router.all("/status", actions.statusCheck);
 
   return router;
 }

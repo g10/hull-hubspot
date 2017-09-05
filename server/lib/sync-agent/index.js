@@ -122,7 +122,11 @@ export default class SyncAgent {
       return asUser.traits(traits)
         .then(
           () => asUser.logger.info("incoming.user.success", { traits }),
-          (error) => asUser.logger.error("incoming.user.error", { traits, errors: error })
+          (error) => asUser.logger.error("incoming.user.error", {
+            hull_summary: `Fetching data from Hubspot returned an error: ${_.get(error, "message", "")}`,
+            traits,
+            errors: error
+          })
         );
     }));
   }
