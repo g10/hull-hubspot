@@ -61,10 +61,15 @@ export default class UsersController {
                   error: value
                 };
               });
-            errors.map(data => ctx.client.asUser(_.pick(data, ["email", "id", "external_id"])).logger.error("outgoing.user.error", {
-              hull_summary: `Sending data to Hubspot returned an error: ${_.get(data, "error", "")}`,
-              errors: data.error
-            }));
+            errors.forEach((data) => {
+              const message = _.get(data, "error.message");
+              const ident = _.pick(data, ["email", "id", "external_id"]);
+              const logger = ctx.client.asUser(ident).logger;
+              logger.error("outgoing.user.error", {
+                hull_summary: `Sending data to Hubspot returned an error: ${message}`,
+                errors: data.error
+              });
+            });
 
             const retryBody = body
               .filter((entry, index) => {
