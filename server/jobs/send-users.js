@@ -16,13 +16,13 @@ export default function sendUsers(ctx: Object, payload: Object) {
   const users = (payload.users || []).filter(u => !_.isEmpty(u.email));
 
   if (users.length === 0) {
-    return ctx.client.logger.debug("skip sendUsersJob - empty users list");
+    return ctx.client.logger.debug("skip sendUsers - empty users list");
   }
 
   ctx.client.logger.debug("outgoing.job.start", { count_users: users.length });
 
   if (users.length > 100) {
-    ctx.client.logger.warn("sendUsersJob works best for under 100 users at once", users.length);
+    ctx.client.logger.warn("sendUsers works best for under 100 users at once", users.length);
   }
 
   return ctx.shipApp.syncAgent.setupShip()

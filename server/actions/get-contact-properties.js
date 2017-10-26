@@ -9,8 +9,8 @@ export default function getContactProperties(req: Request, res: Response) {
   return cache.wrap("contact_properties", () => {
     return hubspotClient.get("/contacts/v2/groups")
       .query({ includeProperties: true })
-      .then(res => {
-        return res.body;
+      .then(response => {
+        return response.body;
       });
   })
     .then((groups) => {

@@ -26,5 +26,5 @@ export default function userUpdateHandler(ctx, messages) {
     return usersArr;
   }, []);
 
-  return ctx.enqueue("sendUsersJob", { users });
+  return ctx.enqueue("sendUsers", { users });
 }
