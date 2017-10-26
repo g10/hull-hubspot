@@ -21,7 +21,7 @@
             <div class="media-body pt-1">
               <span class="pull-right"><a href="<%=urls.home%>&reset=true" class="btn btn-rounded btn-pill btn-secondary">Start over</a></span>
               <h4 class="m-0 pt-05 text-muted">
-                Connected to <%=name%> portal 
+                Connected to <%=name%> portal
                 <a href="https://app.hubspot.com/dashboard/<%=settings.portal_id%>" target="_blank"><%=settings.portal_id%></a>
               </h4>
             </div>
@@ -30,10 +30,10 @@
 
           <hr>
 
-          <div data-href="/fetchAll" class="pull-right btn btn-rounded btn-pill btn-primary">Fetch All Contacts</div>
+          <div data-href="/fetch-all" class="pull-right btn btn-rounded btn-pill btn-primary">Fetch All Contacts</div>
 
           <div class="last_fetch">
-           
+
             <% if (settings.last_fetch_started_at) { %>
             <h5>Last Sync <small class="pull-right"><strong><%=settings.fetch_count || 0%> Users</strong> on <span data-time>Friday, September 8 @ 12h30</span></small></h5>
             <% } %>

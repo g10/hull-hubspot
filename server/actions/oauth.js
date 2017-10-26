@@ -1,19 +1,16 @@
 /* @flow */
-import { Router } from "express";
 import { Strategy as HubspotStrategy } from "passport-hubspot-oauth2.0";
 import { oAuthHandler } from "hull/lib/utils";
 import moment from "moment";
 import Promise from "bluebird";
 
-export default function (deps: any) {
-  const router = Router();
-
+export default function (deps: Object) {
   const {
     clientID,
     clientSecret
   } = deps;
 
-  router.use("/auth", oAuthHandler({
+  return oAuthHandler({
     name: "Hubspot",
     Strategy: HubspotStrategy,
     options: {
@@ -67,7 +64,5 @@ export default function (deps: any) {
       failure: "failure.html",
       success: "success.html"
     },
-  }));
-
-  return router;
+  });
 }

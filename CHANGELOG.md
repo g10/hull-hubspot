@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.9
+- fix the hull_summary error log line
+
 ## v0.3.8
 - upgrade oauth strategy to v2.0
 - adds status endpoint

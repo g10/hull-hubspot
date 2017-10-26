@@ -1,6 +1,6 @@
-const Minibase = require("minihull/src/minibase");
+const MiniApplication = require("mini-application");
 
-class Minihubspot extends Minibase {
+class Minihubspot extends MiniApplication {
   constructor(options = {}) {
     super(options);
     this.db.defaults({ contacts: [] }).write();

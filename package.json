@@ -28,13 +28,13 @@
     "build:server": "babel server -d build",
     "start": "COMBINED=true node build",
     "start:dev": "COMBINED=true babel-watch -L server",
-    "test": "npm run test:lint && npm run test:flow && npm run test:units && npm run test:specs",
+    "test": "npm run test:lint && npm run test:flow && npm run test:unit && npm run test:integration",
     "test:lint": "eslint server",
-    "test:units": "NODE_ENV=test mocha --require babel-register -R spec ./tests",
-    "test:specs": "NODE_ENV=test mocha --require babel-register -R spec ./specs",
+    "test:unit": "NODE_ENV=test mocha --require babel-register -R spec ./test/unit",
+    "test:integration": "NODE_ENV=test mocha --require babel-register -R spec ./test/integration",
     "test:flow": "flow check",
-    "clean": "./node_modules/.bin/rimraf dist; ./node_modules/.bin/rimraf build",
-    "update": "./node_modules/.bin/updtr",
+    "clean": "rimraf dist; rimraf build",
+    "update": "updtr",
     "postinstall": "npm run build"
   },
   "keywords": [
@@ -55,7 +55,8 @@
     "eslint-config-airbnb-base": "^11.1.0",
     "eslint-plugin-import": "^2.2.0",
     "flow-bin": "^0.46.0",
-    "minihull": "^0.0.7",
+    "mini-application": "^1.0.5",
+    "minihull": "^2.1.0",
     "mocha": "^2.5.2",
     "updtr": "^0.2.1"
   },

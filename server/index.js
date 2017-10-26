@@ -46,10 +46,17 @@ const connector = new Hull.Connector({
   }
 });
 
+const deps = {
+  clientID: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  queue,
+  hostSecret: SECRET
+};
+
 connector.setupApp(app);
 
 if (process.env.SERVER || process.env.COMBINED) {
-  server(app, { queue });
+  server(app, deps);
   connector.startApp(app);
 }
 
