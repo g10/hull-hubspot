@@ -53,7 +53,7 @@ export default function sendUsers(ctx: Object, payload: Object) {
           parsedErrorInfo = JSON.parse(err.extra);
         } catch (e) {} // eslint-disable-line no-empty
         if (parsedErrorInfo.status === "error") {
-          const errors = parsedErrorInfo.failureMessages
+          const errors = _.get(parsedErrorInfo, "failureMessages", [])
             .map((value) => {
               return {
                 user: users[value.index],

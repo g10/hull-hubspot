@@ -23,16 +23,12 @@ export default function server(app: express, deps: Object): express {
     }
   }));
 
-  app.use("/notify", notifHandler({
-    userHandlerOptions: {
-      groupTraits: false
-    },
-    handlers: {
-      "segment:update": actions.command,
-      "segment:delete": actions.command,
-      "user:update": actions.user,
-      "ship:update": actions.command
-    }
+  app.use("/notify", actions.notify());
+
+  app.use("/smart-notifier", actions.notify({
+    type: "next",
+    size: parseInt(process.env.FLOW_CONTROL_SIZE, 10) || 100,
+    in: parseInt(process.env.FLOW_CONTROL_IN, 10) || 10
   }));
 
   app.post("/monitor/checkToken", requireConfiguration, actions.checkToken, responseMiddleware());
