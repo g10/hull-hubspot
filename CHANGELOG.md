@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.11
+- adds missing incoming users metric
+
 ## v0.3.10
 - adds backwards compatible queue job name
 

@@ -111,6 +111,7 @@ export default class SyncAgent {
    */
   saveContacts(contacts) {
     this.logger.debug("saveContacts", contacts.length);
+    this.metric.value("ship.incoming.users", contacts.length);
     return this.setupShip()
       .then(({ hubspotProperties }) => {
         return Promise.all(contacts.map((c) => {
