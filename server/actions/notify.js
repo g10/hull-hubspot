@@ -56,10 +56,10 @@ export default function notifyHandler(flowControl) {
       groupTraits: false
     },
     handlers: {
-      "user:update": shipUpdateHandler,
+      "user:update": userUpdateHandler,
       "segment:update": shipUpdateHandler,
       "segment:delete": shipUpdateHandler,
-      "ship:update": userUpdateHandler
+      "ship:update": shipUpdateHandler
     }
   });
 }
