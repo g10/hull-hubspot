@@ -109,26 +109,29 @@ export default class SyncAgent {
    * @param hubspotProperties
    * @param contacts
    */
-  saveContacts(hubspotProperties, contacts) {
+  saveContacts(contacts) {
     this.logger.debug("saveContacts", contacts.length);
-    return Promise.all(contacts.map((c) => {
-      const traits = this.mapping.getHullTraits(hubspotProperties, c);
-      if (!traits.email) {
-        return this.client.asUser(traits).logger.info("incoming.user.skip");
-      }
-      const ident = this.mapping.getIdentFromHubspot(c);
-      this.logger.debug("incoming.user", { ident, traits });
-      const asUser = this.client.asUser(ident);
-      return asUser.traits(traits)
-        .then(
-          () => asUser.logger.info("incoming.user.success", { traits }),
-          (error) => asUser.logger.error("incoming.user.error", {
-            hull_summary: `Fetching data from Hubspot returned an error: ${_.get(error, "message", "")}`,
-            traits,
-            errors: error
-          })
-        );
-    }));
+    return this.setupShip()
+      .then(({ hubspotProperties }) => {
+        return Promise.all(contacts.map((c) => {
+          const traits = this.mapping.getHullTraits(hubspotProperties, c);
+          if (!traits.email) {
+            return this.client.asUser(traits).logger.info("incoming.user.skip");
+          }
+          const ident = this.mapping.getIdentFromHubspot(c);
+          this.logger.debug("incoming.user", { ident, traits });
+          const asUser = this.client.asUser(ident);
+          return asUser.traits(traits)
+            .then(
+              () => asUser.logger.info("incoming.user.success", { traits }),
+              (error) => asUser.logger.error("incoming.user.error", {
+                hull_summary: `Fetching data from Hubspot returned an error: ${_.get(error, "message", "")}`,
+                traits,
+                errors: error
+              })
+            );
+        }));
+      });
   }
 
   userWhitelisted(user) {

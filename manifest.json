@@ -2,12 +2,13 @@
   "name": "Hubspot",
   "description": "Sync a Hubspot Channel whenever a User enters or leaves a Segment",
   "picture": "picture.png",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "tags": [
     "outgoing",
     "incoming",
     "batch",
-    "oneColumn"
+    "oneColumn",
+    "smart-notifier"
   ],
   "settings": [],
   "private_settings": [
@@ -126,7 +127,7 @@
   "ui": false,
   "subscriptions": [
     {
-      "url": "/notify"
+      "url": "/smart-notifier"
     }
   ],
   "schedules": [

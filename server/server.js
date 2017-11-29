@@ -1,31 +1,49 @@
 /* @flow */
 import express from "express";
 import queueUiRouter from "hull/lib/infra/queue/ui-router";
+import cors from "cors";
+import { notifHandler, responseMiddleware } from "hull/lib/utils";
 
-import WebAppRouter from "./router/web-app-router";
-import WebOauthRouter from "./router/web-oauth-router";
+import requireConfiguration from "./lib/middleware/require-configuration";
+import appMiddleware from "./lib/middleware/app";
 
-import MonitorController from "./controller/monitor";
-import UsersController from "./controller/users";
-import FetchAllController from "./controller/fetch-all";
-import SyncController from "./controller/sync";
-import NotifyController from "./controller/notify";
+import * as actions from "./actions";
 
-export default function server(app: express, { queue }: Object): express {
-  const clientID = process.env.CLIENT_ID;
-  const clientSecret = process.env.CLIENT_SECRET;
-  const hostSecret = process.env.SECRET;
+export default function server(app: express, deps: Object): express {
+  const { queue, hostSecret } = deps;
 
-  const controllers = {
-    monitorController: MonitorController,
-    fetchAllController: FetchAllController,
-    usersController: UsersController,
-    notifyController: NotifyController,
-    syncController: SyncController
-  };
+  app.use(appMiddleware());
 
-  app.use("/", WebAppRouter({ ...controllers }));
-  app.use("/", WebOauthRouter({ clientID, clientSecret }));
+  app.post("/fetch-all", requireConfiguration, actions.fetchAll, responseMiddleware());
+  app.post("/sync", requireConfiguration, actions.fetch, responseMiddleware());
+
+  app.use("/batch", requireConfiguration, notifHandler({
+    handlers: {
+      "user:update": actions.handleBatch,
+    }
+  }));
+
+  app.use("/notify", actions.notify());
+
+  app.use("/smart-notifier", actions.notify({
+    type: "next",
+    size: parseInt(process.env.FLOW_CONTROL_SIZE, 10) || 100,
+    in: parseInt(process.env.FLOW_CONTROL_IN, 10) || 10,
+    in_time: parseInt(process.env.FLOW_CONTROL_IN_TIME, 10) || 10
+  }));
+
+  app.post("/monitor/checkToken", requireConfiguration, actions.checkToken, responseMiddleware());
+
+  app.all("/schema/contact_properties", cors(), requireConfiguration, actions.getContactProperties, responseMiddleware());
+
+  app.post("/migrate", requireConfiguration, (req, res, next) => {
+    req.shipApp.syncAgent.migrateSettings().then(next, next);
+  }, responseMiddleware());
+
+  app.all("/status", actions.statusCheck);
+
+  app.use("/auth", actions.oauth(deps));
+
   if (queue.adapter.app) {
     app.use("/kue", queueUiRouter({ hostSecret, queue }));
   }

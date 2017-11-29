@@ -16,7 +16,7 @@ export default function handleBatch(ctx, messages) {
   if (filteredUsers.length === 0) {
     return Promise.resolve("ok");
   }
-  return ctx.enqueue("sendUsersJob", {
+  return ctx.enqueue("sendUsers", {
     users: filteredUsers
   });
 }

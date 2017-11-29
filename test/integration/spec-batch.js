@@ -1,41 +1,47 @@
 const Minihull = require("minihull");
 const expect = require("chai").expect;
 
-const Minihubspot = require("./minihubspot");
-const bootstrap = require("./bootstrap");
+const Minihubspot = require("./support/minihubspot");
+const bootstrap = require("./support/bootstrap");
 
-process.env.CLIENT_ID = "123";
-process.env.CLIENT_SECRET = "abc";
 process.env.OVERRIDE_HUBSPOT_URL = "http://localhost:8002";
 
 describe("Hubspot", function test() {
   let server, minihull, minihubspot;
+
   beforeEach((done) => {
     minihull = new Minihull();
     minihubspot = new Minihubspot();
-    server = bootstrap();
-    setTimeout(() => {
-      minihull.listen(8001);
-      minihull.install("http://localhost:8000")
-        .then(() => {
-          minihull.updateFirstShip({
-            token: "hubspotABC"
-          });
-          done();
-        });
-    }, 100);
-
+    server = bootstrap(8000);
+    minihull.stubConnector({
+      id: "123456789012345678901234",
+      private_settings: {
+        token: "hubspotABC",
+        sync_fields_to_hubspot: [{
+          name: "custom_date_hubspot_create_at",
+          hull: "custom_date_created_at"
+        }, {
+          name: "custom_hubspot_create_at",
+          hull: "custom_created_at"
+        }]
+      }
+    });
     minihubspot.listen(8002);
+    minihull.listen(8001).then(done);
   });
 
   it("should pass batch extract to hubspot batch endpoint", (done) => {
-    minihubspot.stubPost("/contacts/v1/contact/batch")
+    minihubspot.stubApp("post", "/contacts/v1/contact/batch")
       .callsFake((req, res) => {
         res.status(202).end();
       });
-    minihull.fakeUsers(1);
-    minihull.sendBatchToFirstShip().then(() => {});
-    minihubspot.on("incoming.request#7", (req) => {
+    minihull.stubBatch([{
+      email: "foo@bar.com",
+      first_name: "Foo",
+      last_name: "Bar"
+    }]);
+    minihull.batchConnector("123456789012345678901234", "http://localhost:8000/batch");
+    minihubspot.on("incoming.request#6", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.eq("/contacts/v1/contact/batch/?auditId=Hull");
       expect(lastReq.body).to.be.an("array");
@@ -46,8 +52,7 @@ describe("Hubspot", function test() {
   });
 
   it("should handle errors and retry valid users", (done) => {
-    minihull.fakeUsers(3);
-    minihubspot.stubPost("/contacts/v1/contact/batch")
+    minihubspot.stubApp("post", "/contacts/v1/contact/batch")
       .onFirstCall()
       .callsFake((req, res) => {
         res.status(500).json({
@@ -75,8 +80,21 @@ describe("Hubspot", function test() {
       .callsFake((req, res) => {
         res.status(202).end();
       });
-    minihull.sendBatchToFirstShip().then(() => {});
-    minihubspot.on("incoming.request.7", (req) => {
+    minihull.stubBatch([{
+      email: "foo@bar.com",
+      first_name: "Foo",
+      last_name: "Bar"
+    }, {
+      email: "foo1@bar.com",
+      first_name: "Foo1",
+      last_name: "Bar1"
+    }, {
+      email: "foo2@bar.com",
+      first_name: "Foo2",
+      last_name: "Bar2"
+    }]);
+    minihull.batchConnector("123456789012345678901234", "http://localhost:8000/batch");
+    minihubspot.on("incoming.request#6", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.equal("/contacts/v1/contact/batch/?auditId=Hull");
       expect(lastReq.body).to.be.an("array");
@@ -85,7 +103,7 @@ describe("Hubspot", function test() {
       expect(lastReq.body.length).to.be.equal(3);
     });
 
-    minihubspot.on("incoming.request.8", (req) => {
+    minihubspot.on("incoming.request#7", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.equal("/contacts/v1/contact/batch/?auditId=Hull");
       expect(lastReq.body).to.be.an("array");
@@ -93,6 +111,9 @@ describe("Hubspot", function test() {
       expect(lastReq.body[0]).to.have.property("properties");
       expect(lastReq.body.length).to.be.equal(1);
       done();
+    });
+    minihubspot.on("incoming.request", (req) => {
+      console.log(req.method, req.url);
     });
   });
 

@@ -2,8 +2,8 @@ const Minihull = require("minihull");
 const expect = require("chai").expect;
 const moment = require("moment");
 
-const Minihubspot = require("./minihubspot");
-const bootstrap = require("./bootstrap");
+const Minihubspot = require("./support/minihubspot");
+const bootstrap = require("./support/bootstrap");
 
 process.env.CLIENT_ID = "123";
 process.env.CLIENT_SECRET = "abc";
@@ -12,33 +12,30 @@ process.env.TZ = "UTC";
 
 describe("Hubspot properties formatting", function test() {
   let server, minihull, minihubspot;
+
   beforeEach((done) => {
     minihull = new Minihull();
     minihubspot = new Minihubspot();
-    server = bootstrap();
-    setTimeout(() => {
-      minihull.listen(8001);
-      minihull.install("http://localhost:8000")
-        .then(() => {
-          minihull.updateFirstShip({
-            token: "hubspotABC",
-            sync_fields_to_hubspot: [{
-              name: "custom_date_hubspot_create_at",
-              hull: "custom_date_created_at"
-            }, {
-              name: "custom_hubspot_create_at",
-              hull: "custom_created_at"
-            }]
-          });
-          done();
-        });
-    }, 100);
-
+    server = bootstrap(8000);
+    minihull.stubConnector({
+      id: "123456789012345678901234",
+      private_settings: {
+        token: "hubspotABC",
+        sync_fields_to_hubspot: [{
+          name: "custom_date_hubspot_create_at",
+          hull: "custom_date_created_at"
+        }, {
+          name: "custom_hubspot_create_at",
+          hull: "custom_created_at"
+        }]
+      }
+    });
     minihubspot.listen(8002);
+    minihull.listen(8001).then(done);
   });
 
   it("should pass batch extract to hubspot batch endpoint", (done) => {
-    minihubspot.stubGet("/contacts/v2/groups")
+    minihubspot.stubApp("/contacts/v2/groups")
       .callsFake((req, res) => {
         res.json([{
           name: "hull",
@@ -54,18 +51,17 @@ describe("Hubspot properties formatting", function test() {
           }]
         }]);
       });
-    minihubspot.stubPost("/contacts/v1/contact/batch")
+    minihubspot.stubApp("post", "/contacts/v1/contact/batch")
       .callsFake((req, res) => {
         res.status(202).end();
       });
-    minihull.fakeUsers(1);
-    minihull.users().get(0).set("custom_created_at", "2016-08-04T12:49:28Z").write();
-    minihull.users().get(0).set("custom_date_created_at", "2016-08-04T12:49:28Z").write();
-    minihull.sendBatchToFirstShip().then(() => {});
-    minihubspot.on("incoming.request", (req) => {
-      console.log(req.method, req.url);
-    });
-    minihubspot.on("incoming.request#5", (req) => {
+    minihull.stubBatch([{
+      email: "foo@bar.com",
+      custom_created_at: "2016-08-04T12:49:28Z",
+      custom_date_created_at: "2016-08-04T12:49:28Z"
+    }])
+    minihull.batchConnector("123456789012345678901234", "http://localhost:8000/batch");
+    minihubspot.on("incoming.request#3", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.eq("/contacts/v1/contact/batch/?auditId=Hull");
       expect(lastReq.body).to.be.an("array");

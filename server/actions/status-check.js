@@ -34,10 +34,6 @@ export default function (req: Request, res: Response) {
     pushMessage("No fields are going to be sent from hubspot to hull because of missing configuration.");
   }
 
-  if (_.isEmpty(_.get(ship, "private_settings.synchronized_segments", []))) {
-    pushMessage("No segments will be synchronized because of missing configuration.");
-  }
-
   if (_.get(shipApp, "hubspotAgent")) {
     if (_.get(ship, "private_settings.token")) {
       promises.push(shipApp.hubspotAgent.getContacts({}, 1).then(results => {
