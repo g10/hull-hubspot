@@ -1,7 +1,9 @@
 # Changelog
 
-## v0.3.9
+## v0.3.10
+- adds backwards compatible queue job name
 
+## v0.3.9
 - fix the hull_summary error log line
 - general code and tests restructurization
 - removed most of queue jobs
