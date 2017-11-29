@@ -1189,6 +1189,10 @@ chokidar@^1.4.3, chokidar@^1.6.1:
   optionalDependencies:
     fsevents "^1.0.0"
 
+circle-github-bot@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/circle-github-bot/-/circle-github-bot-0.4.0.tgz#d1702cea19277db4333936647828cd433fbcafd9"
+
 circular-json@^0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/circular-json/-/circular-json-0.3.1.tgz#be8b36aefccde8b3ca7aa2d6afc07a37242c0d2d"
@@ -2132,9 +2136,9 @@ flexbuffer@0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/flexbuffer/-/flexbuffer-0.0.6.tgz#039fdf23f8823e440c38f3277e6fef1174215b30"
 
-flow-bin@^0.46.0:
-  version "0.46.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.46.0.tgz#06ad7fe19dddb1042264438064a2a32fee12b872"
+flow-bin@^0.59.0:
+  version "0.59.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.59.0.tgz#8c151ee7f09f1deed9bf0b9d1f2e8ab9d470f1bb"
 
 fn.name@1.0.x:
   version "1.0.1"
@@ -2444,9 +2448,15 @@ hull-client@1.1.3:
     uuid "^3.0.1"
     winston "^2.2.0"
 
-hull@0.13.2:
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/hull/-/hull-0.13.2.tgz#ce03fb46db0848bfe97eb67e9a005c3c5b5a4541"
+hull-connector-tester@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/hull-connector-tester/-/hull-connector-tester-0.0.1.tgz#e745e08d1670f615b582f1774902c49401c5160c"
+  dependencies:
+    circle-github-bot "^0.4.0"
+
+hull@0.13.5:
+  version "0.13.5"
+  resolved "https://registry.yarnpkg.com/hull/-/hull-0.13.5.tgz#4023e33a7ba147bd354b6ce02761d07b17c35c77"
   dependencies:
     JSONStream "^1.1.2"
     aws-sdk "^2.81.0"

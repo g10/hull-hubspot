@@ -43,7 +43,10 @@ export default function sendUsers(ctx: Object, payload: Object) {
         }
 
         if (res.statusCode === 202) {
-          users.map(u => ctx.client.asUser(_.pick(u, ["email", "id", "external_id"])).logger.info("outgoing.user.success"));
+          users.map(hullUser => {
+            const user = _.find(body, { email: hullUser.email });
+            return ctx.client.asUser(hullUser).logger.info("outgoing.user.success", user.properties);
+          });
           return Promise.resolve();
         }
         return Promise.reject(new Error("Error in create/update batch"));
@@ -77,7 +80,10 @@ export default function sendUsers(ctx: Object, payload: Object) {
             return ctx.shipApp.hubspotAgent.batchUsers(retryBody)
               .then(res => {
                 if (res.statusCode === 202) {
-                  retryBody.map(u => ctx.client.asUser(_.pick(u, ["email", "id", "external_id"])).logger.info("outgoing.user.success"));
+                  retryBody.map((hullUser) => {
+                    const user = _.find(retryBody, { email: hullUser.email });
+                    return ctx.client.asUser(hullUser).logger.info("outgoing.user.success", user.properties);
+                  });
                   return Promise.resolve("ok");
                 }
                 return Promise.reject(new Error("Error in create/update batch"));

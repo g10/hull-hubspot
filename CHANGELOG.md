@@ -1,10 +1,12 @@
 # Changelog
 
 ## v0.3.9
+
 - fix the hull_summary error log line
 - general code and tests restructurization
 - removed most of queue jobs
 - dependencies cleanup
+- fix overwrite param for outgoing traffic
 
 ## v0.3.8
 - upgrade oauth strategy to v2.0
