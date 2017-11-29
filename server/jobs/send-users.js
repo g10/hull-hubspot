@@ -29,7 +29,6 @@ export default function sendUsers(ctx: Object, payload: Object) {
     .then(({ hubspotProperties }) => {
       const body = users.map((user) => {
         const properties = ctx.shipApp.syncAgent.mapping.getHubspotProperties(ctx.segments, hubspotProperties, user);
-        ctx.client.logger.debug("outgoing.user", { email: user.email, properties });
         return {
           email: user.email,
           properties

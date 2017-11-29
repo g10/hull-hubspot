@@ -108,8 +108,8 @@ export default class Mapping {
         : _.get(userData, `traits_${prop.hull}`);
 
       if (!_.get(prop, "overwrite") && _.get(prop, "default")) {
-        value = _.has(userData, _.get(prop, "default.hull"))
-          ? _.get(userData, _.get(prop, "default.hull"))
+        value = _.has(userData, `traits_${_.get(prop, "default.hull")}`)
+          ? _.get(userData, `traits_${_.get(prop, "default.hull")}`)
           : value;
       }
 
