@@ -1,7 +1,6 @@
 import Promise from "bluebird";
 import request from "superagent";
 import prefixPlugin from "superagent-prefix";
-import superagentPromisePlugin from "superagent-promise-plugin";
 
 export default class HubspotClient {
   constructor({ ship, client, metric }) {
@@ -16,7 +15,6 @@ export default class HubspotClient {
     const accessToken = this.ship.private_settings.token;
     return req
       .use(prefixPlugin(process.env.OVERRIDE_HUBSPOT_URL || "https://api.hubapi.com"))
-      .use(superagentPromisePlugin)
       .set("Authorization", `Bearer ${accessToken}`)
       .on("request", (reqData) => {
         this.metric.increment("ship.service_api.call", 1);
