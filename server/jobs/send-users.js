@@ -63,8 +63,7 @@ export default function sendUsers(ctx: Object, payload: Object) {
               };
             });
           errors.forEach(data => {
-            const ident = _.pick(data, ["email", "id", "external_id"]);
-            ctx.client.asUser(ident).logger.error("outgoing.user.error", {
+            ctx.client.asUser(data.user).logger.error("outgoing.user.error", {
               hull_summary: "Sending data to Hubspot returned an error",
               errors: data.error
             });

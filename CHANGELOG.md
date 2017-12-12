@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.12
+- adds missing outgoing.user.error ident
+- upgrade hull-node to v0.13.9
+- upgrade superagent to latest v3 (removed promise plugin)
+
 ## v0.3.11
 - adds missing incoming users metric
 
