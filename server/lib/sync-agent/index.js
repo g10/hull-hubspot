@@ -117,11 +117,16 @@ export default class SyncAgent {
         return Promise.all(contacts.map((c) => {
           const traits = this.mapping.getHullTraits(hubspotProperties, c);
           if (!traits.email) {
-            return this.client.asUser(traits).logger.info("incoming.user.skip");
+            return this.logger.info("incoming.user.skip", { contact: c });
           }
           const ident = this.mapping.getIdentFromHubspot(c);
           this.logger.debug("incoming.user", { ident, traits });
-          const asUser = this.client.asUser(ident);
+          let asUser;
+          try {
+            asUser = this.client.asUser(ident);
+          } catch (error) {
+            return this.logger.info("incoming.user.skip", { contact: c, error });
+          }
           return asUser.traits(traits)
             .then(
               () => asUser.logger.info("incoming.user.success", { traits }),

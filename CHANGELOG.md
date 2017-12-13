@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.14
+- skip incoming users without proper ident information
+
 ## v0.3.13
 - make fetchAll operation run in background
 
