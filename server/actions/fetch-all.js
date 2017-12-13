@@ -11,8 +11,6 @@ function fetchAllPage(ctx, payload) {
   const count = payload.count;
   const offset = payload.offset || 0;
   const progress = payload.progress || 0;
-
-  ctx.client.logger.info("incoming.job.start", { jobName: "fetch-all", type: "user" });
   // TODO: pick up from job progress previous offset
   return hubspotAgent.getContacts(syncAgent.mapping.getHubspotPropertiesKeys(), count, offset)
     .then((data) => {
@@ -23,7 +21,7 @@ function fetchAllPage(ctx, payload) {
         newProgress
       };
       // TODO: save offset to job progress
-      ctx.client.logger.info("incoming.job.progress", { jobName: "fetch-all", progress: newProgress, stepName: "fetch-all-progress" });
+      ctx.client.logger.info("incoming.job.progress", { jobName: "fetch-all", progress: newProgress, stepName: "fetch-all-progress", info });
       ctx.shipApp.progressAgent.update(newProgress, data.body["has-more"]);
 
       if (data.body.contacts.length > 0) {
@@ -39,19 +37,20 @@ function fetchAllPage(ctx, payload) {
           progress: newProgress
         });
       }
-      return ctx.client.logger.info("incoming.job.success", { jobName: "fetch-all" });
+      return Promise.resolve();
     });
 }
 
 
 export default function fetchAllAction(req, res) {
   const count = 100;
-
+  res.end("ok");
+  req.hull.client.logger.info("incoming.job.start", { jobName: "fetch-all", type: "user" });
+  req.hull.shipApp.progressAgent.start();
   return fetchAllPage(req.hull, {
     count
   })
   .then(() => {
-    req.hull.shipApp.progressAgent.start();
-    res.end("ok");
+    return req.hull.client.logger.info("incoming.job.success", { jobName: "fetch-all" });
   });
 }

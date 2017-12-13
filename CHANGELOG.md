@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.13
+- make fetchAll operation run in background
+
 ## v0.3.12
 - adds missing outgoing.user.error ident
 - upgrade hull-node to v0.13.9
