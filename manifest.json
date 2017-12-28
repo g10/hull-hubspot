@@ -1,6 +1,8 @@
 {
   "name": "Hubspot",
   "description": "Sync a Hubspot Channel whenever a User enters or leaves a Segment",
+  "source": "hubspot",
+  "logo": "logo.png",
   "picture": "picture.png",
   "version": "0.3.14",
   "tags": [
