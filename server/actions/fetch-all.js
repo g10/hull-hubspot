@@ -45,10 +45,12 @@ function fetchAllPage(ctx, payload) {
 export default function fetchAllAction(req, res) {
   const count = 100;
   res.end("ok");
+  const offset = req.query.vidOffset || null;
   req.hull.client.logger.info("incoming.job.start", { jobName: "fetch-all", type: "user" });
   req.hull.shipApp.progressAgent.start();
   return fetchAllPage(req.hull, {
-    count
+    count,
+    offset
   })
   .then(() => {
     return req.hull.client.logger.info("incoming.job.success", { jobName: "fetch-all" });
