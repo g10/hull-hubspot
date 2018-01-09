@@ -15,7 +15,7 @@ export default function server(app: express, deps: Object): express {
   app.use(appMiddleware());
 
   app.post("/fetch-all", requireConfiguration, actions.fetchAll, responseMiddleware());
-  app.post("/sync", requireConfiguration, actions.fetch, responseMiddleware());
+  app.post("/sync", requireConfiguration, actions.fetch);
 
   app.use("/batch", requireConfiguration, notifHandler({
     handlers: {

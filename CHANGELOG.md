@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.17
+- add instrumentation to outgoing calls
+- respond on fetch operation right away
+
 ## v0.3.16
 - hotfix empty sendUsers returned value
 

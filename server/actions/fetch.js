@@ -1,5 +1,5 @@
 /* @flow */
-import { Request, Response, Next } from "express";
+import { Request, Response } from "express";
 import _ from "lodash";
 
 function fetchPage(ctx, payload) {
@@ -12,7 +12,7 @@ function fetchPage(ctx, payload) {
   const page = payload.page || 1;
   ctx.metric.value("ship.incoming.fetch.page", page);
   ctx.client.logger.debug("syncJob.getRecentContacts", { lastFetchAt, stopFetchAt, count, offset, page });
-  ctx.client.logger.info("incoming.job.progress", { jobName: "sync", progress: (page * count), stepName: "sync-recent-contacts" });
+  ctx.client.logger.info("incoming.job.progress", { jobName: "fetch", progress: (page * count), stepName: "sync-recent-contacts" });
   return hubspotAgent.getRecentContacts(syncAgent.mapping.getHubspotPropertiesKeys(), lastFetchAt, stopFetchAt, count, offset)
     .then((res) => {
       const info = {
@@ -27,7 +27,7 @@ function fetchPage(ctx, payload) {
           .nth(-2);
 
         if (res.body["vid-offset"] === res.body.contacts[0].vid) {
-          ctx.client.logger.warn("incoming.job.warning", { jobName: "sync", warnings: "vidOffset moved to the top of the recent contacts list" });
+          ctx.client.logger.warn("incoming.job.warning", { jobName: "fetch", warnings: "vidOffset moved to the top of the recent contacts list" });
           // TODO: call the `syncJob` with timeOffset instead of the vidOffset
         }
         return ctx.shipApp.syncAgent.saveContacts(res.body.contacts)
@@ -40,7 +40,7 @@ function fetchPage(ctx, payload) {
           lastFetchAt, stopFetchAt, count, page: (page + 1), offset: vidOffset, lastModifiedDate
         });
       }
-      ctx.client.logger.info("incoming.job.success", { jobName: "sync" });
+      ctx.client.logger.info("incoming.job.success", { jobName: "fetch" });
       return Promise.resolve("done");
     });
 }
@@ -49,14 +49,16 @@ function fetchPage(ctx, payload) {
  * Handles operation for automatic sync changes of hubspot profiles
  * to hull users.
  */
-export default function fetchAction(req: Request, res: Response, next: Next) {
+export default function fetchAction(req: Request, res: Response) {
   const ctx = req.hull;
   const count = parseInt(process.env.FETCH_CONTACTS_COUNT, 10) || 100;
   const lastFetchAt = ctx.shipApp.hubspotAgent.getLastFetchAt();
   const stopFetchAt = ctx.shipApp.hubspotAgent.getStopFetchAt();
   let lastModifiedDate;
   ctx.client.logger.debug("syncAction.lastFetchAt", { lastFetchAt, stopFetchAt });
-  ctx.client.logger.info("incoming.job.start", { jobName: "sync", type: "user", lastFetchAt, stopFetchAt });
+  ctx.client.logger.info("incoming.job.start", { jobName: "fetch", type: "user", lastFetchAt, stopFetchAt });
+
+  res.json({ ok: true });
 
   return ctx.helpers.updateSettings({
     last_fetch_at: stopFetchAt
@@ -67,5 +69,7 @@ export default function fetchAction(req: Request, res: Response, next: Next) {
       count,
       lastModifiedDate
     });
-  }).then(next, next);
+  }).catch((error) => {
+    ctx.client.logger.info("incoming.job.error", { jobName: "fetch", error });
+  });
 }

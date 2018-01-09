@@ -2,39 +2,33 @@ import Promise from "bluebird";
 import request from "superagent";
 import prefixPlugin from "superagent-prefix";
 
+const { superagentUrlTemplatePlugin, superagentInstrumentationPlugin } = require("hull/lib/utils");
+
 export default class HubspotClient {
   constructor({ ship, client, metric }) {
     this.ship = ship;
     this.client = client;
     this.metric = metric;
 
-    this.req = request;
-  }
-
-  attach(req) {
     const accessToken = this.ship.private_settings.token;
-    return req
+    this.agent = request.agent()
+      .use(superagentUrlTemplatePlugin({}))
+      .use(superagentInstrumentationPlugin({ logger: client.logger, metric }))
       .use(prefixPlugin(process.env.OVERRIDE_HUBSPOT_URL || "https://api.hubapi.com"))
       .set("Authorization", `Bearer ${accessToken}`)
-      .on("request", (reqData) => {
-        this.metric.increment("ship.service_api.call", 1);
-        this.client.logger.debug("hubspotClient.req", reqData.url);
-      });
+      .timeout({ response: 5000 });
   }
 
   get(url) {
-    const req = this.req.get(url);
-    return this.attach(req);
+    return this.agent.get(url);
   }
 
   post(url) {
-    const req = this.req.post(url);
-    return this.attach(req);
+    return this.agent.post(url);
   }
 
   put(url) {
-    const req = this.req.put(url);
-    return this.attach(req);
+    return this.agent.put(url);
   }
 
   refreshAccessToken() {
@@ -43,7 +37,7 @@ export default class HubspotClient {
       return Promise.reject(new Error("Refresh token is not set."));
     }
     this.metric.increment("ship.service_api.call", 1);
-    return this.attach(this.req.post("/oauth/v1/token"))
+    return this.agent.post("/oauth/v1/token")
       .set("Content-Type", "application/x-www-form-urlencoded")
       .send({
         refresh_token: refreshToken,
