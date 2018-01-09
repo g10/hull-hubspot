@@ -17,6 +17,7 @@ export default function notifyHandler(flowControl) {
 
     if (ctx.smartNotifierResponse) {
       ctx.smartNotifierResponse.setFlowControl({
+        type: "next",
         size: 1,
         in: 1
       });
