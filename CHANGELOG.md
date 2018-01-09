@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.15
+- don't queue outgoing traffic
+- upgrade hull-node to v0.13.10
+- add more outgoing skip logging
+- allow to set offset while calling fetchall
+
 ## v0.3.14
 - skip incoming users without proper ident information
 
