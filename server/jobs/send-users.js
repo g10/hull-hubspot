@@ -16,7 +16,8 @@ export default function sendUsers(ctx: Object, payload: Object) {
   const users = (payload.users || []).filter(u => !_.isEmpty(u.email));
 
   if (users.length === 0) {
-    return ctx.client.logger.debug("skip sendUsers - empty users list");
+    ctx.client.logger.debug("skip sendUsers - empty users list");
+    return Promise.resolve();
   }
 
   ctx.client.logger.debug("outgoing.job.start", { count_users: users.length });
