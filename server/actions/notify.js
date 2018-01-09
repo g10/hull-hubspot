@@ -3,6 +3,8 @@ import _ from "lodash";
 
 import { notifHandler, smartNotifierHandler } from "hull/lib/utils";
 
+const sendUsers = require("../jobs/send-users").default;
+
 export default function notifyHandler(flowControl) {
   const notifyFunction = flowControl ? smartNotifierHandler : notifHandler;
 
@@ -12,6 +14,15 @@ export default function notifyHandler(flowControl) {
       ctx.client.logger.error("connector.configuration.error", { errors: "connector is not configured" });
       return Promise.resolve();
     }
+
+    if (ctx.smartNotifierResponse) {
+      ctx.smartNotifierResponse.setFlowControl({
+        type: "next",
+        size: 1,
+        in: 1
+      });
+    }
+
     return ctx.shipApp.syncAgent.setupShip()
       .catch((err) => {
         ctx.client.logger.error("shipUpdateJob.err", err.stack || err);
@@ -35,11 +46,13 @@ export default function notifyHandler(flowControl) {
       if (_.get(changes, "user['traits_hubspot/fetched_at'][1]", false)
         && _.isEmpty(_.get(changes, "segments"))
       ) {
+        ctx.client.asUser(user).logger.info("outgoing.user.skip", { reason: "User just touched by hubspot connector" });
         return usersArr;
       }
 
       user.segment_ids = _.uniq(_.concat(user.segment_ids || [], segments.map(s => s.id)));
       if (!syncAgent.userWhitelisted(user) || _.isEmpty(user.email)) {
+        ctx.client.asUser(user).logger.info("outgoing.user.skip", { reason: "User doesn't match outgoing filter" });
         return usersArr;
       }
 
@@ -47,7 +60,7 @@ export default function notifyHandler(flowControl) {
       return usersArr;
     }, []);
 
-    return ctx.enqueue("sendUsers", { users });
+    return sendUsers(ctx, { users });
   }
 
 
