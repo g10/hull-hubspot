@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.16
+- hotfix empty sendUsers returned value
+
 ## v0.3.15
 - don't queue outgoing traffic
 - upgrade hull-node to v0.13.10
