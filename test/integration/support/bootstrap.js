@@ -1,8 +1,8 @@
 const Hull = require("hull");
 const express = require("express");
 
-const server = require("../../../server/server").default;
-const worker = require("../../../server/worker").default;
+const server = require("../../../server/server");
+const worker = require("../../../server/worker");
 
 module.exports = function bootstrap(port) {
   Hull.logger.transports.console.level = "debug";

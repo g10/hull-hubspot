@@ -1,11 +1,11 @@
-import Promise from "bluebird";
-import _ from "lodash";
+const Promise = require("bluebird");
+const _ = require("lodash");
 
-import ContactProperty from "./contact-property";
-import Mapping from "./mapping";
-import HubspotAgent from "../hubspot-agent";
+const ContactProperty = require("./contact-property");
+const Mapping = require("./mapping");
+const HubspotAgent = require("../hubspot-agent");
 
-export default class SyncAgent {
+class SyncAgent {
 
   constructor(hubspotAgent: HubspotAgent, ctx) {
     const { client, ship, metric, helpers, segments } = ctx;
@@ -148,3 +148,5 @@ export default class SyncAgent {
     return _.intersection(segmentIds, user.segment_ids).length > 0;
   }
 }
+
+module.exports = SyncAgent;

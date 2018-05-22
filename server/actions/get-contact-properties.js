@@ -1,8 +1,8 @@
 /* @flow */
-import { Request, Response } from "express";
-import _ from "lodash";
+const { Request, Response } = require("express");
+const _ = require("lodash");
 
-export default function getContactProperties(req: Request, res: Response) {
+function getContactProperties(req: Request, res: Response) {
   const { hubspotClient } = req.hull.shipApp;
   const { cache } = req.hull;
 
@@ -34,3 +34,5 @@ export default function getContactProperties(req: Request, res: Response) {
       res.json({ options: [] });
     });
 }
+
+module.exports = getContactProperties;

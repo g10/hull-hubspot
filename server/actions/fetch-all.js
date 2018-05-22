@@ -1,4 +1,4 @@
-import Promise from "bluebird";
+const Promise = require("bluebird");
 
 /**
  * Job which performs fetchAll operations queues itself and the import job
@@ -42,7 +42,7 @@ function fetchAllPage(ctx, payload) {
 }
 
 
-export default function fetchAllAction(req, res) {
+function fetchAllAction(req, res) {
   const count = 100;
   res.end("ok");
   const offset = req.query.vidOffset || null;
@@ -56,3 +56,5 @@ export default function fetchAllAction(req, res) {
     return req.hull.client.logger.info("incoming.job.success", { jobName: "fetch-all" });
   });
 }
+
+module.exports = fetchAllAction;

@@ -1,6 +1,6 @@
 /* @flow */
-import _ from "lodash";
-import Promise from "bluebird";
+const _ = require("lodash");
+const Promise = require("bluebird");
 
 /**
  * Sends Hull users to Hubspot contacts using create or update strategy.
@@ -12,7 +12,7 @@ import Promise from "bluebird";
  * @param  {Array} users users from Hull
  * @return {Promise}
  */
-export default function sendUsers(ctx: Object, payload: Object) {
+function sendUsers(ctx: Object, payload: Object) {
   const users = (payload.users || []).filter(u => !_.isEmpty(u.email));
 
   if (users.length === 0) {
@@ -99,3 +99,5 @@ export default function sendUsers(ctx: Object, payload: Object) {
       return Promise.reject(err);
     });
 }
+
+module.exports = sendUsers;

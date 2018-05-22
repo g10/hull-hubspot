@@ -1,8 +1,8 @@
 /* @flow */
 /* eslint-disable */
 
-import _ from "lodash";
-import slug from "slug";
+const _ = require("lodash");
+const slug = require("slug");
 
 const DEFAULT_MAPPING = [
   { "name": "email",                                         "hull": "email",                                       "type": "string",  "title": "Email",                                   "read_only": false },
@@ -54,7 +54,7 @@ const DEFAULT_MAPPING = [
   { "name": "hs_lifecyclestage_other_date",                  "hull": "hubspot/became_other_at",                     "type": "date",    "title": "Became an Other Lifecycle Date",          "read_only": false }
 ];
 
-export function getFieldsToHubspot(ship: any = {}) {
+function getFieldsToHubspot(ship: any = {}) {
   const fields = _.get(ship, "private_settings.sync_fields_to_hubspot") || [];
   return fields.map(f => {
     if (_.isString(f)) {
@@ -73,7 +73,7 @@ export function getFieldsToHubspot(ship: any = {}) {
   }).filter(_.isObject);
 }
 
-export function getFieldsToHull(ship: any = {}) {
+function getFieldsToHull(ship: any = {}) {
   const fields = DEFAULT_MAPPING.slice();
   const addFields = _.get(ship, 'private_settings.sync_fields_to_hull');
 
@@ -89,9 +89,15 @@ export function getFieldsToHull(ship: any = {}) {
 }
 
 
-export function getMap(ship: any) {
+function getMap(ship: any) {
   return {
     to_hull: getFieldsToHull(ship),
     to_hubspot: getFieldsToHubspot(ship)
   }
+}
+
+module.exports = {
+  getFieldsToHull,
+  getFieldsToHubspot,
+  getMap
 }

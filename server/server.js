@@ -1,15 +1,15 @@
 /* @flow */
-import express from "express";
-import queueUiRouter from "hull/lib/infra/queue/ui-router";
-import cors from "cors";
-import { notifHandler, responseMiddleware } from "hull/lib/utils";
+const express = require("express");
+const queueUiRouter = require("hull/lib/infra/queue/ui-router");
+const cors = require("cors");
+const { notifHandler, responseMiddleware } = require("hull/lib/utils");
 
-import requireConfiguration from "./lib/middleware/require-configuration";
-import appMiddleware from "./lib/middleware/app";
+const requireConfiguration = require("./lib/middleware/require-configuration");
+const appMiddleware = require("./lib/middleware/app");
 
-import * as actions from "./actions";
+const actions = require("./actions");
 
-export default function server(app: express, deps: Object): express {
+function server(app: express, deps: Object): express {
   const { queue, hostSecret } = deps;
 
   app.use(appMiddleware());
@@ -49,3 +49,5 @@ export default function server(app: express, deps: Object): express {
   }
   return app;
 }
+
+module.exports = server;

@@ -1,13 +1,15 @@
 /* @flow */
-import { Connector } from "hull";
+const { Connector } = require("hull");
 
-import appMiddleware from "./lib/middleware/app";
+const appMiddleware = require("./lib/middleware/app");
 
-import * as jobs from "./jobs";
+const jobs = require("./jobs");
 
-export default function workerJobs(connector: Connector) {
+function workerJobs(connector: Connector) {
   connector.worker(jobs)
     .use(appMiddleware());
 
   return connector;
 }
+
+module.exports = workerJobs;

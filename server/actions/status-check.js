@@ -1,9 +1,9 @@
 /* @flow */
+import type { $Request, $Response } from "express";
 
-import { Request, Response } from "express";
-import _ from "lodash";
+const _ = require("lodash");
 
-export default function (req: Request, res: Response) {
+function statusCheckAction(req: $Request, res: $Response) {
   const { ship = {}, client = {}, shipApp = {} } = req.hull;
   const messages = [];
   let status = "ok";
@@ -64,3 +64,5 @@ export default function (req: Request, res: Response) {
     return client.put(`${ship.id}/status`, { status, messages });
   });
 }
+
+module.exports = statusCheckAction;

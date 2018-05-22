@@ -1,8 +1,8 @@
-export checkToken from "./check-token";
-export fetchAll from "./fetch-all";
-export fetch from "./fetch";
-export getContactProperties from "./get-contact-properties";
-export handleBatch from "./handle-batch";
-export oauth from "./oauth";
-export statusCheck from "./status-check";
-export notify from "./notify";
+module.exports.checkToken = require("./check-token");
+module.exports.fetchAll = require("./fetch-all");
+module.exports.fetch = require("./fetch");
+module.exports.getContactProperties = require("./get-contact-properties");
+module.exports.handleBatch = require("./handle-batch");
+module.exports.oauth = require("./oauth");
+module.exports.statusCheck = require("./status-check");
+module.exports.notify = require("./notify");

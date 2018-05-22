@@ -1,10 +1,10 @@
-import Promise from "bluebird";
-import request from "superagent";
-import prefixPlugin from "superagent-prefix";
+const Promise = require("bluebird");
+const request = require("superagent");
+const prefixPlugin = require("superagent-prefix");
 
 const { superagentUrlTemplatePlugin, superagentInstrumentationPlugin } = require("hull/lib/utils");
 
-export default class HubspotClient {
+class HubspotClient {
   constructor({ ship, client, metric }) {
     this.ship = ship;
     this.client = client;
@@ -48,3 +48,5 @@ export default class HubspotClient {
       });
   }
 }
+
+module.exports = HubspotClient;

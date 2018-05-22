@@ -1,6 +1,6 @@
-import moment from "moment";
+const moment = require("moment");
 
-export default class ProgressAgent {
+class ProgressAgent {
   constructor({ helpers }) {
     this.helpers = helpers;
   }
@@ -20,3 +20,5 @@ export default class ProgressAgent {
     });
   }
 }
+
+module.exports = ProgressAgent;

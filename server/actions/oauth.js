@@ -1,10 +1,10 @@
 /* @flow */
-import { Strategy as HubspotStrategy } from "passport-hubspot-oauth2.0";
-import { oAuthHandler } from "hull/lib/utils";
-import moment from "moment";
-import Promise from "bluebird";
+const HubspotStrategy = require("passport-hubspot-oauth2.0");
+const { oAuthHandler } = require("hull/lib/utils");
+const moment = require("moment");
+const Promise = require("bluebird");
 
-export default function (deps: Object) {
+function oAuthAction(deps: Object) {
   const {
     clientID,
     clientSecret
@@ -66,3 +66,5 @@ export default function (deps: Object) {
     },
   });
 }
+
+module.exports = oAuthAction;

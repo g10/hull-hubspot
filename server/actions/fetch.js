@@ -1,6 +1,6 @@
 /* @flow */
-import { Request, Response } from "express";
-import _ from "lodash";
+const { Request, Response } = require("express");
+const _ = require("lodash");
 
 function fetchPage(ctx, payload) {
   const { hubspotAgent, syncAgent } = ctx.shipApp;
@@ -49,7 +49,7 @@ function fetchPage(ctx, payload) {
  * Handles operation for automatic sync changes of hubspot profiles
  * to hull users.
  */
-export default function fetchAction(req: Request, res: Response) {
+function fetchAction(req: Request, res: Response) {
   const ctx = req.hull;
   const count = parseInt(process.env.FETCH_CONTACTS_COUNT, 10) || 100;
   const lastFetchAt = ctx.shipApp.hubspotAgent.getLastFetchAt();
@@ -73,3 +73,5 @@ export default function fetchAction(req: Request, res: Response) {
     ctx.client.logger.info("incoming.job.error", { jobName: "fetch", error });
   });
 }
+
+module.exports = fetchAction;

@@ -1,11 +1,11 @@
-import Promise from "bluebird";
-import _ from "lodash";
+const Promise = require("bluebird");
+const _ = require("lodash");
 
-import { notifHandler, smartNotifierHandler } from "hull/lib/utils";
+const { notifHandler, smartNotifierHandler } = require("hull/lib/utils");
 
-const sendUsers = require("../jobs/send-users").default;
+const sendUsers = require("../jobs/send-users");
 
-export default function notifyHandler(flowControl) {
+function notifyHandler(flowControl) {
   const notifyFunction = flowControl ? smartNotifierHandler : notifHandler;
 
   function shipUpdateHandler(ctx) {
@@ -76,3 +76,5 @@ export default function notifyHandler(flowControl) {
     }
   });
 }
+
+module.exports = notifyHandler;

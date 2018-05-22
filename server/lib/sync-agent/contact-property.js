@@ -1,5 +1,5 @@
-import _ from "lodash";
-import Promise from "bluebird";
+const _ = require("lodash");
+const Promise = require("bluebird");
 
 const TYPES_MAPPING = {
   string: { type: "string", fieldType: "text" },
@@ -32,7 +32,7 @@ const TYPES_MAPPING = {
 };
 
 
-export default class ContactProperty {
+class ContactProperty {
   constructor(hubspot, { logger }) {
     this.hubspot = hubspot;
     this.logger = logger;
@@ -140,3 +140,5 @@ export default class ContactProperty {
     };
   }
 }
+
+module.exports = ContactProperty;

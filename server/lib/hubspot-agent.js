@@ -1,10 +1,10 @@
-import moment from "moment";
-import Promise from "bluebird";
-import _ from "lodash";
-import promiseRetry from "promise-retry";
+const moment = require("moment");
+const Promise = require("bluebird");
+const _ = require("lodash");
+const promiseRetry = require("promise-retry");
 
 
-export default class HubspotAgent {
+class HubspotAgent {
 
   constructor(client, hubspotClient, ship, metric, helpers) {
     this.client = client;
@@ -179,3 +179,5 @@ export default class HubspotAgent {
     return moment().format();
   }
 }
+
+module.exports = HubspotAgent;

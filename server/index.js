@@ -1,12 +1,12 @@
 /* @flow */
-import Hull from "hull";
-import { Cache, Queue } from "hull/lib/infra";
-import KueAdapter from "hull/lib/infra/queue/adapter/kue";
-import express from "express";
-import redisStore from "cache-manager-redis";
+const Hull = require("hull");
+const { Cache, Queue } = require("hull/lib/infra");
+const KueAdapter = require("hull/lib/infra/queue/adapter/kue");
+const express = require("express");
+const redisStore = require("cache-manager-redis");
 
-import server from "./server";
-import worker from "./worker";
+const server = require("./server");
+const worker = require("./worker");
 
 const {
   LOG_LEVEL,

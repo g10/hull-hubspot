@@ -1,9 +1,9 @@
-import _ from "lodash";
-import moment from "moment";
+const _ = require("lodash");
+const moment = require("moment");
 
-import { getMap } from "./mapping-data";
+const { getMap } = require("./mapping-data");
 
-export default class Mapping {
+class Mapping {
   constructor(ship, client) {
     this.ship = ship;
     this.client = client;
@@ -172,3 +172,6 @@ export default class Mapping {
     return ident;
   }
 }
+
+
+module.exports = Mapping;
