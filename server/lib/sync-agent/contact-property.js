@@ -31,7 +31,6 @@ const TYPES_MAPPING = {
   }
 };
 
-
 class ContactProperty {
   constructor(hubspot, { logger }) {
     this.hubspot = hubspot;
@@ -42,8 +41,10 @@ class ContactProperty {
     const propertiesList = this.getPropertiesList({ segments, properties });
     return this.ensureHullGroup(groups)
       .then(() => this.ensureCustomProperties(propertiesList, groups))
-      .catch((err) => {
-        this.logger.warn("Error in ContactProperty sync", { message: err.message });
+      .catch(err => {
+        this.logger.warn("Error in ContactProperty sync", {
+          message: err.message
+        });
       });
   }
 
@@ -51,25 +52,37 @@ class ContactProperty {
     const group = _.find(groups, g => g.name === "hull");
     if (group) return Promise.resolve(group);
     return this.hubspot
-              .post("/contacts/v2/groups")
-              .send({
-                name: "hull",
-                displayName: "Hull Properties",
-                displayOrder: 1
-              }).then(res => res.body);
+      .post("/contacts/v2/groups")
+      .send({
+        name: "hull",
+        displayName: "Hull Properties",
+        displayOrder: 1
+      })
+      .then(res => res.body);
   }
 
   ensureCustomProperties(propertiesList, group = {}) {
-    const groupProperties = _.flatten(group.map(g => g.properties)).reduce((props, prop) => {
-      return Object.assign(props, { [prop.name]: prop });
-    }, {});
-    return Promise.all(propertiesList.map(this.ensureProperty.bind(this, groupProperties)))
-                  .then((...props) => this.logger.debug("ContactProperty.ensureCustomProperties", _.map(props[0], p => p.name)));
+    const groupProperties = _.flatten(group.map(g => g.properties)).reduce(
+      (props, prop) => {
+        return Object.assign(props, { [prop.name]: prop });
+      },
+      {}
+    );
+    return Promise.all(
+      propertiesList.map(this.ensureProperty.bind(this, groupProperties))
+    ).then((...props) =>
+      this.logger.debug(
+        "ContactProperty.ensureCustomProperties",
+        _.map(props[0], p => p.name)
+      )
+    );
   }
 
   shouldUpdateProperty(currentValue, newValue) {
     if (newValue.name === "hull_segments") {
-      const currentSegmentNames = (currentValue.options || []).map(o => o.label).sort();
+      const currentSegmentNames = (currentValue.options || [])
+        .map(o => o.label)
+        .sort();
       const newSegmentNames = (newValue.options || []).map(o => o.label).sort();
       return !_.isEqual(currentSegmentNames, newSegmentNames);
     }
@@ -77,29 +90,28 @@ class ContactProperty {
   }
 
   ensureProperty(groupProperties, property) {
-    const exists = groupProperties[property.name]
-      || groupProperties[property.name.replace(/^hull_/, "")];
+    const exists =
+      groupProperties[property.name] ||
+      groupProperties[property.name.replace(/^hull_/, "")];
     if (exists) {
       if (this.shouldUpdateProperty(exists, property)) {
         return this.hubspot
-                  .put(`/contacts/v2/properties/named/${property.name}`)
-                  .send(property)
-                  .then(res => res.body);
+          .put(`/contacts/v2/properties/named/${property.name}`)
+          .send(property)
+          .then(res => res.body);
       }
       return Promise.resolve(exists);
     }
 
     return this.hubspot
-              .post("/contacts/v2/properties")
-              .send(property)
-              .then(res => res.body);
+      .post("/contacts/v2/properties")
+      .send(property)
+      .then(res => res.body);
   }
 
   getPropertiesList({ properties, segments }) {
-    return [
-      this.getHullSegmentsProperty(segments)
-    ]
-      .concat(properties.map(({ label, type, name }, displayOrder) => {
+    return [this.getHullSegmentsProperty(segments)].concat(
+      properties.map(({ label, type, name }, displayOrder) => {
         const propType = TYPES_MAPPING[type] || TYPES_MAPPING.string;
         return {
           ...propType,
@@ -110,7 +122,8 @@ class ContactProperty {
           groupName: "hull",
           formField: false
         };
-      }));
+      })
+    );
   }
 
   getHullSegmentsProperty(segments = []) {

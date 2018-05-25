@@ -7,7 +7,9 @@ class ProgressAgent {
 
   start() {
     return this.helpers.updateSettings({
-      last_fetch_started_at: moment().utc().format(),
+      last_fetch_started_at: moment()
+        .utc()
+        .format(),
       is_fetch_completed: false,
       fetch_count: 0
     });

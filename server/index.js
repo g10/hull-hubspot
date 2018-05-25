@@ -65,4 +65,3 @@ if (process.env.WORKER || process.env.COMBINED) {
   connector.startWorker();
   connector.startWorker("fetch");
 }
-

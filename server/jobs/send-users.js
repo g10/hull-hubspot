@@ -23,78 +23,95 @@ function sendUsers(ctx: Object, payload: Object) {
   ctx.client.logger.debug("outgoing.job.start", { count_users: users.length });
 
   if (users.length > 100) {
-    ctx.client.logger.warn("sendUsers works best for under 100 users at once", users.length);
+    ctx.client.logger.warn(
+      "sendUsers works best for under 100 users at once",
+      users.length
+    );
   }
 
-  return ctx.shipApp.syncAgent.setupShip()
+  return ctx.shipApp.syncAgent
+    .setupShip()
     .then(({ hubspotProperties }) => {
-      const body = users.map((user) => {
-        const properties = ctx.shipApp.syncAgent.mapping.getHubspotProperties(ctx.segments, hubspotProperties, user);
+      const body = users.map(user => {
+        const properties = ctx.shipApp.syncAgent.mapping.getHubspotProperties(
+          ctx.segments,
+          hubspotProperties,
+          user
+        );
         return {
           email: user.email,
           properties
         };
       });
       ctx.metric.value("ship.outgoing.users", body.length);
-      return ctx.shipApp.hubspotAgent.batchUsers(body)
-      .then((res) => {
-        if (res === null) {
-          return Promise.resolve();
-        }
+      return ctx.shipApp.hubspotAgent.batchUsers(body).then(
+        res => {
+          if (res === null) {
+            return Promise.resolve();
+          }
 
-        if (res.statusCode === 202) {
-          users.map(hullUser => {
-            const user = _.find(body, { email: hullUser.email });
-            return ctx.client.asUser(hullUser).logger.info("outgoing.user.success", user.properties);
-          });
-          return Promise.resolve();
-        }
-        return Promise.reject(new Error("Error in create/update batch"));
-      }, (err) => {
-        let parsedErrorInfo = {};
-        try {
-          parsedErrorInfo = JSON.parse(err.extra);
-        } catch (e) {} // eslint-disable-line no-empty
-        if (parsedErrorInfo.status === "error") {
-          const errors = _.get(parsedErrorInfo, "failureMessages", [])
-            .map((value) => {
-              return {
-                user: users[value.index],
-                error: value
-              };
+          if (res.statusCode === 202) {
+            users.map(hullUser => {
+              const user = _.find(body, { email: hullUser.email });
+              return ctx.client
+                .asUser(hullUser)
+                .logger.info("outgoing.user.success", user.properties);
             });
-          errors.forEach(data => {
-            ctx.client.asUser(data.user).logger.error("outgoing.user.error", {
-              hull_summary: "Sending data to Hubspot returned an error",
-              errors: data.error
+            return Promise.resolve();
+          }
+          return Promise.reject(new Error("Error in create/update batch"));
+        },
+        err => {
+          let parsedErrorInfo = {};
+          try {
+            parsedErrorInfo = JSON.parse(err.extra);
+          } catch (e) {} // eslint-disable-line no-empty
+          if (parsedErrorInfo.status === "error") {
+            const errors = _.get(parsedErrorInfo, "failureMessages", []).map(
+              value => {
+                return {
+                  user: users[value.index],
+                  error: value
+                };
+              }
+            );
+            errors.forEach(data => {
+              ctx.client.asUser(data.user).logger.error("outgoing.user.error", {
+                hull_summary: "Sending data to Hubspot returned an error",
+                errors: data.error
+              });
             });
-          });
 
-          const retryBody = body
-            .filter((entry, index) => {
+            const retryBody = body.filter((entry, index) => {
               return !_.find(parsedErrorInfo.failureMessages, { index });
             });
 
-          if (retryBody.length > 0) {
-            return ctx.shipApp.hubspotAgent.batchUsers(retryBody)
-              .then(res => {
-                if (res.statusCode === 202) {
-                  retryBody.map((hullUser) => {
-                    const user = _.find(retryBody, { email: hullUser.email });
-                    return ctx.client.asUser(hullUser).logger.info("outgoing.user.success", user.properties);
-                  });
-                  return Promise.resolve("ok");
-                }
-                return Promise.reject(new Error("Error in create/update batch"));
-              });
+            if (retryBody.length > 0) {
+              return ctx.shipApp.hubspotAgent
+                .batchUsers(retryBody)
+                .then(res => {
+                  if (res.statusCode === 202) {
+                    retryBody.map(hullUser => {
+                      const user = _.find(retryBody, { email: hullUser.email });
+                      return ctx.client
+                        .asUser(hullUser)
+                        .logger.info("outgoing.user.success", user.properties);
+                    });
+                    return Promise.resolve("ok");
+                  }
+                  return Promise.reject(
+                    new Error("Error in create/update batch")
+                  );
+                });
+            }
+            return Promise.resolve("ok");
           }
-          return Promise.resolve("ok");
+          ctx.client.logger.error("Hubspot batch error", err);
+          return Promise.reject(err);
         }
-        ctx.client.logger.error("Hubspot batch error", err);
-        return Promise.reject(err);
-      });
+      );
     })
-    .catch((err) => {
+    .catch(err => {
       ctx.client.logger.error("sendUsers.error", (err && err.stack) || err);
       return Promise.reject(err);
     });
