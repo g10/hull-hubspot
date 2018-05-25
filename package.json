@@ -1,20 +1,8 @@
 {
   "name": "hull-hubspot",
-  "description": "Send Notification of User events and segments to Hubspot",
   "version": "0.3.17",
+  "description": "Send Notification of User events and segments to Hubspot",
   "homepage": "https://github.com/hull-ships/hull-hubspot",
-  "license": "MIT",
-  "main": "bin/start",
-  "author": {
-    "name": "Hull",
-    "email": "contact@hull.io",
-    "url": "https://github.com/hull"
-  },
-  "engines": {
-    "node": "6.12.x",
-    "npm": "3.10.x",
-    "yarn": "1.3.x"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/hull-ships/hull-hubspot"
@@ -22,46 +10,44 @@
   "bugs": {
     "url": "https://github.com/hull-ships/hull-hubspot/issues"
   },
-  "scripts": {
-    "ngrok": "ngrok http 8082 --region eu --subdomain hubspot",
-    "build": "npm run clean && npm run build:server",
-    "build:server": "babel server -d build",
-    "start": "COMBINED=true node build",
-    "start:dev": "COMBINED=true babel-watch -L server",
-    "test": "npm run test:lint && npm run test:flow && npm run test:unit && npm run test:integration && npm run test:manifest",
-    "test:lint": "eslint server",
-    "test:unit": "NODE_ENV=test mocha --require babel-register -R spec ./test/unit",
-    "test:integration": "NODE_ENV=test mocha --require babel-register -R spec ./test/integration",
-    "test:flow": "flow check",
-    "test:manifest": "jsonlint manifest.json -q",
-    "clean": "rimraf dist; rimraf build",
-    "update": "updtr",
-    "postinstall": "npm run build"
+  "license": "MIT",
+  "author": {
+    "name": "Hull",
+    "email": "contact@hull.io",
+    "url": "https://hull.io"
   },
   "keywords": [
     "hull",
     "ship",
+    "connector",
     "hull-ship",
-    "webhooks",
+    "hull-connector",
+    "hull-connector-template",
     "integration",
     "user",
     "sync",
     "hubspot"
   ],
-  "devDependencies": {
-    "babel-eslint": "^7.1.1",
-    "babel-watch": "^2.0.2",
-    "chai": "^4.0.0",
-    "eslint": "^3.2.2",
-    "eslint-config-airbnb-base": "^11.1.0",
-    "eslint-plugin-import": "^2.2.0",
-    "flow-bin": "^0.59.0",
-    "hull-connector-tester": "^0.0.4",
-    "mini-application": "^1.0.5",
-    "minihull": "^2.1.0",
-    "mocha": "^2.5.2",
-    "sinon": "^4.0.2",
-    "updtr": "^0.2.1"
+  "engines": {
+    "node": "8.11.x",
+    "npm": "5.6.x",
+    "yarn": "1.6.x"
+  },
+  "scripts": {
+    "ngrok": "ngrok http 8082 --region eu --subdomain hubspot",
+    "build": "yarn run build:clean && yarn run build:server",
+    "build:clean": "rimraf dist; rimraf build",
+    "build:server": "babel server -d build",
+    "start": "COMBINED=true node -r newrelic build",
+    "start:dev": "COMBINED=true babel-watch -L server",
+    "dev": "yarn run start:dev",
+    "test": "yarn run test:lint && yarn run test:flow && yarn run test:unit && yarn run test:integration",
+    "test:lint": "eslint server",
+    "test:flow": "flow check",
+    "test:unit": "NODE_ENV=test mocha --require babel-register -R spec ./test/unit",
+    "test:integration": "NODE_ENV=test mocha --require babel-register -R spec ./test/integration",
+    "update": "updtr",
+    "postinstall": "yarn run build"
   },
   "dependencies": {
     "babel-cli": "^6.14.0",
@@ -74,7 +60,6 @@
     "cors": "^2.8.1",
     "express": "^4.14.0",
     "hull": "0.13.10",
-    "jsonlint": "^1.6.2",
     "lodash": "^4.14.2",
     "moment": "^2.14.1",
     "newrelic": "^2.4.1",
@@ -85,5 +70,19 @@
     "slug": "^0.9.1",
     "superagent": "^3.8.2",
     "superagent-prefix": "0.0.2"
+  },
+    "devDependencies": {
+    "babel-eslint": "^7.1.1",
+    "babel-watch": "^2.0.2",
+    "chai": "^4.0.0",
+    "eslint": "^3.2.2",
+    "eslint-config-airbnb-base": "^11.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "flow-bin": "^0.59.0",
+    "mini-application": "^1.0.5",
+    "minihull": "^2.1.0",
+    "mocha": "^2.5.2",
+    "sinon": "^4.0.2",
+    "updtr": "^0.2.1"
   }
 }
