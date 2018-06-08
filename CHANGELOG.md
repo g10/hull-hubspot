@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.0
+- upgrade depdencies
+- rewrite import/export syntax
+
 ## v0.3.17
 - add instrumentation to outgoing calls
 - respond on fetch operation right away
