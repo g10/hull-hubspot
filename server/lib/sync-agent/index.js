@@ -1,13 +1,11 @@
-import Promise from "bluebird";
-import _ from "lodash";
+const Promise = require("bluebird");
+const _ = require("lodash");
 
-import ContactProperty from "./contact-property";
-import Mapping from "./mapping";
-import HubspotAgent from "../hubspot-agent";
+const ContactProperty = require("./contact-property");
+const Mapping = require("./mapping");
 
-export default class SyncAgent {
-
-  constructor(hubspotAgent: HubspotAgent, ctx) {
+class SyncAgent {
+  constructor(hubspotAgent, ctx) {
     const { client, ship, metric, helpers, segments } = ctx;
     this.hubspotAgent = hubspotAgent;
     this.client = client;
@@ -18,12 +16,16 @@ export default class SyncAgent {
     this.logger = client.logger;
     this.segments = segments;
 
-    this.contactProperty = new ContactProperty(this.hubspotClient, { logger: this.logger });
+    this.contactProperty = new ContactProperty(this.hubspotClient, {
+      logger: this.logger
+    });
     this.mapping = new Mapping(ship, client);
   }
 
   isConfigured() {
-    return this.ship.private_settings && !_.isEmpty(this.ship.private_settings.token);
+    return (
+      this.ship.private_settings && !_.isEmpty(this.ship.private_settings.token)
+    );
   }
 
   /**
@@ -31,11 +33,11 @@ export default class SyncAgent {
    * @return {Promise}
    */
   setupShip() {
-    return Promise.all([
-      this.syncContactProperties()
-    ]).spread((hubspotProperties) => {
-      return { hubspotProperties };
-    });
+    return Promise.all([this.syncContactProperties()]).spread(
+      hubspotProperties => {
+        return { hubspotProperties };
+      }
+    );
   }
 
   migrateSettings() {
@@ -46,7 +48,7 @@ export default class SyncAgent {
       return Promise.resolve("ok");
     }
 
-    const newSettings = mapping.map((hullTrait) => {
+    const newSettings = mapping.map(hullTrait => {
       if (_.isObject(hullTrait)) {
         return hullTrait;
       }
@@ -77,19 +79,29 @@ export default class SyncAgent {
     return Promise.all([
       this.segments,
       this.hubspotAgent.retryUnauthorized(() => {
-        return this.hubspotClient.get("/contacts/v2/groups").query({ includeProperties: true });
+        return this.hubspotClient
+          .get("/contacts/v2/groups")
+          .query({ includeProperties: true });
       }),
       this.client.utils.properties.get()
     ]).then(([segments = [], groupsResponse = {}, hullProperties = {}]) => {
       const groups = (groupsResponse && groupsResponse.body) || [];
-      const properties = _.reduce(customProps, (props, customProp) => {
-        const hullProp = _.find(hullProperties, { id: customProp.hull });
-        props.push(_.merge({}, customProp, _.pick(hullProp, ["type"])));
-        return props;
-      }, []);
-      return this.contactProperty.sync({
-        segments, groups, properties
-      }).then(() => groups);
+      const properties = _.reduce(
+        customProps,
+        (props, customProp) => {
+          const hullProp = _.find(hullProperties, { id: customProp.hull });
+          props.push(_.merge({}, customProp, _.pick(hullProp, ["type"])));
+          return props;
+        },
+        []
+      );
+      return this.contactProperty
+        .sync({
+          segments,
+          groups,
+          properties
+        })
+        .then(() => groups);
     });
   }
 
@@ -98,8 +110,10 @@ export default class SyncAgent {
     if (segmentIds.length === 0) {
       return true;
     }
-    return _.intersection(segmentIds, user.segment_ids).length > 0
-      && !_.isEmpty(user.email);
+    return (
+      _.intersection(segmentIds, user.segment_ids).length > 0 &&
+      !_.isEmpty(user.email)
+    );
   }
 
   /**
@@ -112,9 +126,9 @@ export default class SyncAgent {
   saveContacts(contacts) {
     this.logger.debug("saveContacts", contacts.length);
     this.metric.value("ship.incoming.users", contacts.length);
-    return this.setupShip()
-      .then(({ hubspotProperties }) => {
-        return Promise.all(contacts.map((c) => {
+    return this.setupShip().then(({ hubspotProperties }) => {
+      return Promise.all(
+        contacts.map(c => {
           const traits = this.mapping.getHullTraits(hubspotProperties, c);
           if (!traits.email) {
             return this.logger.info("incoming.user.skip", { contact: c });
@@ -125,26 +139,40 @@ export default class SyncAgent {
           try {
             asUser = this.client.asUser(ident);
           } catch (error) {
-            return this.logger.info("incoming.user.skip", { contact: c, error });
+            return this.logger.info("incoming.user.skip", {
+              contact: c,
+              error
+            });
           }
-          return asUser.traits(traits)
-            .then(
-              () => asUser.logger.info("incoming.user.success", { traits }),
-              (error) => asUser.logger.error("incoming.user.error", {
-                hull_summary: `Fetching data from Hubspot returned an error: ${_.get(error, "message", "")}`,
+          return asUser.traits(traits).then(
+            () => asUser.logger.info("incoming.user.success", { traits }),
+            error =>
+              asUser.logger.error("incoming.user.error", {
+                hull_summary: `Fetching data from Hubspot returned an error: ${_.get(
+                  error,
+                  "message",
+                  ""
+                )}`,
                 traits,
                 errors: error
               })
-            );
-        }));
-      });
+          );
+        })
+      );
+    });
   }
 
   userWhitelisted(user) {
-    const segmentIds = _.get(this.ship, "private_settings.synchronized_segments", []);
+    const segmentIds = _.get(
+      this.ship,
+      "private_settings.synchronized_segments",
+      []
+    );
     if (segmentIds.length === 0) {
       return true;
     }
     return _.intersection(segmentIds, user.segment_ids).length > 0;
   }
 }
+
+module.exports = SyncAgent;

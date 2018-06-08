@@ -1,2 +1,2 @@
-export sendUsers from "./send-users";
-export sendUsersJob from "./send-users";
+module.exports.sendUsers = require("./send-users");
+module.exports.sendUsersJob = require("./send-users");

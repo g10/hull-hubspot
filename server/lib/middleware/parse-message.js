@@ -1,4 +1,4 @@
-import rawBody from "raw-body";
+const rawBody = require("raw-body");
 
 /**
  * [handle description]
@@ -6,7 +6,7 @@ import rawBody from "raw-body";
  * @param  {Object}   res
  * @param  {Function} next
  */
-export default function handle(req, res, next) {
+function handle(req, res, next) {
   req.hull = req.hull || {};
   rawBody(req, true, (err, body) => {
     if (err) {
@@ -24,3 +24,5 @@ export default function handle(req, res, next) {
     return next();
   });
 }
+
+module.exports = handle;

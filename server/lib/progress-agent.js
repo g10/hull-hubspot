@@ -1,13 +1,15 @@
-import moment from "moment";
+const moment = require("moment");
 
-export default class ProgressAgent {
+class ProgressAgent {
   constructor({ helpers }) {
     this.helpers = helpers;
   }
 
   start() {
     return this.helpers.updateSettings({
-      last_fetch_started_at: moment().utc().format(),
+      last_fetch_started_at: moment()
+        .utc()
+        .format(),
       is_fetch_completed: false,
       fetch_count: 0
     });
@@ -20,3 +22,5 @@ export default class ProgressAgent {
     });
   }
 }
+
+module.exports = ProgressAgent;

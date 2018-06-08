@@ -1,20 +1,30 @@
 /* @flow */
-import { Request, Response, Next } from "express";
+import type { $Request, $Response, NextFunction } from "express";
 
-import HubspotClient from "../hubspot-client";
-import HubspotAgent from "../hubspot-agent";
-import SyncAgent from "../sync-agent";
-import ProgressAgent from "../progress-agent";
+const HubspotClient = require("../hubspot-client");
+const HubspotAgent = require("../hubspot-agent");
+const SyncAgent = require("../sync-agent");
+const ProgressAgent = require("../progress-agent");
 
-export default function () {
-  return function middleware(req: Request, res: Response, next: Next) {
+function middlewareFactory() {
+  return function middleware(
+    req: $Request,
+    res: $Response,
+    next: NextFunction
+  ) {
     req.hull.shipApp = req.hull.shipApp || {};
 
     if (!req.hull || !req.hull.ship) {
       return next();
     }
     const hubspotClient = new HubspotClient(req.hull);
-    const hubspotAgent = new HubspotAgent(req.hull.client, hubspotClient, req.hull.ship, req.hull.metric, req.hull.helpers);
+    const hubspotAgent = new HubspotAgent(
+      req.hull.client,
+      hubspotClient,
+      req.hull.ship,
+      req.hull.metric,
+      req.hull.helpers
+    );
     const syncAgent = new SyncAgent(hubspotAgent, req.hull);
     const progressAgent = new ProgressAgent(req.hull);
 
@@ -28,3 +38,5 @@ export default function () {
     return next();
   };
 }
+
+module.exports = middlewareFactory;

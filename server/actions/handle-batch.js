@@ -1,13 +1,18 @@
-import _ from "lodash";
-import Promise from "bluebird";
+const _ = require("lodash");
+const Promise = require("bluebird");
 
-export default function handleBatch(ctx, messages) {
+function handleBatch(ctx, messages) {
   const users = messages.map(m => {
     const segmentIds = _.compact(m.segments).map(s => s.id);
-    m.user.segment_ids = _.compact(_.uniq((m.user.segment_ids || []).concat(segmentIds)));
+    m.user.segment_ids = _.compact(
+      _.uniq((m.user.segment_ids || []).concat(segmentIds))
+    );
     return m.user;
   });
-  const filteredUsers = users.filter(user => ctx.shipApp.syncAgent.userWhitelisted(user) && !_.isEmpty(user.email));
+  const filteredUsers = users.filter(
+    user =>
+      ctx.shipApp.syncAgent.userWhitelisted(user) && !_.isEmpty(user.email)
+  );
   ctx.client.logger.debug("outgoing.users.batch", {
     preFilter: users.length,
     postFilter: filteredUsers.length
@@ -20,3 +25,5 @@ export default function handleBatch(ctx, messages) {
     users: filteredUsers
   });
 }
+
+module.exports = handleBatch;
