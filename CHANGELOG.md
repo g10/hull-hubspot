@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.0
+- **BREAKING:** change the way outgoing fiter behaves by default - now when empty it skips all users
+
 ## v0.4.0
 - upgrade depdencies
 - rewrite import/export syntax
