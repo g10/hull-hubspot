@@ -4,7 +4,7 @@
   "source": "hubspot",
   "logo": "logo.png",
   "picture": "picture.png",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "tags": [
     "outgoing",
     "incoming",
