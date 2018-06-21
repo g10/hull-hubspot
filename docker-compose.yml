@@ -1,9 +1,9 @@
 version: '2'
 services:
-    npm:
-        image: node:6
+    yarn:
+        image: node:8.11
         env_file: .env
-        entrypoint: npm
+        entrypoint: yarn
         command: run start:dev
         ports:
             - "8083:8083"

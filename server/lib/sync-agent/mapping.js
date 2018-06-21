@@ -70,7 +70,8 @@ class Mapping {
           let val = _.get(userData, `properties[${prop.name}].value`);
           if (prop.type === "number") {
             const numVal = parseFloat(val);
-            if (!Math.isNaN(val)) {
+            // eslint-disable-next-line no-restricted-globals
+            if (!isNaN(val)) {
               val = numVal;
             }
           }
