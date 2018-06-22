@@ -32,18 +32,27 @@ const TYPES_MAPPING = {
 };
 
 class ContactProperty {
-  constructor(hubspot, { logger }) {
+  constructor(hubspot, { logger, metric }) {
     this.hubspot = hubspot;
     this.logger = logger;
+    this.metric = metric;
   }
 
   sync({ segments, groups, properties }) {
-    const propertiesList = this.getPropertiesList({ segments, properties });
+    const uniqueSegments = _.uniqBy(segments, "name");
+    const propertiesList = this.getPropertiesList({
+      segments: uniqueSegments,
+      properties
+    });
     return this.ensureHullGroup(groups)
       .then(() => this.ensureCustomProperties(propertiesList, groups))
       .catch(err => {
-        this.logger.warn("Error in ContactProperty sync", {
-          message: err.message
+        this.logger.error("connector.sync.error", {
+          error: err.response && err.response.body && err.response.body.message
+        });
+        this.metric.event({
+          title: "connector.sync.error",
+          text: JSON.stringify(err.response && err.response.body)
         });
       });
   }

@@ -17,7 +17,8 @@ class SyncAgent {
     this.segments = segments;
 
     this.contactProperty = new ContactProperty(this.hubspotClient, {
-      logger: this.logger
+      logger: this.logger,
+      metric: this.metric
     });
     this.mapping = new Mapping(ship, client);
   }
