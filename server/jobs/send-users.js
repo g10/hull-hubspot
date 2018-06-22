@@ -84,11 +84,21 @@ function sendUsers(ctx: Object, payload: Object) {
               const hubspotPropertyName =
                 data.error.propertyValidationResult &&
                 data.error.propertyValidationResult.name;
-              ctx.client.asUser(data.user).logger.error("outgoing.user.error", {
-                hull_summary: `Sending data to Hubspot returned an error: ${hubspotMessage} on property: ${hubspotPropertyName}. Please review you outgoing fields mapping.`,
-                hubspot_property_name: hubspotPropertyName,
-                errors: data.error
-              });
+              if (hubspotMessage && hubspotPropertyName) {
+                ctx.client
+                  .asUser(data.user)
+                  .logger.error("outgoing.user.error", {
+                    hull_summary: `Sending data to Hubspot returned an error: ${hubspotMessage} on property: ${hubspotPropertyName}. Please review you outgoing fields mapping.`,
+                    hubspot_property_name: hubspotPropertyName,
+                    errors: data.error
+                  });
+              } else if (data.error && data.error.message) {
+                ctx.client
+                  .asUser(data.user)
+                  .logger.error("outgoing.user.error", {
+                    error: data.error && data.error.message
+                  });
+              }
             });
 
             const retryBody = body.filter((entry, index) => {
