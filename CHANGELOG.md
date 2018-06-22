@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.4
+- adjust error reporting on `outgoing.user.error`
+
 ## v0.5.3
 - deduplicate segment names before updateing hull_segments property
 
