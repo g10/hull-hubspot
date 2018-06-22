@@ -76,8 +76,17 @@ function sendUsers(ctx: Object, payload: Object) {
               }
             );
             errors.forEach(data => {
+              const hubspotMessage =
+                data.error.propertyValidationResult &&
+                _.truncate(data.error.propertyValidationResult.message, {
+                  length: 100
+                });
+              const hubspotPropertyName =
+                data.error.propertyValidationResult &&
+                data.error.propertyValidationResult.name;
               ctx.client.asUser(data.user).logger.error("outgoing.user.error", {
-                hull_summary: "Sending data to Hubspot returned an error",
+                hull_summary: `Sending data to Hubspot returned an error: ${hubspotMessage} on property: ${hubspotPropertyName}. Please review you outgoing fields mapping.`,
+                hubspot_property_name: hubspotPropertyName,
                 errors: data.error
               });
             });
