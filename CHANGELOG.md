@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.3
+- deduplicate segment names before updateing hull_segments property
+
 ## v0.5.2
 - adjust error reporting
 
