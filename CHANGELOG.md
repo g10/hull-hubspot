@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.2
+- adjust error reporting
+
 ## v0.5.1
 - fix `isNaN` issue
 
