@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.6
+- fix sending custom email
+
 ## v0.5.5
 - allow to send custom `email` field
 
