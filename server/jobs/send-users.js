@@ -41,7 +41,9 @@ function sendUsers(ctx: Object, payload: Object) {
         const emailProp = _.find(properties, { property: "email" });
         if (emailProp && user.email !== emailProp.value) {
           ctx.client.asUser(user).logger.info("outgoing.user.skip", {
-            reason: `property email (${emailProp.value}) address must match with ident email`
+            reason: `property email (${
+              emailProp.value
+            }) address must match with ident email`
           });
           return batchPayload;
         }
