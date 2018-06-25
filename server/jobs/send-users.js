@@ -32,17 +32,25 @@ function sendUsers(ctx: Object, payload: Object) {
   return ctx.shipApp.syncAgent
     .setupShip()
     .then(({ hubspotProperties }) => {
-      const body = users.map(user => {
+      const body = users.reduce((batchPayload, user) => {
         const properties = ctx.shipApp.syncAgent.mapping.getHubspotProperties(
           ctx.segments,
           hubspotProperties,
           user
         );
-        return {
+        const emailProp = _.find(properties, { property: "email" });
+        if (emailProp && user.email !== emailProp.value) {
+          ctx.client.asUser(user).logger.info("outgoing.user.skip", {
+            reason: `property email (${emailProp.value}) address must match with ident email`
+          });
+          return batchPayload;
+        }
+        batchPayload.push({
           email: user.email,
           properties
-        };
-      });
+        });
+        return batchPayload;
+      }, []);
       ctx.metric.value("ship.outgoing.users", body.length);
       return ctx.shipApp.hubspotAgent.batchUsers(body).then(
         res => {
