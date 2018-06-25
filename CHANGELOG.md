@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.9
+- skip user when we have email mismatch
+
 ## v0.5.8
 - rever sending emails
 
