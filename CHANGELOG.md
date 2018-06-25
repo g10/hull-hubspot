@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.5
+- allow to send custom `email` field
+
 ## v0.5.4
 - adjust error reporting on `outgoing.user.error`
 
