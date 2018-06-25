@@ -1,8 +1,8 @@
 const Promise = require("bluebird");
 const _ = require("lodash");
 
-const ContactProperty = require("./contact-property");
-const Mapping = require("./mapping");
+const ContactProperty = require("./sync-agent/contact-property");
+const MappingUtil = require("./sync-agent/mapping");
 
 class SyncAgent {
   constructor(hubspotAgent, ctx) {
@@ -18,9 +18,10 @@ class SyncAgent {
 
     this.contactProperty = new ContactProperty(this.hubspotClient, {
       logger: this.logger,
-      metric: this.metric
+      metric: this.metric,
+      segments: this.segments
     });
-    this.mapping = new Mapping(ship, client);
+    this.mapping = new MappingUtil(ship, client);
   }
 
   isConfigured() {
@@ -41,51 +42,21 @@ class SyncAgent {
     );
   }
 
-  migrateSettings() {
-    const mapping = this.ship.private_settings.sync_fields_to_hubspot;
-    const stringSettings = _.filter(mapping, _.isString);
-
-    if (stringSettings.length === 0) {
-      return Promise.resolve("ok");
-    }
-
-    const newSettings = mapping.map(hullTrait => {
-      if (_.isObject(hullTrait)) {
-        return hullTrait;
-      }
-      const label = hullTrait
-        .replace(/^traits_/, "")
-        .replace(/\//, "_")
-        .split("_")
-        .map(_.upperFirst)
-        .join(" ");
-      return { hull: hullTrait, name: label, overwrite: false };
-    });
-
-    if (_.isEqual(newSettings, mapping)) {
-      return Promise.resolve("ok");
-    }
-
-    return this.helpers.updateSettings({
-      sync_fields_to_hubspot: newSettings
-    });
-  }
-
   /**
    * makes sure hubspot is properly configured to receive custom properties and segments list
    * @return {Promise}
    */
   syncContactProperties() {
     const customProps = this.mapping.map.to_hubspot;
+    console.log(">>> customProps", customProps);
     return Promise.all([
-      this.segments,
       this.hubspotAgent.retryUnauthorized(() => {
         return this.hubspotClient
           .get("/contacts/v2/groups")
           .query({ includeProperties: true });
       }),
       this.client.utils.properties.get()
-    ]).then(([segments = [], groupsResponse = {}, hullProperties = {}]) => {
+    ]).then(([groupsResponse = {}, hullProperties = {}]) => {
       const groups = (groupsResponse && groupsResponse.body) || [];
       const properties = _.reduce(
         customProps,
@@ -98,7 +69,6 @@ class SyncAgent {
       );
       return this.contactProperty
         .sync({
-          segments,
           groups,
           properties
         })
@@ -106,16 +76,16 @@ class SyncAgent {
     });
   }
 
-  shouldSyncUser(user) {
-    const segmentIds = this.ship.private_settings.synchronized_segments || [];
-    if (segmentIds.length === 0) {
-      return false;
-    }
-    return (
-      _.intersection(segmentIds, user.segment_ids).length > 0 &&
-      !_.isEmpty(user.email)
-    );
-  }
+  // shouldSyncUser(user) {
+  //   const segmentIds = this.ship.private_settings.synchronized_segments || [];
+  //   if (segmentIds.length === 0) {
+  //     return false;
+  //   }
+  //   return (
+  //     _.intersection(segmentIds, user.segment_ids).length > 0 &&
+  //     !_.isEmpty(user.email)
+  //   );
+  // }
 
   /**
    * creates or updates users
@@ -161,6 +131,10 @@ class SyncAgent {
         })
       );
     });
+  }
+
+  handleConnectorUpdate() {
+
   }
 
   userWhitelisted(user) {

@@ -1,14 +1,27 @@
+// @flow
+import type {
+  THullUser,
+  THullUserIdent,
+  THullAttributes
+} from "hull";
+import type {
+  HubspotWriteContact,
+  HubspotWriteProperties,
+  HubspotReadContact
+} from "../../types";
+
 const _ = require("lodash");
 const moment = require("moment");
 
 const { getMap } = require("./mapping-data");
 
-class Mapping {
-  constructor(ship, client) {
+class MappingUtil {
+  constructor(ship, client, segments) {
     this.ship = ship;
     this.client = client;
     this.logger = client.logger;
     this.map = getMap(ship);
+    this.segments = segments;
   }
 
   /**
@@ -53,7 +66,7 @@ class Mapping {
    * @param  {Object} userData Hubspot contact
    * @return {Object}          Hull user traits
    */
-  getHullTraits(hubspotProperties, userData) {
+  getHullTraits(hubspotProperties, userData: HubspotReadContact): THullAttributes {
     const hullTraits = _.reduce(
       this.map.to_hull,
       (traits, prop) => {
@@ -109,6 +122,22 @@ class Mapping {
     return hullTraits;
   }
 
+  getHubspotContact(hubspotProperties: Object, userData: THullUser): HubspotWriteContact {
+    const hubspotWriteProperties = this.getHubspotProperties(
+      hubspotProperties,
+      userData
+    );
+    const hubspotWriteContact: HubspotWriteContact = {
+      properties: hubspotWriteProperties
+    };
+    if (userData["hubspot/id"] && typeof userData["hubspot/id"] === "string") {
+      hubspotWriteContact.vid = userData["hubspot/id"];
+    } else {
+      hubspotWriteContact.email = userData.email;
+    }
+    return hubspotWriteContact;
+  }
+
   /**
    * Maps Hull user data to Hubspot contact properties.
    * It sends only the properties which are not read only - this is controlled
@@ -117,7 +146,8 @@ class Mapping {
    * @param  {Object} userData Hull user object
    * @return {Array}           Hubspot properties array
    */
-  getHubspotProperties(segments, hubspotProperties, userData) {
+  getHubspotProperties(hubspotProperties, userData): HubspotWriteProperties {
+    const segments = this.segments;
     const contactProps = _.reduce(
       this.map.to_hubspot,
       (props, prop) => {
@@ -198,8 +228,8 @@ class Mapping {
    * @param  {Object} hubspotUser
    * @return {Object}
    */
-  getIdentFromHubspot(hubspotUser) {
-    const ident = {};
+  getIdentFromHubspot(hubspotUser: HubspotReadContact): THullUserIdent {
+    const ident: THullUserIdent = {};
 
     if (_.get(hubspotUser, "properties.email.value")) {
       ident.email = _.get(hubspotUser, "properties.email.value");
@@ -212,4 +242,4 @@ class Mapping {
   }
 }
 
-module.exports = Mapping;
+module.exports = MappingUtil;

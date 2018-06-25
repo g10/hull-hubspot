@@ -10,7 +10,24 @@ export type HubspotError = {
   }
 };
 
-export type HubspotProperties = Array<{
+export type HubspotWriteProperties = Array<{
   property: string,
   value: mixed
 }>;
+
+export type HubspotWriteContact = {
+  vid?: string,
+  email?: string,
+  properties: HubspotWriteProperties
+};
+
+export type HubspotReadContact = {
+  addedAt: number,
+  vid: string,
+  "merged-vids": Array<string>,
+  "is-contact": boolean,
+  properties: {
+    [propertyName: string]: mixed,
+    lastmodifieddate: number
+  }
+};

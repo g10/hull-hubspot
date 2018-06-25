@@ -59,15 +59,6 @@ function server(app: express, deps: Object): express {
     responseMiddleware()
   );
 
-  app.post(
-    "/migrate",
-    requireConfiguration,
-    (req, res, next) => {
-      req.shipApp.syncAgent.migrateSettings().then(next, next);
-    },
-    responseMiddleware()
-  );
-
   app.all("/status", actions.statusCheck);
 
   app.use("/auth", actions.oauth(deps));

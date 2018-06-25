@@ -32,14 +32,16 @@ const TYPES_MAPPING = {
 };
 
 class ContactProperty {
-  constructor(hubspot, { logger, metric }) {
+  constructor(hubspot, { logger, metric, segments }) {
     this.hubspot = hubspot;
     this.logger = logger;
     this.metric = metric;
+    this.segments = segments;
   }
 
-  sync({ segments, groups, properties }) {
-    const uniqueSegments = _.uniqBy(segments, "name");
+  sync({ groups, properties }) {
+    console.log({ groups, properties });
+    const uniqueSegments = _.uniqBy(this.segments, "name");
     const propertiesList = this.getPropertiesList({
       segments: uniqueSegments,
       properties
