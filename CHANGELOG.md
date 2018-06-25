@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.8
+- rever sending emails
+
 ## v0.5.7
 - fix sending custom email
 
