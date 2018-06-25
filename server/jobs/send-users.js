@@ -38,8 +38,9 @@ function sendUsers(ctx: Object, payload: Object) {
           hubspotProperties,
           user
         );
+        const propEmail = _.find(properties, { property: "email" });
         return {
-          email: properties.email || user.email,
+          email: propEmail || user.email,
           properties
         };
       });
