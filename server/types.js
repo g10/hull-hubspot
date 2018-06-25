@@ -9,3 +9,8 @@ export type HubspotError = {
     name: string
   }
 };
+
+export type HubspotProperties = Array<{
+  property: string,
+  value: mixed
+}>;
