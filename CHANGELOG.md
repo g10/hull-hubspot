@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.5.9
+- skip user when we have email mismatch
+
+## v0.5.8
+- rever sending emails
+
+## v0.5.7
+- fix sending custom email
+
+## v0.5.6
+- fix sending custom email
+
 ## v0.5.5
 - allow to send custom `email` field
 
