@@ -40,7 +40,7 @@ function sendUsers(ctx: Object, payload: Object) {
         );
         const propEmail = _.find(properties, { property: "email" });
         return {
-          email: propEmail || user.email,
+          email: (propEmail && propEmail.value) || user.email,
           properties
         };
       });
