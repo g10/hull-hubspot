@@ -39,7 +39,7 @@ function sendUsers(ctx: Object, payload: Object) {
           user
         );
         return {
-          email: user.email,
+          email: properties.email || user.email,
           properties
         };
       });
