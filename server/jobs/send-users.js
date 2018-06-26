@@ -63,6 +63,9 @@ function sendUsers(ctx: Object, payload: Object) {
           if (res.statusCode === 202) {
             users.map(hullUser => {
               const user = _.find(body, { email: hullUser.email });
+              if (!user) {
+                return null;
+              }
               return ctx.client
                 .asUser(hullUser)
                 .logger.info("outgoing.user.success", user.properties);
