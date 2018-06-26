@@ -1,42 +1,27 @@
-/* @flow */
-import type { $Request, $Response, NextFunction } from "express";
+// /* @flow */
+// import type { $Request, $Response, NextFunction } from "express";
 
-const HubspotClient = require("../hubspot-client");
-const HubspotAgent = require("../hubspot-agent");
-const SyncAgent = require("../sync-agent");
-const ProgressAgent = require("../progress-agent");
+// const SyncAgent = require("../sync-agent");
 
-function middlewareFactory() {
-  return function middleware(
-    req: $Request,
-    res: $Response,
-    next: NextFunction
-  ) {
-    req.hull.shipApp = req.hull.shipApp || {};
+// function middlewareFactory() {
+//   return function middleware(
+//     req: $Request,
+//     res: $Response,
+//     next: NextFunction
+//   ) {
+//     req.hull.shipApp = req.hull.shipApp || {};
 
-    if (!req.hull || !req.hull.ship) {
-      return next();
-    }
-    const hubspotClient = new HubspotClient(req.hull);
-    const hubspotAgent = new HubspotAgent(
-      req.hull.client,
-      hubspotClient,
-      req.hull.ship,
-      req.hull.metric,
-      req.hull.helpers
-    );
-    const syncAgent = new SyncAgent(hubspotAgent, req.hull);
-    const progressAgent = new ProgressAgent(req.hull);
+//     if (!req.hull || !req.hull.ship) {
+//       return next();
+//     }
+//     const syncAgent = new SyncAgent(req.hull);
 
-    req.hull.shipApp = {
-      hubspotClient,
-      hubspotAgent,
-      syncAgent,
-      progressAgent
-    };
+//     req.hull.shipApp = {
+//       syncAgent
+//     };
 
-    return next();
-  };
-}
+//     return next();
+//   };
+// }
 
-module.exports = middlewareFactory;
+// module.exports = middlewareFactory;

@@ -1,6 +1,6 @@
 const moment = require("moment");
 
-class ProgressAgent {
+class ProgressUtil {
   constructor({ helpers }) {
     this.helpers = helpers;
   }
@@ -23,4 +23,4 @@ class ProgressAgent {
   }
 }
 
-module.exports = ProgressAgent;
+module.exports = ProgressUtil;

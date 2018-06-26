@@ -1,18 +1,19 @@
-/* @flow */
-const express = require("express");
+// @flow
+import type { $Application } from "express";
+
 const queueUiRouter = require("hull/lib/infra/queue/ui-router");
 const cors = require("cors");
-const { notifHandler, responseMiddleware } = require("hull/lib/utils");
+const { smartNotifierHandler, responseMiddleware } = require("hull/lib/utils");
 
+const notificationsConfiguration = require("./notifications-configuration");
 const requireConfiguration = require("./lib/middleware/require-configuration");
-const appMiddleware = require("./lib/middleware/app");
 
 const actions = require("./actions");
 
-function server(app: express, deps: Object): express {
+function server(app: $Application, deps: Object): $Application {
   const { queue, hostSecret } = deps;
 
-  app.use(appMiddleware());
+  // app.use(appMiddleware());
 
   app.post(
     "/fetch-all",
@@ -24,24 +25,22 @@ function server(app: express, deps: Object): express {
 
   app.use(
     "/batch",
-    requireConfiguration,
-    notifHandler({
-      handlers: {
-        "user:update": actions.handleBatch
-      }
+    smartNotifierHandler({
+      handlers: notificationsConfiguration
     })
   );
 
-  app.use("/notify", actions.notify());
-
   app.use(
     "/smart-notifier",
-    actions.notify({
-      type: "next",
-      size: parseInt(process.env.FLOW_CONTROL_SIZE, 10) || 100,
-      in: parseInt(process.env.FLOW_CONTROL_IN, 10) || 10,
-      in_time: parseInt(process.env.FLOW_CONTROL_IN_TIME, 10) || 10
+    smartNotifierHandler({
+      handlers: notificationsConfiguration
     })
+    // actions.notify({
+    //   type: "next",
+    //   size: parseInt(process.env.FLOW_CONTROL_SIZE, 10) || 100,
+    //   in: parseInt(process.env.FLOW_CONTROL_IN, 10) || 10,
+    //   in_time: parseInt(process.env.FLOW_CONTROL_IN_TIME, 10) || 10
+    // })
   );
 
   app.post(

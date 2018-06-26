@@ -1,9 +1,5 @@
 // @flow
-import type {
-  THullUser,
-  THullUserIdent,
-  THullAttributes
-} from "hull";
+import type { THullUser, THullUserIdent, THullAttributes } from "hull";
 import type {
   HubspotWriteContact,
   HubspotWriteProperties,
@@ -66,7 +62,10 @@ class MappingUtil {
    * @param  {Object} userData Hubspot contact
    * @return {Object}          Hull user traits
    */
-  getHullTraits(hubspotProperties, userData: HubspotReadContact): THullAttributes {
+  getHullTraits(
+    hubspotProperties,
+    userData: HubspotReadContact
+  ): THullAttributes {
     const hullTraits = _.reduce(
       this.map.to_hull,
       (traits, prop) => {
@@ -122,7 +121,10 @@ class MappingUtil {
     return hullTraits;
   }
 
-  getHubspotContact(hubspotProperties: Object, userData: THullUser): HubspotWriteContact {
+  getHubspotContact(
+    hubspotProperties: Object,
+    userData: THullUser
+  ): HubspotWriteContact {
     const hubspotWriteProperties = this.getHubspotProperties(
       hubspotProperties,
       userData

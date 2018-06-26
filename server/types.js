@@ -1,4 +1,5 @@
 // @flow
+import type { THullUserUpdateMessage } from "hull";
 
 export type HubspotError = {
   index: number,
@@ -30,4 +31,17 @@ export type HubspotReadContact = {
     [propertyName: string]: mixed,
     lastmodifieddate: number
   }
+};
+
+export type HubspotUserUpdateMessageEnvelope = {
+  message: THullUserUpdateMessage,
+  hubspotWriteContact: HubspotWriteContact,
+  skipReason?: string,
+  error?: string
+};
+
+export type FilterUtilResults<T> = {
+  toInsert: Array<T>,
+  toUpdate: Array<T>,
+  toSkip: Array<T>
 };

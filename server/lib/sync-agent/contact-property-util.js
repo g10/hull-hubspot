@@ -31,7 +31,7 @@ const TYPES_MAPPING = {
   }
 };
 
-class ContactProperty {
+class ContactPropertyUtil {
   constructor(hubspot, { logger, metric, segments }) {
     this.hubspot = hubspot;
     this.logger = logger;
@@ -165,4 +165,4 @@ class ContactProperty {
   }
 }
 
-module.exports = ContactProperty;
+module.exports = ContactPropertyUtil;
