@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.10
+- handle outgoing.user.success correct
+
 ## v0.5.9
 - skip user when we have email mismatch
 
