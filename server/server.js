@@ -15,12 +15,7 @@ function server(app: $Application, deps: Object): $Application {
 
   // app.use(appMiddleware());
 
-  app.post(
-    "/fetch-all",
-    requireConfiguration,
-    actions.fetchAll,
-    responseMiddleware()
-  );
+  app.post("/fetch-all", actions.fetchAll);
   app.post("/sync", actions.fetch);
 
   app.use(
@@ -43,20 +38,9 @@ function server(app: $Application, deps: Object): $Application {
     // })
   );
 
-  app.post(
-    "/monitor/checkToken",
-    requireConfiguration,
-    actions.checkToken,
-    responseMiddleware()
-  );
+  app.post("/monitor/checkToken", actions.checkToken);
 
-  app.all(
-    "/schema/contact_properties",
-    cors(),
-    requireConfiguration,
-    actions.getContactProperties,
-    responseMiddleware()
-  );
+  app.all("/schema/contact_properties", cors(), actions.getContactProperties);
 
   app.all("/status", actions.statusCheck);
 

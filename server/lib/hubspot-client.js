@@ -129,7 +129,8 @@ class HubspotClient {
     const expiresAt = moment(token_fetched_at, "x").add(expires_in, "seconds");
     const willExpireIn = expiresAt.diff(moment(), "seconds");
     const willExpireSoon =
-      willExpireIn <= (parseInt(process.env.HUBSPOT_TOKEN_REFRESH_ADVANCE, 10) || 600); // 10 minutes
+      willExpireIn <=
+      (parseInt(process.env.HUBSPOT_TOKEN_REFRESH_ADVANCE, 10) || 600); // 10 minutes
     this.client.logger.debug("access_token", {
       fetched_at: moment(token_fetched_at, "x").format(),
       expires_in,
@@ -170,7 +171,7 @@ class HubspotClient {
   getAllContacts(
     properties: Array<string>,
     count: number = 100,
-    offset: number = 0
+    offset: ?string = null
   ): Promise<HubspotGetAllContactsResponse> {
     return this.retryUnauthorized(() => {
       return this.agent.get("/contacts/v1/lists/all/contacts/all").query({

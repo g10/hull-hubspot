@@ -108,6 +108,33 @@ class SyncAgent {
     return this.hubspotClient.checkToken();
   }
 
+  getContactProperties() {
+    return this.cache
+      .wrap("contact_properties", () => {
+        return this.hubspotClient.getContactPropertyGroups();
+      })
+      .then(groups => {
+        return {
+          options: groups.map(group => {
+            return {
+              label: group.displayName,
+              options: _.chain(group.properties)
+                .map(prop => {
+                  return {
+                    label: prop.label,
+                    value: prop.name
+                  };
+                })
+                .value()
+            };
+          })
+        };
+      })
+      .catch(() => {
+        return { options: [] };
+      });
+  }
+
   /**
    * Reconcilation of the ship settings
    * @return {Promise}
