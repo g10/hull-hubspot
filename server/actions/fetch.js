@@ -1,6 +1,7 @@
 /* @flow */
 const { Request, Response } = require("express");
 const _ = require("lodash");
+const SyncAgent = require("../lib/sync-agent");
 
 function fetchPage(ctx, payload) {
   const { hubspotAgent, syncAgent } = ctx.shipApp;
@@ -77,39 +78,44 @@ function fetchPage(ctx, payload) {
  * to hull users.
  */
 function fetchAction(req: Request, res: Response) {
+  console.log(">>> TEST");
   const ctx = req.hull;
-  const count = parseInt(process.env.FETCH_CONTACTS_COUNT, 10) || 100;
-  const lastFetchAt = ctx.shipApp.hubspotAgent.getLastFetchAt();
-  const stopFetchAt = ctx.shipApp.hubspotAgent.getStopFetchAt();
-  let lastModifiedDate;
-  ctx.client.logger.debug("syncAction.lastFetchAt", {
-    lastFetchAt,
-    stopFetchAt
-  });
-  ctx.client.logger.info("incoming.job.start", {
-    jobName: "fetch",
-    type: "user",
-    lastFetchAt,
-    stopFetchAt
-  });
+  // const count = parseInt(process.env.FETCH_CONTACTS_COUNT, 10) || 100;
+  // const lastFetchAt = ctx.shipApp.hubspotAgent.getLastFetchAt();
+  // const stopFetchAt = ctx.shipApp.hubspotAgent.getStopFetchAt();
+  // let lastModifiedDate;
+  // ctx.client.logger.debug("syncAction.lastFetchAt", {
+  //   lastFetchAt,
+  //   stopFetchAt
+  // });
+  // ctx.client.logger.info("incoming.job.start", {
+  //   jobName: "fetch",
+  //   type: "user",
+  //   lastFetchAt,
+  //   stopFetchAt
+  // });
 
   res.json({ ok: true });
-
-  return ctx.helpers
-    .updateSettings({
-      last_fetch_at: stopFetchAt
-    })
-    .then(() => {
-      return fetchPage(ctx, {
-        lastFetchAt,
-        stopFetchAt,
-        count,
-        lastModifiedDate
-      });
-    })
-    .catch(error => {
-      ctx.client.logger.info("incoming.job.error", { jobName: "fetch", error });
-    });
+  console.log("TESTTTEET");
+  const syncAgent = new SyncAgent(ctx);
+  syncAgent.fetchRecentContacts().catch(err => {
+    console.log(err);
+  });
+  // return ctx.helpers
+  //   .updateSettings({
+  //     last_fetch_at: stopFetchAt
+  //   })
+  //   .then(() => {
+  //     return fetchPage(ctx, {
+  //       lastFetchAt,
+  //       stopFetchAt,
+  //       count,
+  //       lastModifiedDate
+  //     });
+  //   })
+  //   .catch(error => {
+  //     ctx.client.logger.info("incoming.job.error", { jobName: "fetch", error });
+  //   });
 }
 
 module.exports = fetchAction;

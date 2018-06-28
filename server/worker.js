@@ -1,7 +1,7 @@
 /* @flow */
 const { Connector } = require("hull");
 
-const appMiddleware = require("./lib/middleware/app");
+// const appMiddleware = require("./lib/middleware/app");
 
 const jobs = require("./jobs");
 

@@ -32,12 +32,49 @@ const TYPES_MAPPING = {
 };
 
 class ContactPropertyUtil {
-  constructor(hubspot, { logger, metric, segments }) {
-    this.hubspot = hubspot;
+  constructor({
+    logger,
+    metric,
+    hubspotClient,
+    userSegments,
+    hubspotProperties,
+    hullProperties
+  }) {
+    this.hubspotClient = hubspotClient;
     this.logger = logger;
     this.metric = metric;
-    this.segments = segments;
+    this.userSegments = userSegments;
+
+    this.hubspotProperties = hubspotProperties;
+    this.hullProperties = hullProperties;
   }
+
+  // get
+  // return Promise.all([
+  //     this.hubspotClient.retryUnauthorized(() => {
+  //       return this.hubspotClient
+  //         .get("/contacts/v2/groups")
+  //         .query({ includeProperties: true });
+  //     }),
+  //     this.hullClient.utils.properties.get()
+  //   ]).then(([groupsResponse = {}, hullProperties = {}]) => {
+  //     const groups = (groupsResponse && groupsResponse.body) || [];
+  //     const properties = _.reduce(
+  //       customProps,
+  //       (props, customProp) => {
+  //         const hullProp = _.find(hullProperties, { id: customProp.hull });
+  //         props.push(_.merge({}, customProp, _.pick(hullProp, ["type"])));
+  //         return props;
+  //       },
+  //       []
+  //     );
+  //     return this.contactPropertyUtil
+  //       .sync({
+  //         groups,
+  //         properties
+  //       })
+  //       .then(() => groups);
+  //   });
 
   sync({ groups, properties }) {
     console.log({ groups, properties });
@@ -61,8 +98,10 @@ class ContactPropertyUtil {
 
   ensureHullGroup(groups) {
     const group = _.find(groups, g => g.name === "hull");
-    if (group) return Promise.resolve(group);
-    return this.hubspot
+    if (group) {
+      return Promise.resolve(group);
+    }
+    return this.hubspotClient
       .post("/contacts/v2/groups")
       .send({
         name: "hull",
@@ -80,7 +119,9 @@ class ContactPropertyUtil {
       {}
     );
     return Promise.all(
-      propertiesList.map(this.ensureProperty.bind(this, groupProperties))
+      propertiesList.map(property =>
+        this.ensureProperty(groupProperties, property)
+      )
     ).then((...props) =>
       this.logger.debug(
         "ContactProperty.ensureCustomProperties",
@@ -106,7 +147,7 @@ class ContactPropertyUtil {
       groupProperties[property.name.replace(/^hull_/, "")];
     if (exists) {
       if (this.shouldUpdateProperty(exists, property)) {
-        return this.hubspot
+        return this.hubspotClient
           .put(`/contacts/v2/properties/named/${property.name}`)
           .send(property)
           .then(res => res.body);
@@ -114,7 +155,7 @@ class ContactPropertyUtil {
       return Promise.resolve(exists);
     }
 
-    return this.hubspot
+    return this.hubspotClient
       .post("/contacts/v2/properties")
       .send(property)
       .then(res => res.body);

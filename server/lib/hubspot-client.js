@@ -1,15 +1,29 @@
 // @flow
+import type { IncomingMessage } from "http";
 import type { THullConnector, THullReqContext } from "hull";
 import type {
-  HubspotUserMessageEnvelope
-} from "../types"
+  HubspotUserUpdateMessageEnvelope,
+  HubspotContactPropertyGroups,
+  HubspotReadContact
+} from "../types";
+
+declare type HubspotGetAllContactsResponse = {
+  ...IncomingMessage,
+  body: {
+    contacts: Array<HubspotReadContact>,
+    "has-more": boolean,
+    "time-offset": string,
+    "vid-offset": string
+  }
+};
 
 const _ = require("lodash");
 const Promise = require("bluebird");
 const superagent = require("superagent");
 const prefixPlugin = require("superagent-prefix");
-const promiseRetry = require("promise-retry");
+// const promiseRetry = require("promise-retry");
 const moment = require("moment");
+const stream = require("stream");
 
 const {
   superagentUrlTemplatePlugin,
@@ -43,19 +57,19 @@ class HubspotClient {
       .timeout({ response: 5000 });
   }
 
-  get(url: string): superagent {
-    return this.agent.get(url);
-  }
+  // get(url: string): superagent {
+  //   return this.agent.get(url);
+  // }
 
-  post(url: string): superagent {
-    return this.agent.post(url);
-  }
+  // post(url: string): superagent {
+  //   return this.agent.post(url);
+  // }
 
-  put(url: string): superagent {
-    return this.agent.put(url);
-  }
+  // put(url: string): superagent {
+  //   return this.agent.put(url);
+  // }
 
-  refreshAccessToken(): Promise {
+  refreshAccessToken(): Promise<*> {
     const refreshToken = this.connector.private_settings.refresh_token;
     if (!refreshToken) {
       return Promise.reject(new Error("Refresh token is not set."));
@@ -83,37 +97,25 @@ class HubspotClient {
    * Then it retries the query once.
    * @param {Promise} promise
    */
-  retryUnauthorized(promise) {
-    return promiseRetry(
-      retry => {
-        return promise().catch(err => {
-          if (err.response.unauthorized) {
-            this.client.logger.debug(
-              "retrying query",
-              _.get(err, "response.body")
-            );
-            return this.checkToken({ force: true })
-              .then(() => {
-                // this.hubspotClient.ship = this.ship;
-                return true;
-              })
-              .then(() => retry(err));
-          }
-          this.client.logger.error("non recoverable error");
-          return Promise.reject(err);
-        });
-      },
-      { retries: 0 }
-    ).catch(err => {
-      const simplifiedErr = new Error(_.get(err.response, "body.message"));
-      simplifiedErr.extra = JSON.stringify(_.get(err.response, "body") || {});
-      simplifiedErr.msg = _.get(err, "message", "");
-      return Promise.reject(simplifiedErr);
+  retryUnauthorized(promise: () => Promise<mixed>): Promise<*> {
+    return promise().catch(err => {
+      if (err.response.unauthorized) {
+        this.client.logger.debug("retrying query", _.get(err, "response.body"));
+        console.log("CHECKING TOKEN");
+        return this.checkToken({ force: true })
+          .then(() => {
+            console.log("CHECKED TOKEN");
+            // this.hubspotClient.ship = this.ship;
+            return true;
+          })
+          .then(() => promise());
+      }
+      return Promise.reject(err);
     });
   }
 
-  checkToken({ force = false } = {}) {
-    let { token_fetched_at, expires_in } = this.ship.private_settings;
+  checkToken({ force = false }: { force: boolean } = {}): Promise<*> {
+    let { token_fetched_at, expires_in } = this.connector.private_settings;
     if (!token_fetched_at || !expires_in) {
       this.client.logger.error(
         "checkToken: Ship private settings lack token information"
@@ -127,7 +129,7 @@ class HubspotClient {
     const expiresAt = moment(token_fetched_at, "x").add(expires_in, "seconds");
     const willExpireIn = expiresAt.diff(moment(), "seconds");
     const willExpireSoon =
-      willExpireIn <= (process.env.HUBSPOT_TOKEN_REFRESH_ADVANCE || 600); // 10 minutes
+      willExpireIn <= (parseInt(process.env.HUBSPOT_TOKEN_REFRESH_ADVANCE, 10) || 600); // 10 minutes
     this.client.logger.debug("access_token", {
       fetched_at: moment(token_fetched_at, "x").format(),
       expires_in,
@@ -143,6 +145,7 @@ class HubspotClient {
           return Promise.reject(refreshErr);
         })
         .then(res => {
+          this.agent.set("Authorization", `Bearer ${res.body.access_token}`);
           return this.helpers.updateSettings({
             expires_in: res.body.expires_in,
             token_fetched_at: moment()
@@ -150,10 +153,6 @@ class HubspotClient {
               .format("x"),
             token: res.body.access_token
           });
-        })
-        .then(ship => {
-          this.ship = ship;
-          return "refreshed";
         });
     }
     return Promise.resolve("valid");
@@ -168,14 +167,11 @@ class HubspotClient {
    * @param  {Number} [offset=0]
    * @return {Promise}
    */
-  getContacts(properties, count = 100, offset = 0): Promise<*> {
-    if (count > 100) {
-      return this.client.logger.error(
-        "getContact gets maximum of 100 contacts at once",
-        count
-      );
-    }
-
+  getAllContacts(
+    properties: Array<string>,
+    count: number = 100,
+    offset: number = 0
+  ): Promise<HubspotGetAllContactsResponse> {
     return this.retryUnauthorized(() => {
       return this.agent.get("/contacts/v1/lists/all/contacts/all").query({
         count,
@@ -183,6 +179,41 @@ class HubspotClient {
         property: properties
       });
     });
+  }
+
+  getAllContactsStream(
+    properties: Array<string>,
+    count: number = 100,
+    offset: ?string = null
+  ): stream.Duplex {
+    const duplexStream = new stream.Duplex({
+      objectMode: true,
+      read() {},
+      write() {}
+    });
+    const getAllContacts = this.getAllContacts.bind(this);
+
+    function getAllContactsPage(pageCount, pageOffset) {
+      return getAllContacts(properties, pageCount, pageOffset).then(
+        response => {
+          const contacts = response.body.contacts;
+          const hasMore = response.body["has-more"];
+          const vidOffset = response.body["vid-offset"];
+          if (contacts.length > 0) {
+            duplexStream.push(contacts);
+            if (hasMore) {
+              return getAllContactsPage(pageCount, vidOffset);
+            }
+          }
+          return Promise.resolve();
+        }
+      );
+    }
+
+    getAllContactsPage(count, offset)
+      .then(() => duplexStream.push(null))
+      .catch(error => duplexStream.destroy(error));
+    return duplexStream;
   }
 
   /**
@@ -196,13 +227,12 @@ class HubspotClient {
    * @param  {Number} [offset=0]
    * @return {Promise -> Array}
    */
-  getRecentContacts(
-    properties,
-    lastFetchAt,
-    stopFetchAt,
-    count = 100,
-    offset = 0
-  ) {
+  getRecentlyUpdatedContacts(
+    properties: Array<string>,
+    count: number = 100,
+    offset: ?string = null
+  ): Promise<IncomingMessage> {
+    console.log(">>> getRecentlyUpdatedContacts");
     return this.retryUnauthorized(() => {
       return this.agent
         .get("/contacts/v1/lists/recently_updated/contacts/recent")
@@ -211,30 +241,68 @@ class HubspotClient {
           vidOffset: offset,
           property: properties
         });
-    }).then(res => {
-      res.body.contacts = res.body.contacts.filter(c => {
-        const time = moment(
-          c.properties.lastmodifieddate.value,
-          "x"
-        ).milliseconds(0);
-        return (
-          time.isAfter(lastFetchAt) &&
-          time
-            .subtract(process.env.HUBSPOT_FETCH_OVERLAP_SEC || 10, "seconds")
-            .isBefore(stopFetchAt)
-        );
-      });
-      return res;
     });
   }
 
-  batchContact(envelopes) {
-    // if (_.isEmpty(body)) {
-    //   return Promise.resolve(null);
-    // }
-    const body = envelopes.map(envelope => {
-      return
+  getRecentContactsStream(
+    lastFetchAt: moment,
+    stopFetchAt: moment,
+    properties: Array<string>,
+    count: number = 100,
+    offset: ?string = null
+  ): stream.Duplex {
+    console.log(">> getRecentContactsStream", lastFetchAt, stopFetchAt);
+    const duplexStream = new stream.Duplex({
+      objectMode: true,
+      read() {},
+      write() {}
     });
+    const getRecentlyUpdatedContacts = this.getRecentlyUpdatedContacts.bind(
+      this
+    );
+
+    function getRecentContactsPage(pageCount, pageOffset) {
+      return getRecentlyUpdatedContacts(properties, pageCount, pageOffset).then(
+        response => {
+          const contacts = response.body.contacts.filter(c => {
+            const time = moment(
+              c.properties.lastmodifieddate.value,
+              "x"
+            ).milliseconds(0);
+            console.log(">>> time", time);
+            return (
+              time.isAfter(lastFetchAt) &&
+              time
+                .subtract(
+                  process.env.HUBSPOT_FETCH_OVERLAP_SEC || 10,
+                  "seconds"
+                )
+                .isBefore(stopFetchAt)
+            );
+          });
+          const hasMore = response.body["has-more"];
+          const vidOffset = response.body["vid-offset"];
+          const timeOffset = response.body["time-offset"];
+          if (contacts.length > 0) {
+            duplexStream.push(contacts);
+            if (hasMore) {
+              return getRecentContactsPage(pageCount, vidOffset);
+            }
+          }
+        }
+      );
+    }
+
+    getRecentContactsPage(count, offset)
+      .then(() => duplexStream.push(null))
+      .catch(error => duplexStream.destroy(error));
+    return duplexStream;
+  }
+
+  postContacts(
+    envelopes: Array<HubspotUserUpdateMessageEnvelope>
+  ): Promise<Array<HubspotUserUpdateMessageEnvelope>> {
+    const body = envelopes.map(envelope => envelope.hubspotWriteContact);
     return this.retryUnauthorized(() => {
       return this.agent
         .post("/contacts/v1/contact/batch/")
@@ -243,28 +311,92 @@ class HubspotClient {
         })
         .set("Content-Type", "application/json")
         .send(body);
+    })
+      .then(res => {
+        if (res.statusCode === 202) {
+          return Promise.resolve(envelopes);
+        }
+        const erroredOutEnvelopes = envelopes.map(envelope => {
+          envelope.error = "unknown response from hubspot";
+          return envelope;
+        });
+        return Promise.resolve(erroredOutEnvelopes);
+      })
+      .catch(responseError => {
+        let parsedErrorInfo = {};
+        try {
+          parsedErrorInfo = JSON.parse(responseError.extra);
+        } catch (e) {} // eslint-disable-line no-empty
+        if (parsedErrorInfo.status !== "error") {
+          const erroredOutEnvelopes = envelopes.map(envelope => {
+            envelope.error = "unknown response from hubspot";
+            return envelope;
+          });
+          return Promise.resolve(erroredOutEnvelopes);
+        }
+        const erroredOutEnvelopes = _.get(
+          parsedErrorInfo,
+          "failureMessages",
+          []
+        ).map(error => {
+          const envelope = envelopes[error.index];
+          const hubspotMessage =
+            error.propertyValidationResult &&
+            _.truncate(error.propertyValidationResult.message, {
+              length: 100
+            });
+          const hubspotPropertyName =
+            error.propertyValidationResult &&
+            error.propertyValidationResult.name;
+          envelope.error = hubspotMessage || error.message;
+          envelope.errorProperty = hubspotPropertyName;
+          return envelope;
+        });
+
+        const retryEnvelopes = envelopes.filter((envelope, index) => {
+          return !_.find(parsedErrorInfo.failureMessages, { index });
+        });
+
+        if (retryEnvelopes.length === 0) {
+          return Promise.resolve(erroredOutEnvelopes);
+        }
+        const retryBody = envelopes.map(
+          envelope => envelope.hubspotWriteContact
+        );
+        return this.agent
+          .post("/contacts/v1/contact/batch/")
+          .query({
+            auditId: "Hull"
+          })
+          .set("Content-Type", "application/json")
+          .send(retryBody)
+          .then(res => {
+            if (res.statusCode === 202) {
+              return Promise.resolve(envelopes);
+            }
+            const retryErroredOutEnvelopes = envelopes.map(envelope => {
+              envelope.error = "unknown response from hubspot";
+              return envelope;
+            });
+            return Promise.resolve(retryErroredOutEnvelopes);
+          })
+          .catch(() => {
+            const retryErroredOutEnvelopes = envelopes.map(envelope => {
+              envelope.error = "batch retry rejected";
+              return envelope;
+            });
+            return Promise.resolve(retryErroredOutEnvelopes);
+          });
+      });
+  }
+
+  getContactPropertyGroups(): Promise<HubspotContactPropertyGroups> {
+    return this.retryUnauthorized(() => {
+      return this.agent
+        .get("/contacts/v2/groups")
+        .query({ includeProperties: true })
+        .then(response => response.body);
     });
-  }
-
-  /**
-   * Get information about last import done from Hubspot.
-   * It tries to get the data from user's information, if not available
-   * defaults to one hour from now.
-   *
-   * @return {String} 2016-08-04T12:51:46Z
-   */
-  getLastFetchAt() {
-    const defaultValue = moment()
-      .subtract(1, "hour")
-      .format();
-    return this.connector.private_settings.last_fetch_at || defaultValue;
-  }
-
-  /**
-   * @return {String}
-   */
-  getStopFetchAt() {
-    return moment().format();
   }
 }
 

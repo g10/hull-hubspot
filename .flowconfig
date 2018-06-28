@@ -9,3 +9,6 @@ all=warn
 
 [options]
 include_warnings=true
+
+[libs]
+flow-typed

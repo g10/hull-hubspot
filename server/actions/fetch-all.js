@@ -1,4 +1,5 @@
 const Promise = require("bluebird");
+const SyncAgent = require("../lib/sync-agent");
 
 /**
  * Job which performs fetchAll operations queues itself and the import job
@@ -50,22 +51,26 @@ function fetchAllPage(ctx, payload) {
 }
 
 function fetchAllAction(req, res) {
-  const count = 100;
+  // const count = 100;
   res.end("ok");
-  const offset = req.query.vidOffset || null;
-  req.hull.client.logger.info("incoming.job.start", {
-    jobName: "fetch-all",
-    type: "user"
+  const syncAgent = new SyncAgent(ctx);
+  syncAgent.fetchRecentContacts().catch(err => {
+    console.log(err);
   });
-  req.hull.shipApp.progressAgent.start();
-  return fetchAllPage(req.hull, {
-    count,
-    offset
-  }).then(() => {
-    return req.hull.client.logger.info("incoming.job.success", {
-      jobName: "fetch-all"
-    });
-  });
+  // const offset = req.query.vidOffset || null;
+  // req.hull.client.logger.info("incoming.job.start", {
+  //   jobName: "fetch-all",
+  //   type: "user"
+  // });
+  // req.hull.shipApp.progressAgent.start();
+  // return fetchAllPage(req.hull, {
+  //   count,
+  //   offset
+  // }).then(() => {
+  //   return req.hull.client.logger.info("incoming.job.success", {
+  //     jobName: "fetch-all"
+  //   });
+  // });
 }
 
 module.exports = fetchAllAction;

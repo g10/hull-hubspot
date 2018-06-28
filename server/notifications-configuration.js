@@ -7,10 +7,10 @@ module.exports = {
   },
   "ship:update": ctx => {
     const syncAgent = new SyncAgent(ctx);
-    return syncAgent.syncShip();
+    return syncAgent.syncConnector();
   },
   "segment:update": ctx => {
     const syncAgent = new SyncAgent(ctx);
-    return syncAgent.syncShip();
+    return syncAgent.syncConnector();
   }
 };

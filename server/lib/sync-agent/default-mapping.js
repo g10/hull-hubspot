@@ -1,10 +1,7 @@
 /* @flow */
 /* eslint-disable */
-
-const _ = require("lodash");
-const slug = require("slug");
-
-const DEFAULT_MAPPING = [
+import type { HubspotDefaultContactMapping } from "../../types";
+const DEFAULT_MAPPING: Array<HubspotDefaultContactMapping> = [
   {
     name: "email",
     hull: "email",
@@ -336,59 +333,4 @@ const DEFAULT_MAPPING = [
   }
 ];
 
-function getFieldsToHubspot(ship: any = {}) {
-  const fields = _.get(ship, "private_settings.sync_fields_to_hubspot") || [];
-  return fields
-    .map(f => {
-      if (_.isString(f)) {
-        return false;
-      }
-
-      if (!f.name) {
-        return false;
-      }
-
-      const name =
-        "hull_" +
-        slug(f.name, {
-          replacement: "_",
-          lower: true
-        });
-      return {
-        label: f.name,
-        name,
-        hull: f.hull,
-        default: _.find(DEFAULT_MAPPING, { name: f.name }),
-        overwrite: f.overwrite
-      };
-    })
-    .filter(_.isObject);
-}
-
-function getFieldsToHull(ship: any = {}) {
-  const fields = DEFAULT_MAPPING.slice();
-  const addFields = _.get(ship, "private_settings.sync_fields_to_hull");
-
-  if (addFields && addFields.length > 0) {
-    addFields.map(({ name, hull }) => {
-      if (name && hull) {
-        fields.push({ name, hull: hull.replace(/^traits_/, "") });
-      }
-    });
-  }
-
-  return fields;
-}
-
-function getMap(ship: any) {
-  return {
-    to_hull: getFieldsToHull(ship),
-    to_hubspot: getFieldsToHubspot(ship)
-  };
-}
-
-module.exports = {
-  getFieldsToHull,
-  getFieldsToHubspot,
-  getMap
-};
+module.exports = DEFAULT_MAPPING;

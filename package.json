@@ -82,6 +82,7 @@
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-prettier": "^2.6.0",
     "flow-bin": "^0.73.0",
+    "flow-typed": "^2.4.0",
     "mini-application": "^1.0.5",
     "minihull": "^2.1.0",
     "mocha": "^2.5.2",

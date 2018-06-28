@@ -21,7 +21,7 @@ function server(app: $Application, deps: Object): $Application {
     actions.fetchAll,
     responseMiddleware()
   );
-  app.post("/sync", requireConfiguration, actions.fetch);
+  app.post("/sync", actions.fetch);
 
   app.use(
     "/batch",
