@@ -232,19 +232,24 @@ class SyncAgent {
       filter_results: filterResults
     });
 
-    return this.hubspotClient.postContacts(envelopes).then(resultEnvelopes => {
-      resultEnvelopes.forEach(envelope => {
-        if (envelope.error === undefined) {
-          this.hullClient
-            .asUser(envelope.message.user)
-            .logger.info("outgoing.user.success", envelope.hubspotWriteContact);
-        } else {
-          this.hullClient
-            .asUser(envelope.message.user)
-            .logger.error("outgoing.user.error", envelope.error);
-        }
+    return this.hubspotClient
+      .postContactsEnvelopes(envelopes)
+      .then(resultEnvelopes => {
+        resultEnvelopes.forEach(envelope => {
+          if (envelope.error === undefined) {
+            this.hullClient
+              .asUser(envelope.message.user)
+              .logger.info(
+                "outgoing.user.success",
+                envelope.hubspotWriteContact
+              );
+          } else {
+            this.hullClient
+              .asUser(envelope.message.user)
+              .logger.error("outgoing.user.error", envelope.error);
+          }
+        });
       });
-    });
   }
 
   buildUserUpdateMessageEnvelope(

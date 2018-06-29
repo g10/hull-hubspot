@@ -41,7 +41,7 @@ describe("Hubspot", function test() {
       last_name: "Bar"
     }]);
     minihull.batchConnector("123456789012345678901234", "http://localhost:8000/batch");
-    minihubspot.on("incoming.request#6", (req) => {
+    minihubspot.on("incoming.request#2", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.eq("/contacts/v1/contact/batch/?auditId=Hull");
       expect(lastReq.body).to.be.an("array");
@@ -93,8 +93,9 @@ describe("Hubspot", function test() {
       first_name: "Foo2",
       last_name: "Bar2"
     }]);
+    minihubspot.on("incoming.request", (req) => console.log("MINIHUBSPOT", req.method, req.url));
     minihull.batchConnector("123456789012345678901234", "http://localhost:8000/batch");
-    minihubspot.on("incoming.request#6", (req) => {
+    minihubspot.on("incoming.request#2", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.equal("/contacts/v1/contact/batch/?auditId=Hull");
       expect(lastReq.body).to.be.an("array");
@@ -103,7 +104,7 @@ describe("Hubspot", function test() {
       expect(lastReq.body.length).to.be.equal(3);
     });
 
-    minihubspot.on("incoming.request#7", (req) => {
+    minihubspot.on("incoming.request#3", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.equal("/contacts/v1/contact/batch/?auditId=Hull");
       expect(lastReq.body).to.be.an("array");

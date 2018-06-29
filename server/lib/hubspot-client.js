@@ -5,7 +5,8 @@ import type { THullConnector, THullReqContext } from "hull";
 import type {
   HubspotUserUpdateMessageEnvelope,
   HubspotContactPropertyGroups,
-  HubspotReadContact
+  HubspotReadContact,
+  HubspotWriteContact
 } from "../types";
 
 declare type HubspotGetAllContactsResponse = {
@@ -275,10 +276,7 @@ class HubspotClient {
     });
   }
 
-  postContacts(
-    envelopes: Array<HubspotUserUpdateMessageEnvelope>
-  ): Promise<Array<HubspotUserUpdateMessageEnvelope>> {
-    const body = envelopes.map(envelope => envelope.hubspotWriteContact);
+  postContacts(body: Array<HubspotWriteContact>): Promise<*> {
     return this.retryUnauthorized(() => {
       return this.agent
         .post("/contacts/v1/contact/batch/")
@@ -287,76 +285,71 @@ class HubspotClient {
         })
         .set("Content-Type", "application/json")
         .send(body);
-    })
-      .then(res => {
-        if (res.statusCode === 202) {
-          return Promise.resolve(envelopes);
-        }
-        const erroredOutEnvelopes = envelopes.map(envelope => {
-          envelope.error = "unknown response from hubspot";
-          return envelope;
-        });
-        return Promise.resolve(erroredOutEnvelopes);
-      })
+    });
+  }
+
+  postContactsEnvelopes(
+    envelopes: Array<HubspotUserUpdateMessageEnvelope>
+  ): Promise<Array<HubspotUserUpdateMessageEnvelope>> {
+    const body = envelopes.map(envelope => envelope.hubspotWriteContact);
+
+    function handleSuccessResponse(res) {
+      if (res.statusCode === 202) {
+        console.log("SUCCESS!!!");
+        return Promise.resolve(envelopes);
+      }
+      console.log(">>>>", res.statusCode);
+      const erroredOutEnvelopes = envelopes.map(envelope => {
+        envelope.error = "unknown response from hubspot";
+        return envelope;
+      });
+      return Promise.resolve(erroredOutEnvelopes);
+    }
+
+    return this.postContacts(body)
+      .then(handleSuccessResponse)
       .catch(responseError => {
-        let parsedErrorInfo = {};
-        try {
-          parsedErrorInfo = JSON.parse(responseError.extra);
-        } catch (e) {} // eslint-disable-line no-empty
-        if (parsedErrorInfo.status !== "error") {
+        const errorInfo = responseError.response.body;
+
+        if (errorInfo.status !== "error") {
           const erroredOutEnvelopes = envelopes.map(envelope => {
             envelope.error = "unknown response from hubspot";
             return envelope;
           });
           return Promise.resolve(erroredOutEnvelopes);
         }
-        const erroredOutEnvelopes = _.get(
-          parsedErrorInfo,
-          "failureMessages",
-          []
-        ).map(error => {
-          const envelope = envelopes[error.index];
-          const hubspotMessage =
-            error.propertyValidationResult &&
-            _.truncate(error.propertyValidationResult.message, {
-              length: 100
-            });
-          const hubspotPropertyName =
-            error.propertyValidationResult &&
-            error.propertyValidationResult.name;
-          envelope.error = hubspotMessage || error.message;
-          envelope.errorProperty = hubspotPropertyName;
-          return envelope;
-        });
+        const erroredOutEnvelopes = _.get(errorInfo, "failureMessages", []).map(
+          error => {
+            const envelope = envelopes[error.index];
+            const hubspotMessage =
+              error.propertyValidationResult &&
+              _.truncate(error.propertyValidationResult.message, {
+                length: 100
+              });
+            const hubspotPropertyName =
+              error.propertyValidationResult &&
+              error.propertyValidationResult.name;
+            envelope.error = hubspotMessage || error.message;
+            envelope.errorProperty = hubspotPropertyName;
+            return envelope;
+          }
+        );
 
         const retryEnvelopes = envelopes.filter((envelope, index) => {
-          return !_.find(parsedErrorInfo.failureMessages, { index });
+          return !_.find(errorInfo.failureMessages, { index });
         });
 
         if (retryEnvelopes.length === 0) {
           return Promise.resolve(erroredOutEnvelopes);
         }
-        const retryBody = envelopes.map(
+        const retryBody = retryEnvelopes.map(
           envelope => envelope.hubspotWriteContact
         );
-        return this.agent
-          .post("/contacts/v1/contact/batch/")
-          .query({
-            auditId: "Hull"
-          })
-          .set("Content-Type", "application/json")
-          .send(retryBody)
-          .then(res => {
-            if (res.statusCode === 202) {
-              return Promise.resolve(envelopes);
-            }
-            const retryErroredOutEnvelopes = envelopes.map(envelope => {
-              envelope.error = "unknown response from hubspot";
-              return envelope;
-            });
-            return Promise.resolve(retryErroredOutEnvelopes);
-          })
-          .catch(() => {
+        console.log(retryEnvelopes.length);
+        return this.postContacts(retryBody)
+          .then(handleSuccessResponse)
+          .catch(error => {
+            console.log("RETRY error", error);
             const retryErroredOutEnvelopes = envelopes.map(envelope => {
               envelope.error = "batch retry rejected";
               return envelope;
