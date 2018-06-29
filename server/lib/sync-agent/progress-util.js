@@ -17,8 +17,13 @@ class ProgressUtil {
 
   update(newProgress, hasMore = false) {
     return this.helpers.updateSettings({
-      fetch_count: newProgress,
-      is_fetch_completed: hasMore
+      fetch_count: newProgress
+    });
+  }
+
+  stop() {
+    return this.helpers.updateSettings({
+      is_fetch_completed: true
     });
   }
 }

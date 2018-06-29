@@ -52,7 +52,7 @@ const SyncAgent = require("../lib/sync-agent");
 function fetchAllAction(req, res) {
   res.end("ok");
   const syncAgent = new SyncAgent(req.hull);
-  syncAgent.fetchRecentContacts().catch(err => {
+  syncAgent.fetchAllContacts().catch(err => {
     console.log(err);
   });
   // const offset = req.query.vidOffset || null;

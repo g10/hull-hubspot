@@ -12,10 +12,11 @@ import type {
   HubspotWriteContact
 } from "../types";
 
-const Promise = require("bluebird");
+// const Promise = require("bluebird");
 const _ = require("lodash");
 const moment = require("moment");
 
+const pipeToPromise = require("./pipe-to-promise");
 const HubspotClient = require("./hubspot-client");
 const ContactPropertyUtil = require("./sync-agent/contact-property-util");
 const MappingUtil = require("./sync-agent/mapping-util");
@@ -62,32 +63,34 @@ class SyncAgent {
   /**
    *
    */
-  initialize(): Promise<void> {
+  async initialize({ skipCache = false }: Object = {}): Promise<void> {
     if (this.isInitialized() === true) {
-      return Promise.resolve();
+      return;
     }
-    return Promise.all([
-      this.cache.wrap("hubspotProperties", () => {
-        return this.hubspotClient.getContactPropertyGroups();
-      }),
-      this.cache.wrap("hullProperties", () => {
-        return this.hullClient.utils.properties.get();
-      })
-    ]).spread((hubspotProperties, hullProperties) => {
-      this.contactPropertyUtil = new ContactPropertyUtil({
-        hubspotClient: this.hubspotClient,
-        logger: this.logger,
-        metric: this.metric,
-        userSegments: this.userSegments,
-        hubspotProperties,
-        hullProperties
-      });
-      this.mappingUtil = new MappingUtil({
-        connector: this.connector,
-        hullClient: this.hullClient,
-        hubspotProperties,
-        hullProperties
-      });
+
+    if (skipCache === true) {
+      await this.cache.del("hubspotProperties");
+      await this.cache.del("hullProperties");
+    }
+    const hubspotProperties = await this.cache.wrap("hubspotProperties", () => {
+      return this.hubspotClient.getContactPropertyGroups();
+    });
+    const hullProperties = await this.cache.wrap("hullProperties", () => {
+      return this.hullClient.utils.properties.get();
+    });
+    this.contactPropertyUtil = new ContactPropertyUtil({
+      hubspotClient: this.hubspotClient,
+      logger: this.logger,
+      metric: this.metric,
+      userSegments: this.userSegments,
+      hubspotProperties,
+      hullProperties
+    });
+    this.mappingUtil = new MappingUtil({
+      connector: this.connector,
+      hullClient: this.hullClient,
+      hubspotProperties,
+      hullProperties
     });
   }
 
@@ -146,77 +149,10 @@ class SyncAgent {
       });
       return Promise.resolve();
     }
-    await this.initialize();
+    await this.initialize({ skipCache: true });
 
-    // if (ctx.smartNotifierResponse) {
-    //   ctx.smartNotifierResponse.setFlowControl({
-    //     type: "next",
-    //     size: 1,
-    //     in: 1
-    //   });
-    // }
-
-    return this.syncContactProperties().catch(err => {
-      this.hullClient.logger.error("shipUpdateJob.err", err.stack || err);
-    });
-  }
-
-  // getContactProperties() {
-  //   const customProps = this.mappingUtil.map.to_hubspot;
-  //   return Promise.all([
-  //     this.hubspotClient.retryUnauthorized(() => {
-  //       return this.hubspotClient
-  //         .get("/contacts/v2/groups")
-  //         .query({ includeProperties: true });
-  //     }),
-  //     this.hullClient.utils.properties.get()
-  //   ]).then(([groupsResponse = {}, hullProperties = {}]) => {
-  //     const groups = (groupsResponse && groupsResponse.body) || [];
-  //     const properties = _.reduce(
-  //       customProps,
-  //       (props, customProp) => {
-  //         const hullProp = _.find(hullProperties, { id: customProp.hull });
-  //         props.push(_.merge({}, customProp, _.pick(hullProp, ["type"])));
-  //         return props;
-  //       },
-  //       []
-  //     );
-  //     return properties;
-  //   });
-  // }
-
-  /**
-   * makes sure hubspot is properly configured to receive custom properties and segments list
-   * @return {Promise}
-   */
-  syncContactProperties(): Promise<*> {
-    // this.customPropertyUtil.get;
-    const customProps = this.mappingUtil.map.to_hubspot;
-    return Promise.all([
-      this.hubspotClient.retryUnauthorized(() => {
-        return this.hubspotClient
-          .get("/contacts/v2/groups")
-          .query({ includeProperties: true });
-      }),
-      this.hullClient.utils.properties.get()
-    ]).then(([groupsResponse = {}, hullProperties = {}]) => {
-      const groups = (groupsResponse && groupsResponse.body) || [];
-      const properties = _.reduce(
-        customProps,
-        (props, customProp) => {
-          const hullProp = _.find(hullProperties, { id: customProp.hull });
-          props.push(_.merge({}, customProp, _.pick(hullProp, ["type"])));
-          return props;
-        },
-        []
-      );
-      return this.contactPropertyUtil
-        .sync({
-          groups,
-          properties
-        })
-        .then(() => groups);
-    });
+    const outboundMapping = this.mappingUtil.getContactOutboundMapping();
+    return this.contactPropertyUtil.sync(outboundMapping);
   }
 
   /**
@@ -286,14 +222,9 @@ class SyncAgent {
       return Promise.resolve();
     }
 
-    // if (ctx.smartNotifierResponse && flowControl) {
-    //   ctx.smartNotifierResponse.setFlowControl(flowControl);
-    // }
-
     const envelopes = messages.map(message =>
       this.buildUserUpdateMessageEnvelope(message)
     );
-    console.log("built envelopes");
     const filterResults = this.filterUtil.filterUserUpdateMessageEnvelopes(
       envelopes
     );
@@ -306,11 +237,11 @@ class SyncAgent {
       resultEnvelopes.forEach(envelope => {
         if (envelope.error === undefined) {
           this.hullClient
-            .asUser(envelope.user)
+            .asUser(envelope.message.user)
             .logger.info("outgoing.user.success", envelope.hubspotWriteContact);
         } else {
           this.hullClient
-            .asUser(envelope.user)
+            .asUser(envelope.message.user)
             .logger.error("outgoing.user.error", envelope.error);
         }
       });
@@ -334,8 +265,6 @@ class SyncAgent {
    */
   async fetchRecentContacts(): Promise {
     await this.initialize();
-    console.log(">>> fetchRecentContacts");
-    console.log("AAA", this.mappingUtil.getHubspotPropertiesKeys());
     const lastFetchAt =
       this.connector.private_settings.last_fetch_at ||
       moment()
@@ -343,125 +272,56 @@ class SyncAgent {
         .format();
     const stopFetchAt = moment().format();
     const propertiesToFetch = this.mappingUtil.getHubspotPropertiesKeys();
+    let progress = 0;
+
+    this.hullClient.logger.info("incoming.job.start", {
+      jobName: "fetch",
+      type: "user",
+      lastFetchAt,
+      stopFetchAt,
+      propertiesToFetch
+    });
+    await this.progressUtil.start();
+    await this.helpers.updateSettings({
+      last_fetch_at: stopFetchAt
+    });
+
     const streamOfIncomingContacts = this.hubspotClient.getRecentContactsStream(
       lastFetchAt,
       stopFetchAt,
       propertiesToFetch
     );
 
-    streamOfIncomingContacts.on("data", contacts => {
-      this.saveContacts(contacts);
-    });
+    streamOfIncomingContacts.pipe(
+      pipeToPromise(contacts => {
+        progress += contacts.length;
+        this.progressUtil.update(progress);
+        this.hullClient.logger.info("incoming.job.progress", {
+          jobName: "fetch",
+          type: "user",
+          progress
+        });
+        return this.saveContacts(contacts);
+      })
+    );
 
     return new Promise((resolve, reject) => {
       streamOfIncomingContacts.on("end", () => resolve());
       streamOfIncomingContacts.on("error", error => reject(error));
-    });
-
-    // function fetchPage(payload) {
-    //   // const { hubspotAgent, syncAgent } = ctx.shipApp;
-    //   const { lastFetchAt, stopFetchAt } = payload;
-    //   let { lastModifiedDate } = payload;
-
-    //   const count = payload.count || 100;
-    //   const offset = payload.offset || 0;
-    //   const page = payload.page || 1;
-    //   this.metric.value("ship.incoming.fetch.page", page);
-    //   this.hullClient.logger.debug("syncJob.getRecentContacts", {
-    //     lastFetchAt,
-    //     stopFetchAt,
-    //     count,
-    //     offset,
-    //     page
-    //   });
-    //   this.hullClient.logger.info("incoming.job.progress", {
-    //     jobName: "fetch",
-    //     progress: page * count,
-    //     stepName: "sync-recent-contacts"
-    //   });
-    //   return this.hubspotClient
-    //     .getRecentContacts(
-    //       this.mappingUtil.getHubspotPropertiesKeys(),
-    //       lastFetchAt,
-    //       stopFetchAt,
-    //       count,
-    //       offset
-    //     )
-    //     .then(res => {
-    //       const info = {
-    //         usersCount: res.body.contacts.length,
-    //         hasMore: res.body["has-more"],
-    //         vidOffset: res.body["vid-offset"]
-    //       };
-    //       if (res.body.contacts.length > 0) {
-    //         lastModifiedDate = _(res.body.contacts)
-    //           .map(c => _.get(c, "properties.lastmodifieddate.value"))
-    //           .uniq()
-    //           .nth(-2);
-
-    //         if (res.body["vid-offset"] === res.body.contacts[0].vid) {
-    //           ctx.client.logger.warn("incoming.job.warning", {
-    //             jobName: "fetch",
-    //             warnings:
-    //               "vidOffset moved to the top of the recent contacts list"
-    //           });
-    //           // TODO: call the `syncJob` with timeOffset instead of the vidOffset
-    //         }
-    //         return ctx.shipApp.syncAgent
-    //           .saveContacts(res.body.contacts)
-    //           .then(() => info);
-    //       }
-    //       return Promise.resolve(info);
-    //     })
-    //     .then(({ usersCount, hasMore, vidOffset }) => {
-    //       if (hasMore && usersCount > 0) {
-    //         return fetchPage(ctx, {
-    //           lastFetchAt,
-    //           stopFetchAt,
-    //           count,
-    //           page: page + 1,
-    //           offset: vidOffset,
-    //           lastModifiedDate
-    //         });
-    //       }
-    //       ctx.client.logger.info("incoming.job.success", { jobName: "fetch" });
-    //       return Promise.resolve("done");
-    //     });
-    // }
-
-    // const count = parseInt(process.env.FETCH_CONTACTS_COUNT, 10) || 100;
-    // const lastFetchAt = new Date(); //ctx.shipApp.hubspotAgent.getLastFetchAt();
-    // const stopFetchAt = new Date(); //ctx.shipApp.hubspotAgent.getStopFetchAt();
-    // let lastModifiedDate;
-    // this.hullClient.logger.debug("syncAction.lastFetchAt", {
-    //   lastFetchAt,
-    //   stopFetchAt
-    // });
-    // this.hullClient.logger.info("incoming.job.start", {
-    //   jobName: "fetch",
-    //   type: "user",
-    //   lastFetchAt,
-    //   stopFetchAt
-    // });
-
-    // return this.helpers
-    //   .updateSettings({
-    //     last_fetch_at: stopFetchAt
-    //   })
-    //   .then(() => {
-    //     return fetchPage({
-    //       lastFetchAt,
-    //       stopFetchAt,
-    //       count,
-    //       lastModifiedDate
-    //     });
-    //   })
-    //   .catch(error => {
-    //     this.hullClient.logger.info("incoming.job.error", {
-    //       jobName: "fetch",
-    //       error
-    //     });
-    //   });
+    })
+      .then(() => {
+        this.progressUtil.start();
+        this.hullClient.logger.info("incoming.job.success", {
+          jobName: "fetch"
+        });
+      })
+      .catch(error => {
+        this.progressUtil.start();
+        this.hullClient.logger.info("incoming.job.error", {
+          jobName: "fetch",
+          error
+        });
+      });
   }
 
   /**
@@ -470,68 +330,49 @@ class SyncAgent {
    * @param  {Number} [offset=0]
    * @return {Promise}
    */
-  fetchAllContacts(): Promise {
-    const {
-      saveContacts,
-      progressAgent,
-      hullClient,
-      hubspotClient,
-      mappingUtil
-    } = this;
-    function fetchAllPage(payload) {
-      const count = payload.count;
-      const offset = payload.offset || 0;
-      const progress = payload.progress || 0;
-      // TODO: pick up from job progress previous offset
-      return hubspotClient
-        .getContacts(mappingUtil.getHubspotPropertiesKeys(), count, offset)
-        .then(data => {
-          const newProgress = progress + data.body.contacts.length;
-          const info = {
-            hasMore: data.body["has-more"],
-            vidOffset: data.body["vid-offset"],
-            newProgress
-          };
-          // TODO: save offset to job progress
-          hullClient.logger.info("incoming.job.progress", {
-            jobName: "fetch-all",
-            progress: newProgress,
-            stepName: "fetch-all-progress",
-            info
-          });
-          progressAgent.update(newProgress, data.body["has-more"]);
+  async fetchAllContacts(): Promise {
+    await this.initialize();
+    const propertiesToFetch = this.mappingUtil.getHubspotPropertiesKeys();
+    let progress = 0;
 
-          if (data.body.contacts.length > 0) {
-            return saveContacts(data.body.contacts).then(() => info);
-          }
-          return Promise.resolve(info);
-        })
-        .then(({ hasMore, vidOffset, newProgress }) => {
-          if (hasMore) {
-            return fetchAllPage({
-              count,
-              offset: vidOffset,
-              progress: newProgress
-            });
-          }
-          return Promise.resolve();
+    this.hullClient.logger.info("incoming.job.start", {
+      jobName: "fetchAll",
+      type: "user",
+      propertiesToFetch
+    });
+
+    const streamOfIncomingContacts = this.hubspotClient.getAllContactsStream(
+      propertiesToFetch
+    );
+
+    streamOfIncomingContacts.pipe(
+      pipeToPromise(contacts => {
+        progress += contacts.length;
+        this.progressUtil.update(progress);
+        this.hullClient.logger.info("incoming.job.progress", {
+          jobName: "fetch",
+          type: "user",
+          progress
         });
-    }
-    const count = 100;
-    const offset = req.query.vidOffset || null;
-    req.hull.client.logger.info("incoming.job.start", {
-      jobName: "fetch-all",
-      type: "user"
-    });
-    req.hull.shipApp.progressAgent.start();
-    return fetchAllPage({
-      count,
-      offset
-    }).then(() => {
-      return req.hull.client.logger.info("incoming.job.success", {
-        jobName: "fetch-all"
+        return this.saveContacts(contacts);
+      })
+    );
+
+    return new Promise((resolve, reject) => {
+      streamOfIncomingContacts.on("end", () => resolve());
+      streamOfIncomingContacts.on("error", error => reject(error));
+    })
+      .then(() => {
+        this.hullClient.logger.info("incoming.job.success", {
+          jobName: "fetchAll"
+        });
+      })
+      .catch(error => {
+        this.hullClient.logger.info("incoming.job.error", {
+          jobName: "fetchAl",
+          error
+        });
       });
-    });
   }
 }
 

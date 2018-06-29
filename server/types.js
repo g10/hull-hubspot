@@ -29,8 +29,12 @@ export type HubspotReadContact = {
   "merged-vids": Array<string>,
   "is-contact": boolean,
   properties: {
-    [propertyName: string]: mixed,
-    lastmodifieddate: number
+    [propertyName: string]: {
+      value: mixed
+    },
+    lastmodifieddate: {
+      value: string
+    }
   }
 };
 
@@ -52,7 +56,7 @@ export type FilterUtilResults<T> = {
 export type HubspotContactProperty = {
   name: string,
   label: string,
-  description: string,
+  description?: string,
   groupName: string,
   type: string,
   fieldType: string,
@@ -137,6 +141,7 @@ export type HubspotContactOutboundMapping = {
     HubspotContactAttributesOutboundSetting,
     "name"
   >,
+  hubspot_property_label: $PropertyType<HubspotContactProperty, "label">,
   hubspot_property_read_only: $PropertyType<
     HubspotContactProperty,
     "readOnlyValue"
@@ -145,6 +150,10 @@ export type HubspotContactOutboundMapping = {
   hubspot_property_field_type: $PropertyType<
     HubspotContactProperty,
     "fieldType"
+  >,
+  hubspot_property_display_order: $PropertyType<
+    HubspotContactProperty,
+    "displayOrder"
   >
 };
 

@@ -1,5 +1,12 @@
+// @flow
+import type {
+  HubspotContactOutboundMapping,
+  HubspotContactProperty
+} from "../../types";
+
 const _ = require("lodash");
 const Promise = require("bluebird");
+const debug = require("debug")("hubspot-connector:contact-property-util");
 
 const TYPES_MAPPING = {
   string: { type: "string", fieldType: "text" },
@@ -76,16 +83,23 @@ class ContactPropertyUtil {
   //       .then(() => groups);
   //   });
 
-  sync({ groups, properties }) {
-    console.log({ groups, properties });
-    const uniqueSegments = _.uniqBy(this.segments, "name");
-    const propertiesList = this.getPropertiesList({
-      segments: uniqueSegments,
-      properties
-    });
-    return this.ensureHullGroup(groups)
-      .then(() => this.ensureCustomProperties(propertiesList, groups))
+  sync(outboundMapping: Array<HubspotContactOutboundMapping>): Promise<*> {
+    debug("outboundMapping", outboundMapping);
+    const uniqueSegments = _.uniqBy(this.userSegments, "name");
+    const expectedPropertiesList = [].concat(
+      [this.getHullSegmentsProperty(uniqueSegments)],
+      this.getPropertiesList(outboundMapping)
+    );
+    debug("expectedPropertiesList", expectedPropertiesList);
+    return this.ensureHullGroup(this.hubspotProperties)
+      .then(() =>
+        this.ensureCustomProperties(
+          this.hubspotProperties,
+          expectedPropertiesList
+        )
+      )
       .catch(err => {
+        console.log("ERROR!!!", err);
         this.logger.error("connector.sync.error", {
           error: err.response && err.response.body && err.response.body.message
         });
@@ -96,12 +110,12 @@ class ContactPropertyUtil {
       });
   }
 
-  ensureHullGroup(groups) {
-    const group = _.find(groups, g => g.name === "hull");
+  ensureHullGroup(hubspotProperties) {
+    const group = _.find(hubspotProperties, g => g.name === "hull");
     if (group) {
       return Promise.resolve(group);
     }
-    return this.hubspotClient
+    return this.hubspotClient.agent
       .post("/contacts/v2/groups")
       .send({
         name: "hull",
@@ -111,16 +125,15 @@ class ContactPropertyUtil {
       .then(res => res.body);
   }
 
-  ensureCustomProperties(propertiesList, group = {}) {
-    const groupProperties = _.flatten(group.map(g => g.properties)).reduce(
-      (props, prop) => {
-        return Object.assign(props, { [prop.name]: prop });
-      },
-      {}
-    );
+  ensureCustomProperties(hubspotGroupProperties, expectedPropertiesList) {
+    const flattenProperties = _.flatten(
+      hubspotGroupProperties.map(g => g.properties)
+    ).reduce((props, prop) => {
+      return Object.assign(props, { [prop.name]: prop });
+    }, {});
     return Promise.all(
-      propertiesList.map(property =>
-        this.ensureProperty(groupProperties, property)
+      expectedPropertiesList.map(property =>
+        this.ensureProperty(flattenProperties, property)
       )
     ).then((...props) =>
       this.logger.debug(
@@ -132,6 +145,7 @@ class ContactPropertyUtil {
 
   shouldUpdateProperty(currentValue, newValue) {
     if (newValue.name === "hull_segments") {
+      console.log("shouldUpdateProperty", currentValue, newValue);
       const currentSegmentNames = (currentValue.options || [])
         .map(o => o.label)
         .sort();
@@ -142,6 +156,7 @@ class ContactPropertyUtil {
   }
 
   ensureProperty(groupProperties, property) {
+    debug("ensureProperty");
     const exists =
       groupProperties[property.name] ||
       groupProperties[property.name.replace(/^hull_/, "")];
@@ -161,21 +176,27 @@ class ContactPropertyUtil {
       .then(res => res.body);
   }
 
-  getPropertiesList({ properties, segments }) {
-    return [this.getHullSegmentsProperty(segments)].concat(
-      properties.map(({ label, type, name }, displayOrder) => {
-        const propType = TYPES_MAPPING[type] || TYPES_MAPPING.string;
-        return {
-          ...propType,
-          name,
-          label,
-          displayOrder,
-          calculated: false,
-          groupName: "hull",
-          formField: false
-        };
-      })
-    );
+  getPropertiesList(
+    outboundMapping: Array<HubspotContactOutboundMapping>
+  ): Array<HubspotContactProperty> {
+    return outboundMapping.map(mappingEntry => {
+      console.log("mappingEntry", mappingEntry);
+      const name = mappingEntry.hubspot_property_name;
+      const label = mappingEntry.hubspot_property_label;
+      const displayOrder = mappingEntry.hubspot_property_display_order;
+      const propType =
+        TYPES_MAPPING[mappingEntry.hubspot_property_type] ||
+        TYPES_MAPPING.string;
+      return {
+        ...propType,
+        name,
+        label,
+        displayOrder,
+        calculated: false,
+        groupName: "hull",
+        formField: false
+      };
+    });
   }
 
   getHullSegmentsProperty(segments = []) {

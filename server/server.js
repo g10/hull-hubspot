@@ -3,10 +3,9 @@ import type { $Application } from "express";
 
 const queueUiRouter = require("hull/lib/infra/queue/ui-router");
 const cors = require("cors");
-const { smartNotifierHandler, responseMiddleware } = require("hull/lib/utils");
+const { smartNotifierHandler } = require("hull/lib/utils");
 
 const notificationsConfiguration = require("./notifications-configuration");
-const requireConfiguration = require("./lib/middleware/require-configuration");
 
 const actions = require("./actions");
 

@@ -1,5 +1,6 @@
 // @flow
 import type { IncomingMessage } from "http";
+import type { Readable } from "stream";
 import type { THullConnector, THullReqContext } from "hull";
 import type {
   HubspotUserUpdateMessageEnvelope,
@@ -21,9 +22,8 @@ const _ = require("lodash");
 const Promise = require("bluebird");
 const superagent = require("superagent");
 const prefixPlugin = require("superagent-prefix");
-// const promiseRetry = require("promise-retry");
 const moment = require("moment");
-const stream = require("stream");
+const promiseToStream = require("./promise-to-stream");
 
 const {
   superagentUrlTemplatePlugin,
@@ -56,18 +56,6 @@ class HubspotClient {
       .set("Authorization", `Bearer ${accessToken}`)
       .timeout({ response: 5000 });
   }
-
-  // get(url: string): superagent {
-  //   return this.agent.get(url);
-  // }
-
-  // post(url: string): superagent {
-  //   return this.agent.post(url);
-  // }
-
-  // put(url: string): superagent {
-  //   return this.agent.put(url);
-  // }
 
   refreshAccessToken(): Promise<*> {
     const refreshToken = this.connector.private_settings.refresh_token;
@@ -186,24 +174,18 @@ class HubspotClient {
     properties: Array<string>,
     count: number = 100,
     offset: ?string = null
-  ): stream.Duplex {
-    const duplexStream = new stream.Duplex({
-      objectMode: true,
-      read() {},
-      write() {}
-    });
+  ): Readable {
     const getAllContacts = this.getAllContacts.bind(this);
-
-    function getAllContactsPage(pageCount, pageOffset) {
+    function getAllContactsPage(push, pageCount, pageOffset) {
       return getAllContacts(properties, pageCount, pageOffset).then(
         response => {
           const contacts = response.body.contacts;
           const hasMore = response.body["has-more"];
           const vidOffset = response.body["vid-offset"];
           if (contacts.length > 0) {
-            duplexStream.push(contacts);
+            push(contacts);
             if (hasMore) {
-              return getAllContactsPage(pageCount, vidOffset);
+              return getAllContactsPage(push, pageCount, vidOffset);
             }
           }
           return Promise.resolve();
@@ -211,10 +193,9 @@ class HubspotClient {
       );
     }
 
-    getAllContactsPage(count, offset)
-      .then(() => duplexStream.push(null))
-      .catch(error => duplexStream.destroy(error));
-    return duplexStream;
+    return promiseToStream(push => {
+      return getAllContactsPage(push, count, offset);
+    });
   }
 
   /**
@@ -232,7 +213,7 @@ class HubspotClient {
     properties: Array<string>,
     count: number = 100,
     offset: ?string = null
-  ): Promise<IncomingMessage> {
+  ): Promise<HubspotGetAllContactsResponse> {
     console.log(">>> getRecentlyUpdatedContacts");
     return this.retryUnauthorized(() => {
       return this.agent
@@ -251,18 +232,12 @@ class HubspotClient {
     properties: Array<string>,
     count: number = 100,
     offset: ?string = null
-  ): stream.Duplex {
-    console.log(">> getRecentContactsStream", lastFetchAt, stopFetchAt);
-    const duplexStream = new stream.Duplex({
-      objectMode: true,
-      read() {},
-      write() {}
-    });
+  ): Readable {
     const getRecentlyUpdatedContacts = this.getRecentlyUpdatedContacts.bind(
       this
     );
 
-    function getRecentContactsPage(pageCount, pageOffset) {
+    function getRecentContactsPage(push, pageCount, pageOffset) {
       return getRecentlyUpdatedContacts(properties, pageCount, pageOffset).then(
         response => {
           const contacts = response.body.contacts.filter(c => {
@@ -283,21 +258,21 @@ class HubspotClient {
           });
           const hasMore = response.body["has-more"];
           const vidOffset = response.body["vid-offset"];
-          const timeOffset = response.body["time-offset"];
+          // const timeOffset = response.body["time-offset"];
           if (contacts.length > 0) {
-            duplexStream.push(contacts);
+            push(contacts);
             if (hasMore) {
-              return getRecentContactsPage(pageCount, vidOffset);
+              return getRecentContactsPage(push, pageCount, vidOffset);
             }
           }
+          return Promise.resolve();
         }
       );
     }
 
-    getRecentContactsPage(count, offset)
-      .then(() => duplexStream.push(null))
-      .catch(error => duplexStream.destroy(error));
-    return duplexStream;
+    return promiseToStream(push => {
+      return getRecentContactsPage(push, count, offset);
+    });
   }
 
   postContacts(

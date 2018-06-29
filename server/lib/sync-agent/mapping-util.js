@@ -57,6 +57,10 @@ class MappingUtil {
       this.connector.private_settings.sync_fields_to_hull || [];
     this.contactAttributesOutboundSettings =
       this.connector.private_settings.sync_fields_to_hubspot || [];
+    console.log(
+      "MAPPINGUTIL, contactAttributesInboundSettings",
+      this.contactAttributesInboundSettings
+    );
   }
 
   getContactOutboundMapping(): Array<HubspotContactOutboundMapping> {
@@ -68,11 +72,7 @@ class MappingUtil {
           name: setting.name
         });
 
-        if (
-          defaultMapping === undefined ||
-          hullTrait === undefined ||
-          hubspotContactProperty === undefined
-        ) {
+        if (hullTrait === undefined || hubspotContactProperty === undefined) {
           return outboundMapping;
         }
 
@@ -83,13 +83,15 @@ class MappingUtil {
         return [].concat(outboundMapping, [
           {
             hull_trait_name: setting.hull,
-            hull_default_trait_name: defaultMapping.name,
+            hull_default_trait_name: defaultMapping.name || null,
             hull_trait_type: hullTrait.type,
             hull_overwrite_hubspot: setting.overwrite,
             hubspot_property_name: `hull_${hubspotPropertyName}`,
+            hubspot_property_label: setting.name,
             hubspot_property_read_only: hubspotContactProperty.readOnlyValue,
             hubspot_property_type: hubspotContactProperty.type,
-            hubspot_property_field_type: hubspotContactProperty.fieldType
+            hubspot_property_field_type: hubspotContactProperty.fieldType,
+            hubspot_property_display_order: hubspotContactProperty.displayOrder
           }
         ]);
       },
@@ -110,7 +112,7 @@ class MappingUtil {
         if (hullTrait === undefined || hubspotContactProperty === undefined) {
           return mapping;
         }
-        return [].concat(mapping, [
+        return mapping.concat([
           {
             hull_trait_name: defaultMapping.hull,
             hull_trait_type: hullTrait.type,
@@ -132,7 +134,7 @@ class MappingUtil {
         if (hullTrait === undefined || hubspotContactProperty === undefined) {
           return mapping;
         }
-        return [].concat(mapping, [
+        return mapping.concat([
           {
             hull_trait_name: setting.hull,
             hull_trait_type: hullTrait.type,
@@ -145,7 +147,7 @@ class MappingUtil {
       },
       []
     );
-    return [].concat(mappingFromDefault, mappingFromSettings);
+    return mappingFromDefault.concat(mappingFromSettings);
   }
 
   /**
