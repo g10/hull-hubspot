@@ -1,7 +1,6 @@
 // @flow
 import type { $Application } from "express";
 
-const queueUiRouter = require("hull/lib/infra/queue/ui-router");
 const cors = require("cors");
 const { smartNotifierHandler } = require("hull/lib/utils");
 
@@ -10,8 +9,6 @@ const notificationsConfiguration = require("./notifications-configuration");
 const actions = require("./actions");
 
 function server(app: $Application, deps: Object): $Application {
-  const { queue, hostSecret } = deps;
-
   // app.use(appMiddleware());
 
   app.post("/fetch-all", actions.fetchAll);
@@ -29,12 +26,6 @@ function server(app: $Application, deps: Object): $Application {
     smartNotifierHandler({
       handlers: notificationsConfiguration
     })
-    // actions.notify({
-    //   type: "next",
-    //   size: parseInt(process.env.FLOW_CONTROL_SIZE, 10) || 100,
-    //   in: parseInt(process.env.FLOW_CONTROL_IN, 10) || 10,
-    //   in_time: parseInt(process.env.FLOW_CONTROL_IN_TIME, 10) || 10
-    // })
   );
 
   app.post("/monitor/checkToken", actions.checkToken);
@@ -45,9 +36,6 @@ function server(app: $Application, deps: Object): $Application {
 
   app.use("/auth", actions.oauth(deps));
 
-  if (queue.adapter.app) {
-    app.use("/kue", queueUiRouter({ hostSecret, queue }));
-  }
   return app;
 }
 

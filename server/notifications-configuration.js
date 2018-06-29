@@ -5,8 +5,9 @@ module.exports = {
     if (ctx.smartNotifierResponse) {
       ctx.smartNotifierResponse.setFlowControl({
         type: "next",
-        size: 100,
-        in: 1
+        size: parseInt(process.env.FLOW_CONTROL_SIZE, 10) || 100,
+        in: parseInt(process.env.FLOW_CONTROL_IN, 10) || 10,
+        in_time: parseInt(process.env.FLOW_CONTROL_IN_TIME, 10) || 10
       });
     }
     const syncAgent = new SyncAgent(ctx);
