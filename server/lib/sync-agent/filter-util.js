@@ -22,7 +22,10 @@ class FilterUtil {
     if (segmentIds.length === 0) {
       return true;
     }
-    return _.intersection(segmentIds, user.segment_ids).length > 0;
+    if (Array.isArray(user.segment_ids)) {
+      return _.intersection(segmentIds, user.segment_ids).length > 0;
+    }
+    return false;
   }
 
   filterUserUpdateMessageEnvelopes(
@@ -45,9 +48,11 @@ class FilterUtil {
         return filterUtilResults.toSkip.push(envelope);
       }
 
-      user.segment_ids = _.uniq(
-        _.concat(user.segment_ids || [], segments.map(s => s.id))
-      );
+      if (Array.isArray(user.segment_ids)) {
+        user.segment_ids = _.uniq(
+          (user.segment_ids || []).concat(segments.map(s => s.id))
+        );
+      }
       if (!this.isUserWhitelisted(user) || _.isEmpty(user.email)) {
         envelope.skipReason = "User doesn't match outgoing filter";
         return filterUtilResults.toSkip.push(envelope);

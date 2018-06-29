@@ -1,7 +1,11 @@
 // @flow
+import type { THullSegment } from "hull";
 import type {
   HubspotContactOutboundMapping,
-  HubspotContactProperty
+  HubspotContactProperty,
+  HullProperty,
+  HubspotContactPropertyGroup,
+  HubspotContactPropertyWrite
 } from "../../types";
 
 const _ = require("lodash");
@@ -39,6 +43,14 @@ const TYPES_MAPPING = {
 };
 
 class ContactPropertyUtil {
+  hubspotClient: Object;
+  logger: Object;
+  metric: Object;
+  userSegments: Array<THullSegment>;
+
+  hubspotProperties: Array<HubspotContactPropertyGroup>;
+  hullProperties: Array<HullProperty>;
+
   constructor({
     logger,
     metric,
@@ -46,7 +58,7 @@ class ContactPropertyUtil {
     userSegments,
     hubspotProperties,
     hullProperties
-  }) {
+  }: Object) {
     this.hubspotClient = hubspotClient;
     this.logger = logger;
     this.metric = metric;
@@ -56,40 +68,12 @@ class ContactPropertyUtil {
     this.hullProperties = hullProperties;
   }
 
-  // get
-  // return Promise.all([
-  //     this.hubspotClient.retryUnauthorized(() => {
-  //       return this.hubspotClient
-  //         .get("/contacts/v2/groups")
-  //         .query({ includeProperties: true });
-  //     }),
-  //     this.hullClient.utils.properties.get()
-  //   ]).then(([groupsResponse = {}, hullProperties = {}]) => {
-  //     const groups = (groupsResponse && groupsResponse.body) || [];
-  //     const properties = _.reduce(
-  //       customProps,
-  //       (props, customProp) => {
-  //         const hullProp = _.find(hullProperties, { id: customProp.hull });
-  //         props.push(_.merge({}, customProp, _.pick(hullProp, ["type"])));
-  //         return props;
-  //       },
-  //       []
-  //     );
-  //     return this.contactPropertyUtil
-  //       .sync({
-  //         groups,
-  //         properties
-  //       })
-  //       .then(() => groups);
-  //   });
-
   sync(outboundMapping: Array<HubspotContactOutboundMapping>): Promise<*> {
     debug("outboundMapping", outboundMapping);
     const uniqueSegments = _.uniqBy(this.userSegments, "name");
-    const expectedPropertiesList = [].concat(
-      [this.getHullSegmentsProperty(uniqueSegments)],
-      this.getPropertiesList(outboundMapping)
-    );
+    const expectedPropertiesList = [
+      this.getHullSegmentsProperty(uniqueSegments)
+    ].concat(this.getPropertiesList(outboundMapping));
     debug("expectedPropertiesList", expectedPropertiesList);
     return this.ensureHullGroup(this.hubspotProperties)
       .then(() =>
@@ -110,7 +94,7 @@ class ContactPropertyUtil {
       });
   }
 
-  ensureHullGroup(hubspotProperties) {
+  ensureHullGroup(hubspotProperties: Array<HubspotContactPropertyGroup>) {
     const group = _.find(hubspotProperties, g => g.name === "hull");
     if (group) {
       return Promise.resolve(group);
@@ -125,7 +109,10 @@ class ContactPropertyUtil {
       .then(res => res.body);
   }
 
-  ensureCustomProperties(hubspotGroupProperties, expectedPropertiesList) {
+  ensureCustomProperties(
+    hubspotGroupProperties: Array<HubspotContactPropertyGroup>,
+    expectedPropertiesList: Array<HubspotContactPropertyWrite>
+  ) {
     const flattenProperties = _.flatten(
       hubspotGroupProperties.map(g => g.properties)
     ).reduce((props, prop) => {
@@ -143,7 +130,10 @@ class ContactPropertyUtil {
     );
   }
 
-  shouldUpdateProperty(currentValue, newValue) {
+  shouldUpdateProperty(
+    currentValue: HubspotContactProperty,
+    newValue: HubspotContactPropertyWrite
+  ): boolean {
     if (newValue.name === "hull_segments") {
       console.log("shouldUpdateProperty", currentValue, newValue);
       const currentSegmentNames = (currentValue.options || [])
@@ -155,19 +145,22 @@ class ContactPropertyUtil {
     return false;
   }
 
-  ensureProperty(groupProperties, property) {
+  ensureProperty(
+    groupProperties: { [string]: HubspotContactProperty },
+    property: HubspotContactPropertyWrite
+  ) {
     debug("ensureProperty");
-    const exists =
+    const existing =
       groupProperties[property.name] ||
       groupProperties[property.name.replace(/^hull_/, "")];
-    if (exists) {
-      if (this.shouldUpdateProperty(exists, property)) {
+    if (existing) {
+      if (this.shouldUpdateProperty(existing, property)) {
         return this.hubspotClient
           .put(`/contacts/v2/properties/named/${property.name}`)
           .send(property)
           .then(res => res.body);
       }
-      return Promise.resolve(exists);
+      return Promise.resolve(existing);
     }
 
     return this.hubspotClient
@@ -178,7 +171,7 @@ class ContactPropertyUtil {
 
   getPropertiesList(
     outboundMapping: Array<HubspotContactOutboundMapping>
-  ): Array<HubspotContactProperty> {
+  ): Array<HubspotContactPropertyWrite> {
     return outboundMapping.map(mappingEntry => {
       console.log("mappingEntry", mappingEntry);
       const name = mappingEntry.hubspot_property_name;
@@ -199,7 +192,7 @@ class ContactPropertyUtil {
     });
   }
 
-  getHullSegmentsProperty(segments = []) {
+  getHullSegmentsProperty(segments: Array<THullSegment> = []) {
     const options = _.map(segments, (s, i) => this.optionsHash(s.name, i));
     return {
       options,
@@ -214,7 +207,7 @@ class ContactPropertyUtil {
     };
   }
 
-  optionsHash(name, i) {
+  optionsHash(name: string, i: any) {
     return {
       hidden: false,
       description: null,

@@ -87,6 +87,19 @@ export type HubspotContactProperty = {
   updatedUserId: null | any
 };
 
+export type HubspotContactPropertyWrite = {
+  name: string,
+  label: string,
+  description?: string,
+  displayOrder: any,
+  calculated?: boolean,
+  groupName: string,
+  formField: boolean,
+  type: string,
+  fieldType: string,
+  options?: Array<any>
+};
+
 export type HubspotContactPropertyGroup = {
   name: string,
   displayName: string,
@@ -131,7 +144,10 @@ export type HubspotContactOutboundMapping = {
     HubspotContactAttributesOutboundSetting,
     "hull"
   >,
-  hull_default_trait_name: $PropertyType<HubspotDefaultContactMapping, "hull">,
+  hull_default_trait_name: $PropertyType<
+    HubspotDefaultContactMapping,
+    "hull"
+  > | null,
   hull_trait_type: $PropertyType<HullProperty, "type">,
   hull_overwrite_hubspot: $PropertyType<
     HubspotContactAttributesOutboundSetting,

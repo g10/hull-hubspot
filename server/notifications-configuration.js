@@ -2,7 +2,7 @@ const SyncAgent = require("./lib/sync-agent");
 
 module.exports = {
   "user:update": (ctx, messages) => {
-    if (ctx.smartNotifierResponse && flowControl) {
+    if (ctx.smartNotifierResponse) {
       ctx.smartNotifierResponse.setFlowControl({
         type: "next",
         size: 100,

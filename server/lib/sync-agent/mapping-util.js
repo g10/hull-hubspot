@@ -80,10 +80,11 @@ class MappingUtil {
           replacement: "_",
           lower: true
         });
-        return [].concat(outboundMapping, [
+        return outboundMapping.concat([
           {
             hull_trait_name: setting.hull,
-            hull_default_trait_name: defaultMapping.name || null,
+            hull_default_trait_name:
+              (defaultMapping && defaultMapping.name) || null,
             hull_trait_type: hullTrait.type,
             hull_overwrite_hubspot: setting.overwrite,
             hubspot_property_name: `hull_${hubspotPropertyName}`,

@@ -15,7 +15,7 @@ class ProgressUtil {
     });
   }
 
-  update(newProgress, hasMore = false) {
+  update(newProgress) {
     return this.helpers.updateSettings({
       fetch_count: newProgress
     });

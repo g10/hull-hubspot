@@ -227,8 +227,8 @@ class HubspotClient {
   }
 
   getRecentContactsStream(
-    lastFetchAt: moment,
-    stopFetchAt: moment,
+    lastFetchAt: string,
+    stopFetchAt: string,
     properties: Array<string>,
     count: number = 100,
     offset: ?string = null

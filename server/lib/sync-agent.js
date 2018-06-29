@@ -8,8 +8,7 @@ import type {
 
 import type {
   HubspotUserUpdateMessageEnvelope,
-  HubspotReadContact,
-  HubspotWriteContact
+  HubspotReadContact
 } from "../types";
 
 // const Promise = require("bluebird");
@@ -162,7 +161,7 @@ class SyncAgent {
    * @param hubspotProperties
    * @param contacts
    */
-  saveContacts(contacts: Array<HubspotReadContact>): Promise {
+  saveContacts(contacts: Array<HubspotReadContact>): Promise<any> {
     this.logger.debug("saveContacts", contacts.length);
     this.metric.value("ship.incoming.users", contacts.length);
     return Promise.all(
@@ -263,7 +262,7 @@ class SyncAgent {
    * Handles operation for automatic sync changes of hubspot profiles
    * to hull users.
    */
-  async fetchRecentContacts(): Promise {
+  async fetchRecentContacts(): Promise<any> {
     await this.initialize();
     const lastFetchAt =
       this.connector.private_settings.last_fetch_at ||
@@ -330,7 +329,7 @@ class SyncAgent {
    * @param  {Number} [offset=0]
    * @return {Promise}
    */
-  async fetchAllContacts(): Promise {
+  async fetchAllContacts(): Promise<any> {
     await this.initialize();
     const propertiesToFetch = this.mappingUtil.getHubspotPropertiesKeys();
     let progress = 0;
