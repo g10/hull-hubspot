@@ -61,25 +61,35 @@ class MappingUtil {
       "MAPPINGUTIL, contactAttributesInboundSettings",
       this.contactAttributesInboundSettings
     );
+
+    console.log(
+      "MAPPINGUTIL, contactAttributesOutboundSettings",
+      this.contactAttributesOutboundSettings
+    );
   }
 
   getContactOutboundMapping(): Array<HubspotContactOutboundMapping> {
     return this.contactAttributesOutboundSettings.reduce(
       (outboundMapping, setting) => {
+        const hubspotPropertyNameSlug = slug(setting.name, {
+          replacement: "_",
+          lower: true
+        });
+        const hubspotPropertyName = `hull_${hubspotPropertyNameSlug}`;
+
         const defaultMapping = _.find(DEFAULT_MAPPING, { name: setting.name });
         const hullTrait = _.find(this.hullProperties, { id: setting.hull });
-        const hubspotContactProperty = _.find(this.hubspotProperties, {
-          name: setting.name
-        });
+        const hubspotContactProperty = _.find(
+          _.flatten(_.map(this.hubspotProperties, "properties")),
+          {
+            name: hubspotPropertyName
+          }
+        );
 
         if (hullTrait === undefined || hubspotContactProperty === undefined) {
           return outboundMapping;
         }
 
-        const hubspotPropertyName = slug(setting.name, {
-          replacement: "_",
-          lower: true
-        });
         return outboundMapping.concat([
           {
             hull_trait_name: setting.hull,
@@ -87,7 +97,7 @@ class MappingUtil {
               (defaultMapping && defaultMapping.name) || null,
             hull_trait_type: hullTrait.type,
             hull_overwrite_hubspot: setting.overwrite,
-            hubspot_property_name: `hull_${hubspotPropertyName}`,
+            hubspot_property_name: hubspotPropertyName,
             hubspot_property_label: setting.name,
             hubspot_property_read_only: hubspotContactProperty.readOnlyValue,
             hubspot_property_type: hubspotContactProperty.type,
@@ -278,6 +288,7 @@ class MappingUtil {
    * @return {Array}           Hubspot properties array
    */
   getHubspotProperties(userData: THullUser): HubspotWriteProperties {
+    console.log("!!!! getHubspotProperties", this.getContactOutboundMapping());
     // const userSegments = this.userSegments;
     const contactProps = _.reduce(
       this.getContactOutboundMapping(),

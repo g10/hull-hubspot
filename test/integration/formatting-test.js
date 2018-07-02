@@ -23,10 +23,10 @@ describe("Hubspot properties formatting", function test() {
         token: "hubspotABC",
         sync_fields_to_hubspot: [{
           name: "custom_date_hubspot_create_at",
-          hull: "custom_date_created_at"
+          hull: "traits_custom_date_created_at"
         }, {
           name: "custom_hubspot_create_at",
-          hull: "custom_created_at"
+          hull: "traits_custom_created_at"
         }]
       }
     });
@@ -34,7 +34,7 @@ describe("Hubspot properties formatting", function test() {
     minihull.listen(8001).then(done);
   });
 
-  it("should pass batch extract to hubspot batch endpoint", (done) => {
+  it("should format outgoing traffic correctly", (done) => {
     minihubspot.stubApp("/contacts/v2/groups")
       .callsFake((req, res) => {
         res.json([{
@@ -55,13 +55,25 @@ describe("Hubspot properties formatting", function test() {
       .callsFake((req, res) => {
         res.status(202).end();
       });
+    minihull.stubApp("/search/user_reports/bootstrap").respond({
+      tree: [{
+        text: "User",
+        children: [
+          { id: 'id', text: 'Hull ID', type: 'string' },
+          { id: 'email', text: 'Email', type: 'string' },
+          { id: 'traits_custom_date_created_at', text: 'traits_custom_date_created_at', type: 'string', default: null },
+          { id: 'traits_custom_created_at', text: 'traits_custom_created_at', type: 'string', default: null },
+        ]
+      }]
+    });
     minihull.stubBatch([{
       email: "foo@bar.com",
-      custom_created_at: "2016-08-04T12:49:28Z",
-      custom_date_created_at: "2016-08-04T12:49:28Z"
-    }])
+      traits_custom_created_at: "2016-08-04T12:49:28Z",
+      traits_custom_date_created_at: "2016-08-04T12:49:28Z"
+    }]);
+    minihubspot.on("incoming.request", req => console.log("MINIHUBSPOT", req.method, req.url));
     minihull.batchConnector("123456789012345678901234", "http://localhost:8000/batch");
-    minihubspot.on("incoming.request#3", (req) => {
+    minihubspot.on("incoming.request#2", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.eq("/contacts/v1/contact/batch/?auditId=Hull");
       expect(lastReq.body).to.be.an("array");
