@@ -9,8 +9,6 @@ const notificationsConfiguration = require("./notifications-configuration");
 const actions = require("./actions");
 
 function server(app: $Application, deps: Object): $Application {
-  // app.use(appMiddleware());
-
   app.post("/fetch-all", actions.fetchAll);
   app.post("/sync", actions.fetch);
 

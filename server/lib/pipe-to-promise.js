@@ -14,7 +14,7 @@ function pipeToPromise(
     objectMode: true,
     write(chunk, encoding, callback) {
       promise(chunk, encoding)
-        .then(() => callback)
+        .then(() => callback())
         .catch(error => callback(error));
     }
   });

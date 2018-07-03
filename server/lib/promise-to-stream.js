@@ -9,7 +9,7 @@ const { Readable } = require("stream");
  * The provided promise is executed with `push` function as first and only argument, thanks to that
  * promise can push data to the stream.
  *
- * When promise resolves the stream is ended.
+ * When promise resolves the stream is ended. When the promise is rejected the error is bubbled up to the stream.
  */
 function promiseToStream(
   promise: (chunk: any, encoding?: string) => Promise<any>
