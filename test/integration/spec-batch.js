@@ -7,13 +7,13 @@ const bootstrap = require("./support/bootstrap");
 process.env.OVERRIDE_HUBSPOT_URL = "http://localhost:8002";
 
 describe("Hubspot", function test() {
-  let server, minihull, minihubspot;
+  let server, minihull, minihubspot, connector;
 
   beforeEach((done) => {
     minihull = new Minihull();
     minihubspot = new Minihubspot();
     server = bootstrap(8000);
-    minihull.stubConnector({
+    connector = {
       id: "123456789012345678901234",
       private_settings: {
         token: "hubspotABC",
@@ -25,7 +25,7 @@ describe("Hubspot", function test() {
           hull: "custom_created_at"
         }]
       }
-    });
+    };
     minihubspot.listen(8002);
     minihull.listen(8001).then(done);
   });
@@ -35,12 +35,12 @@ describe("Hubspot", function test() {
       .callsFake((req, res) => {
         res.status(202).end();
       });
-    minihull.stubBatch([{
+    minihull.stubUsersBatch([{
       email: "foo@bar.com",
       first_name: "Foo",
       last_name: "Bar"
     }]);
-    minihull.batchConnector("123456789012345678901234", "http://localhost:8000/batch");
+    minihull.batchUsersConnector(connector, "http://localhost:8000/batch").catch(err => console.log(err));
     minihubspot.on("incoming.request#2", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.eq("/contacts/v1/contact/batch/?auditId=Hull");
@@ -80,7 +80,7 @@ describe("Hubspot", function test() {
       .callsFake((req, res) => {
         res.status(202).end();
       });
-    minihull.stubBatch([{
+    minihull.stubUsersBatch([{
       email: "foo@bar.com",
       first_name: "Foo",
       last_name: "Bar"
@@ -94,7 +94,7 @@ describe("Hubspot", function test() {
       last_name: "Bar2"
     }]);
     minihubspot.on("incoming.request", (req) => console.log("MINIHUBSPOT", req.method, req.url));
-    minihull.batchConnector("123456789012345678901234", "http://localhost:8000/batch");
+    minihull.batchUsersConnector(connector, "http://localhost:8000/batch");
     minihubspot.on("incoming.request#2", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.equal("/contacts/v1/contact/batch/?auditId=Hull");

@@ -11,13 +11,13 @@ process.env.OVERRIDE_HUBSPOT_URL = "http://localhost:8002";
 process.env.TZ = "UTC";
 
 describe("Hubspot properties formatting", function test() {
-  let server, minihull, minihubspot;
+  let server, minihull, minihubspot, connector;
 
   beforeEach((done) => {
     minihull = new Minihull();
     minihubspot = new Minihubspot();
     server = bootstrap(8000);
-    minihull.stubConnector({
+    connector = {
       id: "123456789012345678901234",
       private_settings: {
         token: "hubspotABC",
@@ -29,7 +29,7 @@ describe("Hubspot properties formatting", function test() {
           hull: "traits_custom_created_at"
         }]
       }
-    });
+    };
     minihubspot.listen(8002);
     minihull.listen(8001).then(done);
   });
@@ -66,13 +66,13 @@ describe("Hubspot properties formatting", function test() {
         ]
       }]
     });
-    minihull.stubBatch([{
+    minihull.stubUsersBatch([{
       email: "foo@bar.com",
       traits_custom_created_at: "2016-08-04T12:49:28Z",
       traits_custom_date_created_at: "2016-08-04T12:49:28Z"
     }]);
     minihubspot.on("incoming.request", req => console.log("MINIHUBSPOT", req.method, req.url));
-    minihull.batchConnector("123456789012345678901234", "http://localhost:8000/batch");
+    minihull.batchUsersConnector(connector, "http://localhost:8000/batch");
     minihubspot.on("incoming.request#2", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.eq("/contacts/v1/contact/batch/?auditId=Hull");

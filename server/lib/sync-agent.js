@@ -38,9 +38,9 @@ class SyncAgent {
   cache: Object;
 
   constructor(ctx: THullReqContext) {
-    const { client, cache, ship, metric, helpers, segments } = ctx;
+    const { client, cache, connector, metric, helpers, segments } = ctx;
     this.hullClient = client;
-    this.connector = ship;
+    this.connector = connector;
     this.metric = metric;
     this.helpers = helpers;
     this.logger = client.logger;
@@ -211,9 +211,7 @@ class SyncAgent {
   async sendUserUpdateMessages(
     messages: Array<THullUserUpdateMessage>
   ): Promise<*> {
-    console.log(">>> SEND");
     await this.initialize();
-    console.log("initialized", this.isConfigured());
     if (!this.isConfigured()) {
       this.hullClient.logger.error("connector.configuration.error", {
         errors: "connector is not configured"

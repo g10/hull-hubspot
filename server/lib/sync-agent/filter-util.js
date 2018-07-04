@@ -11,7 +11,7 @@ class FilterUtil {
   connector: THullConnector;
 
   constructor(ctx: THullReqContext) {
-    this.connector = ctx.ship;
+    this.connector = ctx.connector;
   }
 
   isUserWhitelisted(user: THullUser): boolean {

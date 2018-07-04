@@ -2,35 +2,38 @@
 import type { $Application } from "express";
 
 const cors = require("cors");
-const { smartNotifierHandler } = require("hull/lib/utils");
+const { notificationHandler, batchHandler } = require("hull").handlers;
+const {
+  credsFromQueryFullBody,
+  credsFromQueryFullFetch
+} = require("hull").utils;
 
 const notificationsConfiguration = require("./notifications-configuration");
 
 const actions = require("./actions");
 
 function server(app: $Application, deps: Object): $Application {
-  app.post("/fetch-all", actions.fetchAll);
-  app.post("/sync", actions.fetch);
+  app.post("/fetch-all", ...credsFromQueryFullBody(), actions.fetchAll);
+  app.post("/sync", ...credsFromQueryFullBody(), actions.fetch);
 
-  app.use(
-    "/batch",
-    smartNotifierHandler({
-      handlers: notificationsConfiguration
-    })
+  app.use("/batch", batchHandler(notificationsConfiguration));
+
+  app.use("/smart-notifier", notificationHandler(notificationsConfiguration));
+
+  app.post(
+    "/monitor/checkToken",
+    ...credsFromQueryFullBody(),
+    actions.checkToken
   );
 
-  app.use(
-    "/smart-notifier",
-    smartNotifierHandler({
-      handlers: notificationsConfiguration
-    })
+  app.all(
+    "/schema/contact_properties",
+    ...credsFromQueryFullFetch(),
+    cors(),
+    actions.getContactProperties
   );
 
-  app.post("/monitor/checkToken", actions.checkToken);
-
-  app.all("/schema/contact_properties", cors(), actions.getContactProperties);
-
-  app.all("/status", actions.statusCheck);
+  app.all("/status", ...credsFromQueryFullFetch(), actions.statusCheck);
 
   app.use("/auth", actions.oauth(deps));
 

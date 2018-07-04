@@ -10,7 +10,7 @@ import type {
 
 const _ = require("lodash");
 const Promise = require("bluebird");
-const debug = require("debug")("hubspot-connector:contact-property-util");
+const debug = require("debug")("hull-hubspot:contact-property-util");
 
 const TYPES_MAPPING = {
   string: { type: "string", fieldType: "text" },
@@ -83,7 +83,6 @@ class ContactPropertyUtil {
         )
       )
       .catch(err => {
-        console.log("ERROR!!!", err);
         this.logger.error("connector.sync.error", {
           error: err.response && err.response.body && err.response.body.message
         });
@@ -135,7 +134,7 @@ class ContactPropertyUtil {
     newValue: HubspotContactPropertyWrite
   ): boolean {
     if (newValue.name === "hull_segments") {
-      console.log("shouldUpdateProperty", currentValue, newValue);
+      debug("shouldUpdateProperty", currentValue, newValue);
       const currentSegmentNames = (currentValue.options || [])
         .map(o => o.label)
         .sort();
@@ -173,7 +172,6 @@ class ContactPropertyUtil {
     outboundMapping: Array<HubspotContactOutboundMapping>
   ): Array<HubspotContactPropertyWrite> {
     return outboundMapping.map(mappingEntry => {
-      console.log("mappingEntry", mappingEntry);
       const name = mappingEntry.hubspot_property_name;
       const label = mappingEntry.hubspot_property_label;
       const displayOrder = mappingEntry.hubspot_property_display_order;

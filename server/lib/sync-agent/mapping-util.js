@@ -21,6 +21,7 @@ import type {
 const _ = require("lodash");
 const moment = require("moment");
 const slug = require("slug");
+const debug = require("debug")("hull-hubspot:mapping-util");
 
 const DEFAULT_MAPPING = require("./default-mapping");
 
@@ -57,15 +58,6 @@ class MappingUtil {
       this.connector.private_settings.sync_fields_to_hull || [];
     this.contactAttributesOutboundSettings =
       this.connector.private_settings.sync_fields_to_hubspot || [];
-    console.log(
-      "MAPPINGUTIL, contactAttributesInboundSettings",
-      this.contactAttributesInboundSettings
-    );
-
-    console.log(
-      "MAPPINGUTIL, contactAttributesOutboundSettings",
-      this.contactAttributesOutboundSettings
-    );
   }
 
   getContactOutboundMapping(): Array<HubspotContactOutboundMapping> {
@@ -288,7 +280,7 @@ class MappingUtil {
    * @return {Array}           Hubspot properties array
    */
   getHubspotProperties(userData: THullUser): HubspotWriteProperties {
-    console.log("!!!! getHubspotProperties", this.getContactOutboundMapping());
+    debug("getHubspotProperties", this.getContactOutboundMapping());
     // const userSegments = this.userSegments;
     const contactProps = _.reduce(
       this.getContactOutboundMapping(),

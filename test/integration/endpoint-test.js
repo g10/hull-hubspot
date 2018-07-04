@@ -14,17 +14,18 @@ const Minihubspot = require("./support/minihubspot");
 const bootstrap = require("./support/bootstrap");
 
 describe("Hubspot fetchContacts", function test() {
-  let server, minihull, minihubspot;
+  let server, minihull, minihubspot, connector;
   beforeEach((done) => {
     minihull = new Minihull();
     minihubspot = new Minihubspot();
     server = bootstrap(8000);
-    minihull.stubConnector({
+    connector = {
       id: "123456789012345678901234",
       private_settings: {
         token: "hubspotABC",
       }
-    });
+    };
+    minihull.stubConnector(connector);
     minihubspot.listen(8002);
     minihull.listen(8001).then(done);
   });
@@ -42,7 +43,7 @@ describe("Hubspot fetchContacts", function test() {
           ]
         }]);
       });
-    minihull.postConnector("123456789012345678901234", "http://localhost:8000/schema/contact_properties")
+    minihull.postConnector(connector, "http://localhost:8000/schema/contact_properties")
       .then((response) => {
         assert(response.statusCode === 200);
         console.log(response.body);
@@ -51,7 +52,8 @@ describe("Hubspot fetchContacts", function test() {
         assert(parsedBody.options[0].label === "coke");
         assert(parsedBody.options[0].value === "shortName");
         done();
-      });
+      })
+      .catch(err => console.log(err))
     });
 
   afterEach(() => {

@@ -38,8 +38,8 @@ class HubspotClient {
   agent: superagent;
   helpers: Object;
 
-  constructor({ ship, client, metric, helpers }: THullReqContext) {
-    this.connector = ship;
+  constructor({ connector, client, metric, helpers }: THullReqContext) {
+    this.connector = connector;
     this.client = client;
     this.metric = metric;
     this.helpers = helpers;
@@ -90,14 +90,7 @@ class HubspotClient {
     return promise().catch(err => {
       if (err.response.unauthorized) {
         this.client.logger.debug("retrying query", _.get(err, "response.body"));
-        console.log("CHECKING TOKEN");
-        return this.checkToken({ force: true })
-          .then(() => {
-            console.log("CHECKED TOKEN");
-            // this.hubspotClient.ship = this.ship;
-            return true;
-          })
-          .then(() => promise());
+        return this.checkToken({ force: true }).then(() => promise());
       }
       return Promise.reject(err);
     });
@@ -215,7 +208,6 @@ class HubspotClient {
     count: number = 100,
     offset: ?string = null
   ): Promise<HubspotGetAllContactsResponse> {
-    console.log(">>> getRecentlyUpdatedContacts");
     return this.retryUnauthorized(() => {
       return this.agent
         .get("/contacts/v1/lists/recently_updated/contacts/recent")
@@ -246,7 +238,6 @@ class HubspotClient {
               c.properties.lastmodifieddate.value,
               "x"
             ).milliseconds(0);
-            console.log(">>> time", time);
             return (
               time.isAfter(lastFetchAt) &&
               time
@@ -295,10 +286,8 @@ class HubspotClient {
 
     function handleSuccessResponse(res) {
       if (res.statusCode === 202) {
-        console.log("SUCCESS!!!");
         return Promise.resolve(envelopes);
       }
-      console.log(">>>>", res.statusCode);
       const erroredOutEnvelopes = envelopes.map(envelope => {
         envelope.error = "unknown response from hubspot";
         return envelope;
@@ -345,11 +334,9 @@ class HubspotClient {
         const retryBody = retryEnvelopes.map(
           envelope => envelope.hubspotWriteContact
         );
-        console.log(retryEnvelopes.length);
         return this.postContacts(retryBody)
           .then(handleSuccessResponse)
-          .catch(error => {
-            console.log("RETRY error", error);
+          .catch(() => {
             const retryErroredOutEnvelopes = envelopes.map(envelope => {
               envelope.error = "batch retry rejected";
               return envelope;
