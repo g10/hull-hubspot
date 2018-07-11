@@ -24,7 +24,7 @@ module.exports = {
     const syncAgent = new SyncAgent(ctx);
     return syncAgent.syncConnector();
   },
-  "segment:update": ctx => {
+  "users_segment:update": ctx => {
     if (ctx.smartNotifierResponse) {
       ctx.smartNotifierResponse.setFlowControl({
         type: "next",

@@ -29,7 +29,7 @@ class MappingUtil {
   connector: THullConnector;
   hullClient: Object;
   logger: Object;
-  userSegments: Array<THullSegment>;
+  usersSegments: Array<THullSegment>;
 
   hubspotProperties: Array<HubspotContactProperty>;
   hullProperties: Array<HullProperty>;
@@ -43,15 +43,14 @@ class MappingUtil {
   constructor({
     connector,
     hullClient,
-    userSegments,
+    usersSegments,
     hubspotProperties,
     hullProperties
   }: Object) {
     this.connector = connector;
     this.hullClient = hullClient;
     this.logger = hullClient.logger;
-    this.userSegments = userSegments;
-
+    this.usersSegments = usersSegments;
     this.hubspotProperties = hubspotProperties;
     this.hullProperties = hullProperties;
     this.contactAttributesInboundSettings =
@@ -63,6 +62,9 @@ class MappingUtil {
   getContactOutboundMapping(): Array<HubspotContactOutboundMapping> {
     return this.contactAttributesOutboundSettings.reduce(
       (outboundMapping, setting) => {
+        if (!setting.name || !setting.hull) {
+          return outboundMapping;
+        }
         const hubspotPropertyNameSlug = slug(setting.name, {
           replacement: "_",
           lower: true
@@ -130,6 +132,9 @@ class MappingUtil {
     );
     const mappingFromSettings = this.contactAttributesInboundSettings.reduce(
       (mapping, setting) => {
+        if (!setting.name || !setting.hull) {
+          return mapping;
+        }
         const hullTrait = _.find(this.hullProperties, { id: setting.hull });
         const hubspotContactProperty = _.find(this.hubspotProperties, {
           name: setting.name
@@ -254,7 +259,7 @@ class MappingUtil {
         value: hullTraits["hubspot/last_name"]
       };
     }
-
+    debug("getHullTraits", hullTraits);
     return hullTraits;
   }
 
@@ -365,13 +370,15 @@ class MappingUtil {
     const userSegments: Array<string> = Array.isArray(userData.segment_ids)
       ? userData.segment_ids
       : [];
+    debug("userSegments", userData.segment_ids);
     const segmentNames = _.uniq(
       userSegments.map(segmentId => {
         return _.trim(
-          _.get(_.find(this.userSegments, { id: segmentId }), "name")
+          _.get(_.find(this.usersSegments, { id: segmentId }), "name")
         );
       })
     );
+    debug("segmentNames", segmentNames);
 
     contactProps.push({
       property: "hull_segments",

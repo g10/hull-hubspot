@@ -34,17 +34,18 @@ class SyncAgent {
   metric: Object;
   helpers: Object;
   logger: Object;
-  userSegments: Array<THullSegment>;
+  usersSegments: Array<THullSegment>;
   cache: Object;
+  isBatch: boolean;
 
   constructor(ctx: THullReqContext) {
-    const { client, cache, connector, metric, helpers, segments } = ctx;
+    const { client, cache, connector, metric, helpers, usersSegments } = ctx;
     this.hullClient = client;
     this.connector = connector;
     this.metric = metric;
     this.helpers = helpers;
     this.logger = client.logger;
-    this.userSegments = segments;
+    this.usersSegments = usersSegments;
     this.cache = cache;
 
     this.hubspotClient = new HubspotClient(ctx);
@@ -81,13 +82,14 @@ class SyncAgent {
       hubspotClient: this.hubspotClient,
       logger: this.logger,
       metric: this.metric,
-      userSegments: this.userSegments,
+      usersSegments: this.usersSegments,
       hubspotProperties,
       hullProperties
     });
     this.mappingUtil = new MappingUtil({
       connector: this.connector,
       hullClient: this.hullClient,
+      usersSegments: this.usersSegments,
       hubspotProperties,
       hullProperties
     });
@@ -167,10 +169,13 @@ class SyncAgent {
     return Promise.all(
       contacts.map(contact => {
         const traits = this.mappingUtil.getHullTraits(contact);
-        if (!traits.email) {
-          return this.logger.info("incoming.user.skip", { contact });
-        }
         const ident = this.mappingUtil.getIdentFromHubspot(contact);
+        if (!ident.email) {
+          return this.logger.info("incoming.user.skip", {
+            contact,
+            reason: "missing email"
+          });
+        }
         this.logger.debug("incoming.user", { ident, traits });
         let asUser;
         try {
@@ -230,8 +235,17 @@ class SyncAgent {
       filter_results: filterResults
     });
 
+    filterResults.toSkip.forEach(envelope => {
+      this.hullClient
+        .asUser(envelope.message.user)
+        .logger.info("outgoing.user.skip", { reason: envelope.skipReason });
+    });
+
+    const envelopesToUpsert = filterResults.toInsert.concat(
+      filterResults.toUpdate
+    );
     return this.hubspotClient
-      .postContactsEnvelopes(envelopes)
+      .postContactsEnvelopes(envelopesToUpsert)
       .then(resultEnvelopes => {
         resultEnvelopes.forEach(envelope => {
           if (envelope.error === undefined) {

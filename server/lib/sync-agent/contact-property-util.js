@@ -46,7 +46,7 @@ class ContactPropertyUtil {
   hubspotClient: Object;
   logger: Object;
   metric: Object;
-  userSegments: Array<THullSegment>;
+  usersSegments: Array<THullSegment>;
 
   hubspotProperties: Array<HubspotContactPropertyGroup>;
   hullProperties: Array<HullProperty>;
@@ -55,26 +55,27 @@ class ContactPropertyUtil {
     logger,
     metric,
     hubspotClient,
-    userSegments,
+    usersSegments,
     hubspotProperties,
     hullProperties
   }: Object) {
     this.hubspotClient = hubspotClient;
     this.logger = logger;
     this.metric = metric;
-    this.userSegments = userSegments;
+    this.usersSegments = usersSegments;
 
     this.hubspotProperties = hubspotProperties;
     this.hullProperties = hullProperties;
   }
 
   sync(outboundMapping: Array<HubspotContactOutboundMapping>): Promise<*> {
-    debug("outboundMapping", outboundMapping);
-    const uniqueSegments = _.uniqBy(this.userSegments, "name");
+    debug("outboundMapping %o", outboundMapping);
+    const uniqueSegments = _.uniqBy(this.usersSegments, "name");
+    debug("uniqueSegments %o", uniqueSegments.map(s => s.name));
     const expectedPropertiesList = [
       this.getHullSegmentsProperty(uniqueSegments)
     ].concat(this.getPropertiesList(outboundMapping));
-    debug("expectedPropertiesList", expectedPropertiesList);
+    debug("expectedPropertiesList %o", expectedPropertiesList);
     return this.ensureHullGroup(this.hubspotProperties)
       .then(() =>
         this.ensureCustomProperties(
@@ -83,9 +84,10 @@ class ContactPropertyUtil {
         )
       )
       .catch(err => {
-        this.logger.error("connector.sync.error", {
-          error: err.response && err.response.body && err.response.body.message
-        });
+        debug("sync error", err);
+        // this.logger.error("connector.sync.error", {
+        //   error: err.response && err.response.body && err.response.body.message
+        // });
         this.metric.event({
           title: "connector.sync.error",
           text: JSON.stringify(err.response && err.response.body)
@@ -134,7 +136,7 @@ class ContactPropertyUtil {
     newValue: HubspotContactPropertyWrite
   ): boolean {
     if (newValue.name === "hull_segments") {
-      debug("shouldUpdateProperty", currentValue, newValue);
+      debug("shouldUpdateProperty", currentValue.name, newValue.name);
       const currentSegmentNames = (currentValue.options || [])
         .map(o => o.label)
         .sort();
@@ -148,13 +150,13 @@ class ContactPropertyUtil {
     groupProperties: { [string]: HubspotContactProperty },
     property: HubspotContactPropertyWrite
   ) {
-    debug("ensureProperty");
     const existing =
       groupProperties[property.name] ||
       groupProperties[property.name.replace(/^hull_/, "")];
     if (existing) {
       if (this.shouldUpdateProperty(existing, property)) {
-        return this.hubspotClient
+        debug("ensureProperty %o", property);
+        return this.hubspotClient.agent
           .put(`/contacts/v2/properties/named/${property.name}`)
           .send(property)
           .then(res => res.body);
@@ -162,7 +164,7 @@ class ContactPropertyUtil {
       return Promise.resolve(existing);
     }
 
-    return this.hubspotClient
+    return this.hubspotClient.agent
       .post("/contacts/v2/properties")
       .send(property)
       .then(res => res.body);

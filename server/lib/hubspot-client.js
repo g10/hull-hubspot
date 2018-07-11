@@ -282,6 +282,9 @@ class HubspotClient {
   postContactsEnvelopes(
     envelopes: Array<HubspotUserUpdateMessageEnvelope>
   ): Promise<Array<HubspotUserUpdateMessageEnvelope>> {
+    if (envelopes.length === 0) {
+      return Promise.resolve([]);
+    }
     const body = envelopes.map(envelope => envelope.hubspotWriteContact);
 
     function handleSuccessResponse(res) {

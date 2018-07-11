@@ -3,18 +3,15 @@ import type { $Application } from "express";
 
 const cors = require("cors");
 const { notificationHandler, batchHandler } = require("hull").handlers;
-const {
-  credsFromQueryFullBody,
-  credsFromQueryFullFetch
-} = require("hull").utils;
+const { credsFromQueryMiddlewares } = require("hull").utils;
 
 const notificationsConfiguration = require("./notifications-configuration");
 
 const actions = require("./actions");
 
 function server(app: $Application, deps: Object): $Application {
-  app.post("/fetch-all", ...credsFromQueryFullBody(), actions.fetchAll);
-  app.post("/sync", ...credsFromQueryFullBody(), actions.fetch);
+  app.post("/fetch-all", ...credsFromQueryMiddlewares(), actions.fetchAll);
+  app.post("/sync", ...credsFromQueryMiddlewares(), actions.fetch);
 
   app.use("/batch", batchHandler(notificationsConfiguration));
 
@@ -22,18 +19,18 @@ function server(app: $Application, deps: Object): $Application {
 
   app.post(
     "/monitor/checkToken",
-    ...credsFromQueryFullBody(),
+    ...credsFromQueryMiddlewares(),
     actions.checkToken
   );
 
   app.all(
     "/schema/contact_properties",
-    ...credsFromQueryFullFetch(),
+    ...credsFromQueryMiddlewares(),
     cors(),
     actions.getContactProperties
   );
 
-  app.all("/status", ...credsFromQueryFullFetch(), actions.statusCheck);
+  app.all("/status", ...credsFromQueryMiddlewares(), actions.statusCheck);
 
   app.use("/auth", actions.oauth(deps));
 

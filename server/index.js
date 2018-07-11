@@ -9,21 +9,24 @@ const server = require("./server");
 const {
   LOG_LEVEL,
   SHIP_CACHE_TTL = 180,
-  CACHE_REDIS_URL = "127.0.0.1",
+  CACHE_REDIS_URL,
   SECRET = "1234",
   PORT = 8082,
   OVERRIDE_FIREHOSE_URL
 } = process.env;
 
 if (LOG_LEVEL) {
-  Hull.logger.transports.console.level = LOG_LEVEL;
+  Hull.Client.logger.transports.console.level = LOG_LEVEL;
 }
 
-const cache = new Cache({
-  store: redisStore,
-  url: CACHE_REDIS_URL,
-  ttl: SHIP_CACHE_TTL
-});
+let cache;
+if (CACHE_REDIS_URL) {
+  cache = new Cache({
+    store: redisStore,
+    url: CACHE_REDIS_URL,
+    ttl: SHIP_CACHE_TTL
+  });
+}
 
 const app = express();
 const connector = new Hull.Connector({
