@@ -186,6 +186,11 @@ class MappingUtil {
   getIdentFromHubspot(hubspotUser: HubspotReadContact): THullUserIdent {
     const ident: THullUserIdent = {};
 
+    const emailIdentity = _.find(_.get(hubspotUser, "identity-profiles[0].identities", []), { type: "EMAIL" });
+    if (emailIdentity !== undefined) {
+      ident.email = emailIdentity.value;
+    }
+
     if (_.get(hubspotUser, "properties.email.value")) {
       ident.email = _.get(hubspotUser, "properties.email.value");
     }
@@ -193,6 +198,7 @@ class MappingUtil {
     if (hubspotUser.vid) {
       ident.anonymous_id = `hubspot:${hubspotUser.vid}`;
     }
+    debug("getIdentFromHubspot", ident);
     return ident;
   }
 

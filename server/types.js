@@ -28,6 +28,16 @@ export type HubspotReadContact = {
   vid: string,
   "merged-vids": Array<string>,
   "is-contact": boolean,
+  "identity-profiles": Array<{
+    vid: string,
+    "saved-at-timestamp": number,
+    identities: Array<{
+      type: string,
+      value: string,
+      timestamp: number,
+      "is-primary": boolean
+    }>
+  }>,
   properties: {
     [propertyName: string]: {
       value: mixed

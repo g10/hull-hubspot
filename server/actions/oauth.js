@@ -3,6 +3,9 @@ const HubspotStrategy = require("passport-hubspot-oauth2.0");
 const { oAuthHandler } = require("hull").handlers;
 const moment = require("moment");
 const Promise = require("bluebird");
+const debug = require("debug")("hull-hubspot:oauth");
+
+const SyncAgent = require("../lib/sync-agent");
 
 function oAuthAction(deps: Object) {
   const { clientID, clientSecret } = deps;
@@ -16,22 +19,23 @@ function oAuthAction(deps: Object) {
       scope: ["oauth", "contacts", "timeline"]
     },
     isSetup(req) {
-      const { client, ship } = req.hull;
+      const { client, connector } = req.hull;
       if (req.query.reset) return Promise.reject(new Error("Requested reset"));
-      const { token } = ship.private_settings || {};
+      const { token } = connector.private_settings || {};
       if (token) {
+        const syncAgent = new SyncAgent(req.hull);
         // TODO: we have notices problems with syncing hull segments property
         // TODO: check if below code works after hull-node upgrade.
         // after a Hubspot resync, there may be a problem with notification
         // subscription. Following two lines fixes that problem.
         // AppMiddleware({ queueAdapter, shipCache, instrumentationAgent })(req, {}, () => {});
-        req.hull.shipApp.syncAgent.setupShip().catch(err =>
+        syncAgent.syncConnector().catch(err =>
           client.logger.error("connector.configuration.error", {
             errors: ["Error in creating segments property", err]
           })
         );
 
-        return client.get(ship.id).then(s => {
+        return client.get(connector.id).then(s => {
           return { settings: s.private_settings };
         });
       }
@@ -42,23 +46,26 @@ function oAuthAction(deps: Object) {
       return Promise.resolve();
     },
     onAuthorize: req => {
+      debug("onAuthorize req.account", req.account);
       const { helpers } = req.hull;
       const { refreshToken, accessToken } = req.account || {};
-      const { expiresIn } = req.account.params;
-      return req.hull.shipApp.hubspotClient
+      const { expires_in } = req.account.params;
+      const syncAgent = new SyncAgent(req.hull);
+      return syncAgent.hubspotClient.agent
         .get(`/oauth/v1/access-tokens/${accessToken}`)
         .then(res => {
           const portalId = res.body.hub_id;
-          const newShip = {
+          const newConnector = {
             portal_id: portalId,
             refresh_token: refreshToken,
             token: accessToken,
-            expires_in: expiresIn,
+            expires_in,
             token_fetched_at: moment()
               .utc()
               .format("x")
           };
-          return helpers.updateSettings(newShip);
+          debug("onAuthorize updating settings", newConnector);
+          return helpers.updateSettings(newConnector);
         });
     },
     views: {
