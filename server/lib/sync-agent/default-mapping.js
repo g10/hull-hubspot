@@ -330,6 +330,20 @@ const DEFAULT_MAPPING: Array<HubspotDefaultContactMapping> = [
     type: "date",
     title: "Became an Other Lifecycle Date",
     read_only: false
+  },
+  {
+    name: "hs_email_bounce",
+    hull: "hubspot/emails_bounced_count",
+    title: "",
+    type: "number",
+    read_only: true
+  },
+  {
+    name: "hs_email_open",
+    hull: "hubspot/opened_count",
+    title: "",
+    type: "number",
+    read_only: true
   }
 ];
 

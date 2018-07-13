@@ -3,7 +3,7 @@ import type { $Application } from "express";
 
 const cors = require("cors");
 const { notificationHandler, batchHandler } = require("hull").handlers;
-const { credsFromQueryMiddlewares } = require("hull").utils;
+const { credsFromQueryMiddlewares } = require("hull/lib/utils");
 
 const notificationsConfiguration = require("./notifications-configuration");
 
