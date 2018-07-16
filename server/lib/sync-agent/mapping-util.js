@@ -10,10 +10,10 @@ import type {
   HubspotWriteContact,
   HubspotWriteProperties,
   HubspotReadContact,
-  HubspotContactOutboundMapping,
-  HubspotContactAttributesOutboundSetting,
-  HubspotContactAttributesInboundSetting,
-  HubspotContactInboundMapping,
+  HubspotContactOutgoingMapping,
+  HubspotContactAttributesOutgoingSetting,
+  HubspotContactAttributesIncomingSetting,
+  HubspotContactIncomingMapping,
   HubspotContactProperty,
   HullProperty
 } from "../../types";
@@ -32,13 +32,16 @@ class MappingUtil {
   usersSegments: Array<THullSegment>;
 
   hubspotProperties: Array<HubspotContactProperty>;
-  hullProperties: Array<HullProperty>;
-  contactAttributesInboundSettings: Array<
-    HubspotContactAttributesInboundSetting
+  hullProperties: { [string]: HullProperty };
+  contactAttributesIncomingSettings: Array<
+    HubspotContactAttributesIncomingSetting
   >;
-  contactAttributesOutboundSettings: Array<
-    HubspotContactAttributesOutboundSetting
+  contactAttributesOutgoingSettings: Array<
+    HubspotContactAttributesOutgoingSetting
   >;
+
+  contactOutgoingMapping: Array<HubspotContactOutgoingMapping>;
+  contactIncomingMapping: Array<HubspotContactIncomingMapping>;
 
   constructor({
     connector,
@@ -51,16 +54,21 @@ class MappingUtil {
     this.hullClient = hullClient;
     this.logger = hullClient.logger;
     this.usersSegments = usersSegments;
-    this.hubspotProperties = hubspotProperties;
+    this.hubspotProperties = _.flatten(
+      hubspotProperties.map(group => group.properties)
+    );
     this.hullProperties = hullProperties;
-    this.contactAttributesInboundSettings =
+    this.contactAttributesIncomingSettings =
       this.connector.private_settings.sync_fields_to_hull || [];
-    this.contactAttributesOutboundSettings =
+    this.contactAttributesOutgoingSettings =
       this.connector.private_settings.sync_fields_to_hubspot || [];
+
+    this.contactOutgoingMapping = this.getContactOutgoingMapping();
+    this.contactIncomingMapping = this.getContactIncomingMapping();
   }
 
-  getContactOutboundMapping(): Array<HubspotContactOutboundMapping> {
-    return this.contactAttributesOutboundSettings.reduce(
+  getContactOutgoingMapping(): Array<HubspotContactOutgoingMapping> {
+    return this.contactAttributesOutgoingSettings.reduce(
       (outboundMapping, setting) => {
         if (!setting.name || !setting.hull) {
           return outboundMapping;
@@ -73,13 +81,10 @@ class MappingUtil {
 
         const defaultMapping = _.find(DEFAULT_MAPPING, { name: setting.name });
         const hullTrait = _.find(this.hullProperties, { id: setting.hull });
-        const hubspotContactProperty = _.find(
-          _.flatten(_.map(this.hubspotProperties, "properties")),
-          {
-            name: hubspotPropertyName
-          }
-        );
-
+        const hubspotContactProperty = _.find(this.hubspotProperties, {
+          name: hubspotPropertyName
+        });
+        console.log({ hullTrait, hubspotContactProperty, hubspotPropertyName });
         if (hullTrait === undefined || hubspotContactProperty === undefined) {
           return outboundMapping;
         }
@@ -104,23 +109,21 @@ class MappingUtil {
     );
   }
 
-  getContactInboundMapping(): Array<HubspotContactInboundMapping> {
+  getContactIncomingMapping(): Array<HubspotContactIncomingMapping> {
     const mappingFromDefault = DEFAULT_MAPPING.reduce(
       (mapping, defaultMapping) => {
-        const hullTrait = _.find(this.hullProperties, {
-          id: defaultMapping.hull
-        });
+        const hullTrait = this.hullProperties[defaultMapping.hull];
         const hubspotContactProperty = _.find(this.hubspotProperties, {
           name: defaultMapping.name
         });
 
-        if (hullTrait === undefined || hubspotContactProperty === undefined) {
+        if (hubspotContactProperty === undefined) {
           return mapping;
         }
         return mapping.concat([
           {
             hull_trait_name: defaultMapping.hull,
-            hull_trait_type: hullTrait.type,
+            hull_trait_type: hullTrait && hullTrait.type,
             hubspot_property_name: defaultMapping.name,
             hubspot_property_read_only: hubspotContactProperty.readOnlyValue,
             hubspot_property_type: hubspotContactProperty.type,
@@ -130,22 +133,22 @@ class MappingUtil {
       },
       []
     );
-    const mappingFromSettings = this.contactAttributesInboundSettings.reduce(
+    const mappingFromSettings = this.contactAttributesIncomingSettings.reduce(
       (mapping, setting) => {
         if (!setting.name || !setting.hull) {
           return mapping;
         }
-        const hullTrait = _.find(this.hullProperties, { id: setting.hull });
+        const hullTrait = this.hullProperties[setting.hull];
         const hubspotContactProperty = _.find(this.hubspotProperties, {
           name: setting.name
         });
-        if (hullTrait === undefined || hubspotContactProperty === undefined) {
+        if (hubspotContactProperty === undefined) {
           return mapping;
         }
         return mapping.concat([
           {
             hull_trait_name: setting.hull,
-            hull_trait_type: hullTrait.type,
+            hull_trait_type: hullTrait && hullTrait.type,
             hubspot_property_name: setting.name,
             hubspot_property_read_only: hubspotContactProperty.readOnlyValue,
             hubspot_property_type: hubspotContactProperty.type,
@@ -164,9 +167,7 @@ class MappingUtil {
    * @return {Array}
    */
   getHubspotPropertiesKeys(): Array<string> {
-    return this.getContactInboundMapping().map(
-      prop => prop.hubspot_property_name
-    );
+    return this.contactIncomingMapping.map(prop => prop.hubspot_property_name);
   }
 
   /**
@@ -175,7 +176,7 @@ class MappingUtil {
    * @return {Array}
    */
   getHullTraitsKeys(): Array<string> {
-    return this.getContactOutboundMapping().map(prop => prop.hull_trait_name);
+    return this.contactOutgoingMapping.map(prop => prop.hull_trait_name);
   }
 
   /**
@@ -186,7 +187,10 @@ class MappingUtil {
   getIdentFromHubspot(hubspotUser: HubspotReadContact): THullUserIdent {
     const ident: THullUserIdent = {};
 
-    const emailIdentity = _.find(_.get(hubspotUser, "identity-profiles[0].identities", []), { type: "EMAIL" });
+    const emailIdentity = _.find(
+      _.get(hubspotUser, "identity-profiles[0].identities", []),
+      { type: "EMAIL" }
+    );
     if (emailIdentity !== undefined) {
       ident.email = emailIdentity.value;
     }
@@ -209,9 +213,8 @@ class MappingUtil {
    */
   getHullTraits(userData: HubspotReadContact): THullAttributes {
     const hullTraits = _.reduce(
-      this.getContactInboundMapping(),
+      this.contactIncomingMapping,
       (traits, mappingEntry) => {
-        // const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
         if (!mappingEntry.hubspot_property_name) {
           this.hullClient
             .asUser(_.pick(userData, ["id", "external_id", "email"]))
@@ -291,10 +294,10 @@ class MappingUtil {
    * @return {Array}           Hubspot properties array
    */
   getHubspotProperties(userData: THullUser): HubspotWriteProperties {
-    debug("getHubspotProperties", this.getContactOutboundMapping());
+    debug("getHubspotProperties", this.contactOutgoingMapping);
     // const userSegments = this.userSegments;
     const contactProps = _.reduce(
-      this.getContactOutboundMapping(),
+      this.contactOutgoingMapping,
       (contactProperties, mappingEntry) => {
         // const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
         const userIdent = _.pick(userData, ["id", "external_id", "email"]);

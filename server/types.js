@@ -138,20 +138,20 @@ export type HubspotDefaultContactMapping = {
   read_only: boolean
 };
 
-export type HubspotContactAttributesInboundSetting = {
+export type HubspotContactAttributesIncomingSetting = {
   name: string,
   hull: string
 };
 
-export type HubspotContactAttributesOutboundSetting = {
+export type HubspotContactAttributesOutgoingSetting = {
   hull: string,
   name: string,
   overwrite: boolean
 };
 
-export type HubspotContactOutboundMapping = {
+export type HubspotContactOutgoingMapping = {
   hull_trait_name: $PropertyType<
-    HubspotContactAttributesOutboundSetting,
+    HubspotContactAttributesOutgoingSetting,
     "hull"
   >,
   hull_default_trait_name: $PropertyType<
@@ -160,11 +160,11 @@ export type HubspotContactOutboundMapping = {
   > | null,
   hull_trait_type: $PropertyType<HullProperty, "type">,
   hull_overwrite_hubspot: $PropertyType<
-    HubspotContactAttributesOutboundSetting,
+    HubspotContactAttributesOutgoingSetting,
     "overwrite"
   >,
   hubspot_property_name: $PropertyType<
-    HubspotContactAttributesOutboundSetting,
+    HubspotContactAttributesOutgoingSetting,
     "name"
   >,
   hubspot_property_label: $PropertyType<HubspotContactProperty, "label">,
@@ -183,14 +183,14 @@ export type HubspotContactOutboundMapping = {
   >
 };
 
-export type HubspotContactInboundMapping = {
+export type HubspotContactIncomingMapping = {
   hull_trait_name: $PropertyType<
-    HubspotContactAttributesOutboundSetting,
+    HubspotContactAttributesOutgoingSetting,
     "hull"
   >,
-  hull_trait_type: $PropertyType<HullProperty, "type">,
+  hull_trait_type?: $PropertyType<HullProperty, "type">,
   hubspot_property_name: $PropertyType<
-    HubspotContactAttributesOutboundSetting,
+    HubspotContactAttributesOutgoingSetting,
     "name"
   >,
   hubspot_property_read_only: $PropertyType<

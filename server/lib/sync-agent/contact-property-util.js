@@ -1,7 +1,7 @@
 // @flow
 import type { THullSegment } from "hull";
 import type {
-  HubspotContactOutboundMapping,
+  HubspotContactOutgoingMapping,
   HubspotContactProperty,
   HullProperty,
   HubspotContactPropertyGroup,
@@ -68,7 +68,7 @@ class ContactPropertyUtil {
     this.hullProperties = hullProperties;
   }
 
-  sync(outboundMapping: Array<HubspotContactOutboundMapping>): Promise<*> {
+  sync(outboundMapping: Array<HubspotContactOutgoingMapping>): Promise<*> {
     debug("outboundMapping %o", outboundMapping);
     const uniqueSegments = _.uniqBy(this.usersSegments, "name");
     debug("uniqueSegments %o", uniqueSegments.map(s => s.name));
@@ -171,7 +171,7 @@ class ContactPropertyUtil {
   }
 
   getPropertiesList(
-    outboundMapping: Array<HubspotContactOutboundMapping>
+    outboundMapping: Array<HubspotContactOutgoingMapping>
   ): Array<HubspotContactPropertyWrite> {
     return outboundMapping.map(mappingEntry => {
       const name = mappingEntry.hubspot_property_name;

@@ -24,7 +24,7 @@ const Promise = require("bluebird");
 const superagent = require("superagent");
 const prefixPlugin = require("superagent-prefix");
 const moment = require("moment");
-const promiseToStream = require("./promise-to-stream");
+const promiseToReadableStream = require("./promise-to-readable-stream");
 
 const {
   superagentUrlTemplatePlugin,
@@ -187,7 +187,7 @@ class HubspotClient {
       );
     }
 
-    return promiseToStream(push => {
+    return promiseToReadableStream(push => {
       return getAllContactsPage(push, count, offset);
     });
   }
@@ -262,7 +262,7 @@ class HubspotClient {
       );
     }
 
-    return promiseToStream(push => {
+    return promiseToReadableStream(push => {
       return getRecentContactsPage(push, count, offset);
     });
   }

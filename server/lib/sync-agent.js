@@ -15,7 +15,7 @@ import type {
 const _ = require("lodash");
 const moment = require("moment");
 
-const pipeToPromise = require("./pipe-to-promise");
+const pipeStreamToPromise = require("./pipe-stream-to-promise");
 const HubspotClient = require("./hubspot-client");
 const ContactPropertyUtil = require("./sync-agent/contact-property-util");
 const MappingUtil = require("./sync-agent/mapping-util");
@@ -152,7 +152,7 @@ class SyncAgent {
     }
     await this.initialize({ skipCache: true });
 
-    const outboundMapping = this.mappingUtil.getContactOutboundMapping();
+    const outboundMapping = this.mappingUtil.contactOutgoingMapping;
     return this.contactPropertyUtil.sync(outboundMapping);
   }
 
@@ -308,35 +308,28 @@ class SyncAgent {
       propertiesToFetch
     );
 
-    streamOfIncomingContacts.pipe(
-      pipeToPromise(contacts => {
-        progress += contacts.length;
-        this.progressUtil.update(progress);
-        this.hullClient.logger.info("incoming.job.progress", {
-          jobName: "fetch",
-          type: "user",
-          progress
-        });
-        return this.saveContacts(contacts);
-      })
-    );
-
-    return new Promise((resolve, reject) => {
-      streamOfIncomingContacts.on("end", () => resolve());
-      streamOfIncomingContacts.on("error", error => reject(error));
+    return pipeStreamToPromise(streamOfIncomingContacts, contacts => {
+      progress += contacts.length;
+      this.progressUtil.update(progress);
+      this.hullClient.logger.info("incoming.job.progress", {
+        jobName: "fetch",
+        type: "user",
+        progress
+      });
+      return this.saveContacts(contacts);
     })
       .then(() => {
-        this.progressUtil.start();
         this.hullClient.logger.info("incoming.job.success", {
           jobName: "fetch"
         });
+        this.progressUtil.stop();
       })
       .catch(error => {
-        this.progressUtil.start();
         this.hullClient.logger.info("incoming.job.error", {
           jobName: "fetch",
           error
         });
+        this.progressUtil.stop();
       });
   }
 
@@ -352,7 +345,7 @@ class SyncAgent {
     let progress = 0;
 
     this.hullClient.logger.info("incoming.job.start", {
-      jobName: "fetchAll",
+      jobName: "fetchAllContacts",
       type: "user",
       propertiesToFetch
     });
@@ -361,32 +354,25 @@ class SyncAgent {
       propertiesToFetch
     );
 
-    streamOfIncomingContacts.pipe(
-      pipeToPromise(contacts => {
-        progress += contacts.length;
-        this.progressUtil.update(progress);
-        this.hullClient.logger.info("incoming.job.progress", {
-          jobName: "fetch",
-          type: "user",
-          progress
-        });
-        return this.saveContacts(contacts);
-      })
-    );
-
-    return new Promise((resolve, reject) => {
-      streamOfIncomingContacts.on("end", () => resolve());
-      streamOfIncomingContacts.on("error", error => reject(error));
+    return pipeStreamToPromise(streamOfIncomingContacts, contacts => {
+      progress += contacts.length;
+      this.progressUtil.update(progress);
+      this.hullClient.logger.info("incoming.job.progress", {
+        jobName: "fetchAllContacts",
+        type: "user",
+        progress
+      });
+      return this.saveContacts(contacts);
     })
       .then(() => {
         this.hullClient.logger.info("incoming.job.success", {
-          jobName: "fetchAll"
+          jobName: "fetchAllContacts"
         });
       })
       .catch(error => {
         this.hullClient.logger.info("incoming.job.error", {
-          jobName: "fetchAl",
-          error
+          jobName: "fetchAllContacts",
+          error: error.message
         });
       });
   }
