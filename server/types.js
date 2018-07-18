@@ -167,17 +167,17 @@ export type HubspotContactOutgoingMapping = {
     HubspotContactAttributesOutgoingSetting,
     "name"
   >,
-  hubspot_property_label: $PropertyType<HubspotContactProperty, "label">,
-  hubspot_property_read_only: $PropertyType<
+  hubspot_property_label?: $PropertyType<HubspotContactProperty, "label">,
+  hubspot_property_read_only?: $PropertyType<
     HubspotContactProperty,
     "readOnlyValue"
   >,
-  hubspot_property_type: $PropertyType<HubspotContactProperty, "type">,
-  hubspot_property_field_type: $PropertyType<
+  hubspot_property_type?: $PropertyType<HubspotContactProperty, "type">,
+  hubspot_property_field_type?: $PropertyType<
     HubspotContactProperty,
     "fieldType"
   >,
-  hubspot_property_display_order: $PropertyType<
+  hubspot_property_display_order?: $PropertyType<
     HubspotContactProperty,
     "displayOrder"
   >

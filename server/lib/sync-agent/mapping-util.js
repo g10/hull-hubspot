@@ -68,6 +68,7 @@ class MappingUtil {
   }
 
   getContactOutgoingMapping(): Array<HubspotContactOutgoingMapping> {
+    console.log("this.contactAttributesOutgoingSettings", this.contactAttributesOutgoingSettings);
     return this.contactAttributesOutgoingSettings.reduce(
       (outboundMapping, setting) => {
         if (!setting.name || !setting.hull) {
@@ -84,8 +85,8 @@ class MappingUtil {
         const hubspotContactProperty = _.find(this.hubspotProperties, {
           name: hubspotPropertyName
         });
-        console.log({ hullTrait, hubspotContactProperty, hubspotPropertyName });
-        if (hullTrait === undefined || hubspotContactProperty === undefined) {
+        console.log("!!!!", { hullTrait, hubspotContactProperty, hubspotPropertyName });
+        if (hullTrait === undefined) {
           return outboundMapping;
         }
 
@@ -98,10 +99,10 @@ class MappingUtil {
             hull_overwrite_hubspot: setting.overwrite,
             hubspot_property_name: hubspotPropertyName,
             hubspot_property_label: setting.name,
-            hubspot_property_read_only: hubspotContactProperty.readOnlyValue,
-            hubspot_property_type: hubspotContactProperty.type,
-            hubspot_property_field_type: hubspotContactProperty.fieldType,
-            hubspot_property_display_order: hubspotContactProperty.displayOrder
+            hubspot_property_read_only: hubspotContactProperty && hubspotContactProperty.readOnlyValue,
+            hubspot_property_type: hubspotContactProperty && hubspotContactProperty.type,
+            hubspot_property_field_type: hubspotContactProperty && hubspotContactProperty.fieldType,
+            hubspot_property_display_order: hubspotContactProperty && hubspotContactProperty.displayOrder
           }
         ]);
       },
@@ -360,11 +361,11 @@ class MappingUtil {
               });
           }
         }
-
+console.log(">>>> TEST", mappingEntry, value);
         if (
           !_.isNil(value) &&
           value !== "" &&
-          mappingEntry.hubspot_property_read_only !== false
+          mappingEntry.hubspot_property_read_only !== true
         ) {
           contactProperties.push({
             property: mappingEntry.hubspot_property_name,
