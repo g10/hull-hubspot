@@ -50,10 +50,14 @@ class ContactProperty {
         this.logger.error("connector.sync.error", {
           error: err.response && err.response.body && err.response.body.message
         });
-        this.metric.event({
-          title: "connector.sync.error",
-          text: JSON.stringify(err.response && err.response.body)
-        });
+        // TODO: this event was too verbose, but the original problem was that
+        // we tried to create hull_segments property when there was no segments
+        // within organization
+        // we should
+        // this.metric.event({
+        //   title: "connector.sync.error",
+        //   text: JSON.stringify(err.response && err.response.body)
+        // });
       });
   }
 

@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.11
+- disable verbose instrumentation event
+
 ## v0.5.10
 - handle outgoing.user.success correct
 
