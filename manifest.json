@@ -4,7 +4,7 @@
   "source": "hubspot",
   "logo": "logo.png",
   "picture": "picture.png",
-  "version": "0.5.9",
+  "version": "0.5.12",
   "tags": [
     "outgoing",
     "incoming",
@@ -125,7 +125,14 @@
   "deployment_settings": [],
   "resources": [],
   "readme": "readme.md",
-  "admin": "/auth/",
+  "tabs": [
+    {
+      "title": "Credentials & Actions",
+      "url": "/auth/",
+      "size": "small",
+      "editable": false
+    }
+  ],
   "ui": false,
   "subscriptions": [
     {
