@@ -4,7 +4,7 @@
   "source": "hubspot",
   "logo": "logo.png",
   "picture": "picture.png",
-  "version": "0.5.11",
+  "version": "0.5.12",
   "tags": [
     "outgoing",
     "incoming",
@@ -17,7 +17,7 @@
     {
       "name": "synchronized_segments",
       "title": "Segments",
-      "description": "Post to Hubspot when users match these segments (Empty to send everyone)",
+      "description": "Post to Hubspot when users match these segments",
       "default": [],
       "type": "array",
       "format": "segment"
@@ -125,7 +125,14 @@
   "deployment_settings": [],
   "resources": [],
   "readme": "readme.md",
-  "admin": "/auth/",
+  "tabs": [
+    {
+      "title": "Credentials & Actions",
+      "url": "/auth/",
+      "size": "small",
+      "editable": false
+    }
+  ],
   "ui": false,
   "subscriptions": [
     {
