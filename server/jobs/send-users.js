@@ -2,6 +2,21 @@
 const _ = require("lodash");
 const Promise = require("bluebird");
 
+export type PreparedUser = {
+  id: string,
+  external_id: string | null,
+  email: string | null,
+  anonymous_ids: Array<string> | null,
+  segment_ids: Array<string>,
+  account: {
+    [string]: any
+  }
+};
+
+export type Payload = {
+  users: Array<PreparedUser>
+};
+
 /**
  * Sends Hull users to Hubspot contacts using create or update strategy.
  * The job on Hubspot side is done async the returned Promise is resolved
@@ -12,7 +27,7 @@ const Promise = require("bluebird");
  * @param  {Array} users users from Hull
  * @return {Promise}
  */
-function sendUsers(ctx: Object, payload: Object) {
+function sendUsers(ctx: Object, payload: Payload) {
   const users = (payload.users || []).filter(u => !_.isEmpty(u.email));
 
   if (users.length === 0) {

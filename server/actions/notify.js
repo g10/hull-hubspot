@@ -1,11 +1,14 @@
+// @flow
+
+import type { PreparedUser } from "../jobs/send-users";
+
 const Promise = require("bluebird");
 const _ = require("lodash");
 
 const { notifHandler, smartNotifierHandler } = require("hull/lib/utils");
-
 const sendUsers = require("../jobs/send-users");
 
-function notifyHandler(flowControl) {
+function notifyHandler(flowControl: {}) {
   const notifyFunction = flowControl ? smartNotifierHandler : notifHandler;
 
   function shipUpdateHandler(ctx) {
@@ -43,8 +46,8 @@ function notifyHandler(flowControl) {
       ctx.smartNotifierResponse.setFlowControl(flowControl);
     }
 
-    const users = messages.reduce((usersArr, message) => {
-      const { user, changes = {}, segments = [] } = message;
+    const users: Array<PreparedUser> = messages.reduce((usersArr, message) => {
+      const { user, changes = {}, segments = [], account } = message;
 
       if (
         _.get(changes, "user['traits_hubspot/fetched_at'][1]", false) &&
@@ -56,9 +59,10 @@ function notifyHandler(flowControl) {
         return usersArr;
       }
 
-      user.segment_ids = _.uniq(
+      const segment_ids = _.uniq(
         _.concat(user.segment_ids || [], segments.map(s => s.id))
       );
+
       if (!syncAgent.userWhitelisted(user) || _.isEmpty(user.email)) {
         ctx.client.asUser(user).logger.info("outgoing.user.skip", {
           reason: "User doesn't match outgoing filter"
@@ -66,7 +70,7 @@ function notifyHandler(flowControl) {
         return usersArr;
       }
 
-      usersArr.push(user);
+      usersArr.push({ account, ...user, segment_ids });
       return usersArr;
     }, []);
 
