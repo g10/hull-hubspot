@@ -12,12 +12,21 @@ const {
   LOG_LEVEL,
   SHIP_CACHE_TTL = 180,
   KUE_PREFIX = "hull-hubspot",
-  REDIS_URL = "127.0.0.1",
-  CACHE_REDIS_URL = "127.0.0.1",
+  REDIS_URL = null,
+  CACHE_REDIS_URL = null,
   SECRET = "1234",
   PORT = 8082,
-  OVERRIDE_FIREHOSE_URL
+  OVERRIDE_FIREHOSE_URL,
+  CLIENT_ID = null,
+  CLIENT_SECRET = null,
+  WORKER,
+  SERVER,
+  COMBINED
 } = process.env;
+
+if (!REDIS_URL || !CACHE_REDIS_URL || !CLIENT_ID || !CLIENT_SECRET) {
+  throw new Error("some environment variables missing");
+}
 
 if (LOG_LEVEL) {
   Hull.logger.transports.console.level = LOG_LEVEL;
@@ -47,20 +56,20 @@ const connector = new Hull.Connector({
 });
 
 const deps = {
-  clientID: process.env.CLIENT_ID,
-  clientSecret: process.env.CLIENT_SECRET,
+  clientID: CLIENT_ID,
+  clientSecret: CLIENT_SECRET,
   queue,
   hostSecret: SECRET
 };
 
 connector.setupApp(app);
 
-if (process.env.SERVER || process.env.COMBINED) {
+if (SERVER || COMBINED) {
   server(app, deps);
   connector.startApp(app);
 }
 
-if (process.env.WORKER || process.env.COMBINED) {
+if (WORKER || COMBINED) {
   worker(connector);
   connector.startWorker();
   connector.startWorker("fetch");

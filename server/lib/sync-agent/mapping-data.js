@@ -366,7 +366,7 @@ function getFieldsToHubspot(ship: any = {}) {
 }
 
 function getFieldsToHull(ship: any = {}) {
-  const fields = DEFAULT_MAPPING.slice();
+  const fields = [...DEFAULT_MAPPING];
   const addFields = _.get(ship, "private_settings.sync_fields_to_hull");
 
   if (addFields && addFields.length > 0) {

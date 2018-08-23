@@ -1,15 +1,21 @@
 const _ = require("lodash");
 const Promise = require("bluebird");
 
+import type { PreparedUser } from "../jobs/send-users";
+
 function handleBatch(ctx, messages) {
-  const users = messages.map(m => {
-    const segmentIds = _.compact(m.segments).map(s => s.id);
-    m.user.segment_ids = _.compact(
-      _.uniq((m.user.segment_ids || []).concat(segmentIds))
+  const users: Array<PreparedUser> = messages.map(({ user, account, segments = [] }) => {
+    const segmentIds = _.compact(segments).map(s => s.id);
+    const segment_ids = _.compact(
+      _.uniq((user.segment_ids || []).concat(segmentIds))
     );
-    return m.user;
+    return {
+      account,
+      ...user,
+      segment_ids,
+    };
   });
-  const filteredUsers = users.filter(
+  const filteredUsers: Array<PreparedUser> = users.filter(
     user =>
       ctx.shipApp.syncAgent.userWhitelisted(user) && !_.isEmpty(user.email)
   );
