@@ -2,7 +2,6 @@
 const _ = require("lodash");
 const Promise = require("bluebird");
 
-
 export type PreparedUser = {
   id: string,
   external_id: string | null,
@@ -12,11 +11,11 @@ export type PreparedUser = {
   account: {
     [string]: any
   }
-}
+};
 
 export type Payload = {
   users: Array<PreparedUser>
-}
+};
 
 /**
  * Sends Hull users to Hubspot contacts using create or update strategy.

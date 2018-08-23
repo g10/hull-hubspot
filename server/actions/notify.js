@@ -1,11 +1,11 @@
-//@flow
+// @flow
+
+import type { PreparedUser } from "../jobs/send-users";
 
 const Promise = require("bluebird");
 const _ = require("lodash");
 
 const { notifHandler, smartNotifierHandler } = require("hull/lib/utils");
-
-import type { PreparedUser } from "../jobs/send-users";
 const sendUsers = require("../jobs/send-users");
 
 function notifyHandler(flowControl: {}) {
