@@ -1,6 +1,6 @@
 /* @flow */
 const HubspotStrategy = require("passport-hubspot-oauth2.0");
-const { oAuthHandler } = require("hull").handlers;
+const { oAuthHandler } = require("hull/lib/handlers");
 const moment = require("moment");
 const Promise = require("bluebird");
 const debug = require("debug")("hull-hubspot:oauth");

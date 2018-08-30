@@ -13,6 +13,10 @@ module.exports = {
     const syncAgent = new SyncAgent(ctx);
     return syncAgent.sendUserUpdateMessages(messages);
   },
+  "account:update": (ctx, messages) => {
+    const syncAgent = new SyncAgent(ctx);
+    return syncAgent.sendAccountUpdateMessages(messages);
+  },
   "ship:update": ctx => {
     if (ctx.smartNotifierResponse) {
       ctx.smartNotifierResponse.setFlowControl({

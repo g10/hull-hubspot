@@ -3081,9 +3081,9 @@ hull-client@^2.0.0:
     uuid "^3.0.1"
     winston "^2.2.0"
 
-hull@^0.14.0-beta.7:
-  version "0.14.0-beta.7"
-  resolved "https://registry.yarnpkg.com/hull/-/hull-0.14.0-beta.7.tgz#183371cdb531e59fd905e8b3d67b6fae8e16fe68"
+hull@0.14.0-beta.13:
+  version "0.14.0-beta.13"
+  resolved "https://registry.yarnpkg.com/hull/-/hull-0.14.0-beta.13.tgz#6faf37968c4e8f9352dd15b84c99418b2456b0fe"
   dependencies:
     JSONStream "^1.1.2"
     aws-sdk "^2.81.0"
@@ -3108,6 +3108,7 @@ hull@^0.14.0-beta.7:
     kue "^0.11.5"
     kue-ui "^0.1.0"
     lodash "^4.17.5"
+    moment "^2.22.2"
     newrelic "^4.1.4"
     passport "^0.3.2"
     progress-bar-webpack-plugin "^1.11.0"
@@ -3121,6 +3122,7 @@ hull@^0.14.0-beta.7:
     sqs-consumer "^3.6.1"
     supply "0.0.4"
     urijs "^1.18.7"
+    uuid "^3.3.2"
     webpack "^3.12.0"
     webpack-dev-middleware "^2.0.6"
     webpack-hot-middleware "^2.22.2"
@@ -4228,6 +4230,10 @@ moment@2.x.x:
 "moment@>= 2.9.0", moment@^2.14.1, moment@^2.18.1:
   version "2.18.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
+
+moment@^2.22.2:
+  version "2.22.2"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
 morgan@~1.6.1:
   version "1.6.1"
@@ -6657,6 +6663,10 @@ uuid@^2.0.1:
 uuid@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.1.0.tgz#3dd3d3e790abc24d7b0d3a034ffababe28ebbc04"
+
+uuid@^3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
 
 v8flags@^2.0.10:
   version "2.1.1"

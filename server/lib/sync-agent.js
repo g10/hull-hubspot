@@ -3,7 +3,8 @@ import type {
   THullUserUpdateMessage,
   THullConnector,
   THullReqContext,
-  THullSegment
+  THullSegment,
+  THullAccountUpdateMessage
 } from "hull";
 
 import type {
@@ -14,17 +15,22 @@ import type {
 // const Promise = require("bluebird");
 const _ = require("lodash");
 const moment = require("moment");
+const debug = require("debug")("hull-hubspot:sync-agent");
 
-const pipeStreamToPromise = require("./pipe-stream-to-promise");
+const { pipeStreamToPromise } = require("hull/lib/utils");
 const HubspotClient = require("./hubspot-client");
 const ContactPropertyUtil = require("./sync-agent/contact-property-util");
+const CompanyPropertyUtil = require("./sync-agent/company-property-util");
 const MappingUtil = require("./sync-agent/mapping-util");
 const ProgressUtil = require("./sync-agent/progress-util");
 const FilterUtil = require("./sync-agent/filter-util");
 
+const hullClientAccountPropertiesUtil = require("../hull-client-account-properties-util");
+
 class SyncAgent {
   hubspotClient: HubspotClient;
   contactPropertyUtil: ContactPropertyUtil;
+  companyPropertyUtil: CompanyPropertyUtil;
   mappingUtil: MappingUtil;
   progressUtil: ProgressUtil;
   filterUtil: FilterUtil;
@@ -35,17 +41,27 @@ class SyncAgent {
   helpers: Object;
   logger: Object;
   usersSegments: Array<THullSegment>;
+  accountsSegments: Array<THullSegment>;
   cache: Object;
   isBatch: boolean;
 
   constructor(ctx: THullReqContext) {
-    const { client, cache, connector, metric, helpers, usersSegments } = ctx;
+    const {
+      client,
+      cache,
+      connector,
+      metric,
+      helpers,
+      usersSegments,
+      accountsSegments
+    } = ctx;
     this.hullClient = client;
     this.connector = connector;
     this.metric = metric;
     this.helpers = helpers;
     this.logger = client.logger;
     this.usersSegments = usersSegments;
+    this.accountsSegments = accountsSegments;
     this.cache = cache;
 
     this.hubspotClient = new HubspotClient(ctx);
@@ -56,6 +72,7 @@ class SyncAgent {
   isInitialized(): boolean {
     return (
       this.contactPropertyUtil instanceof ContactPropertyUtil &&
+      this.companyPropertyUtil instanceof CompanyPropertyUtil &&
       this.mappingUtil instanceof MappingUtil
     );
   }
@@ -72,26 +89,69 @@ class SyncAgent {
       await this.cache.del("hubspotProperties");
       await this.cache.del("hullProperties");
     }
-    const hubspotProperties = await this.cache.wrap("hubspotProperties", () => {
-      return this.hubspotClient.getContactPropertyGroups();
-    });
-    const hullProperties = await this.cache.wrap("hullProperties", () => {
-      return this.hullClient.utils.properties.get();
+    const hubspotContactProperties = await this.cache.wrap(
+      "hubspotContactProperties",
+      () => {
+        return this.hubspotClient.getContactPropertyGroups();
+      }
+    );
+    const hubspotCompanyProperties = await this.cache.wrap(
+      "hubspotCompanyProperties",
+      () => {
+        return this.hubspotClient.getCompanyPropertyGroups();
+      }
+    );
+
+    const hullUserProperties = await this.cache.wrap(
+      "hullUserProperties",
+      () => {
+        return this.hullClient.utils.properties.get();
+      }
+    );
+
+    const hullAccountProperties = await this.cache.wrap(
+      "hullAccountProperties",
+      () => {
+        return hullClientAccountPropertiesUtil({
+          client: this.hullClient
+        });
+      }
+    );
+    debug("initialize", {
+      usersSegments: typeof this.usersSegments,
+      accountsSegments: typeof this.accountsSegments,
+      hubspotContactProperties: typeof hubspotContactProperties,
+      hubspotCompanyProperties: typeof hubspotCompanyProperties,
+      hullUserProperties: typeof hullUserProperties,
+      hullAccountProperties: typeof hullAccountProperties
     });
     this.contactPropertyUtil = new ContactPropertyUtil({
       hubspotClient: this.hubspotClient,
       logger: this.logger,
       metric: this.metric,
       usersSegments: this.usersSegments,
-      hubspotProperties,
-      hullProperties
+      hubspotProperties: hubspotContactProperties,
+      hullProperties: hullUserProperties
     });
+
+    this.companyPropertyUtil = new CompanyPropertyUtil({
+      hubspotClient: this.hubspotClient,
+      logger: this.logger,
+      metric: this.metric,
+      accountsSegments: this.accountsSegments,
+      hubspotProperties: hubspotCompanyProperties,
+      hullProperties: hullAccountProperties
+    });
+
     this.mappingUtil = new MappingUtil({
       connector: this.connector,
       hullClient: this.hullClient,
       usersSegments: this.usersSegments,
-      hubspotProperties,
-      hullProperties
+      accountsSegments: this.accountsSegments,
+      hubspotContactProperties,
+      hubspotCompanyProperties,
+      hullUserProperties,
+      hullAccountProperties
     });
   }
 
@@ -139,6 +199,34 @@ class SyncAgent {
       });
   }
 
+  getCompanyProperties() {
+    return this.cache
+      .wrap("company_properties", () => {
+        return this.hubspotClient.getCompanyPropertyGroups();
+      })
+      .then(groups => {
+        console.log("?>>>>>> GROUPS", groups);
+        return {
+          options: groups.map(group => {
+            return {
+              label: group.displayName,
+              options: _.chain(group.properties)
+                .map(prop => {
+                  return {
+                    label: prop.label,
+                    value: prop.name
+                  };
+                })
+                .value()
+            };
+          })
+        };
+      })
+      .catch(err => {
+        return { options: [] };
+      });
+  }
+
   /**
    * Reconcilation of the ship settings
    * @return {Promise}
@@ -152,8 +240,12 @@ class SyncAgent {
     }
     await this.initialize({ skipCache: true });
 
-    const outboundMapping = this.mappingUtil.contactOutgoingMapping;
-    return this.contactPropertyUtil.sync(outboundMapping);
+    await this.contactPropertyUtil.sync(
+      this.mappingUtil.contactOutgoingMapping
+    );
+    return this.companyPropertyUtil.sync(
+      this.mappingUtil.companyOutgoingMapping
+    );
   }
 
   /**
@@ -168,8 +260,8 @@ class SyncAgent {
     this.metric.value("ship.incoming.users", contacts.length);
     return Promise.all(
       contacts.map(contact => {
-        const traits = this.mappingUtil.getHullTraits(contact);
-        const ident = this.mappingUtil.getIdentFromHubspot(contact);
+        const traits = this.mappingUtil.getHullUserTraits(contact);
+        const ident = this.mappingUtil.getHullUserIdentFromHubspot(contact);
         if (!ident.email) {
           return this.logger.info("incoming.user.skip", {
             contact,
@@ -275,6 +367,85 @@ class SyncAgent {
     };
   }
 
+  async sendAccountUpdateMessages(
+    messages: Array<THullAccountUpdateMessage>
+  ): Promise<*> {
+    await this.initialize();
+    if (!this.isConfigured()) {
+      this.hullClient.logger.error("connector.configuration.error", {
+        errors: "connector is not configured"
+      });
+      return Promise.resolve();
+    }
+
+    const envelopes = messages.map(message =>
+      this.buildAccountUpdateMessageEnvelope(message)
+    );
+    const filterResults = this.filterUtil.filterAccountUpdateMessageEnvelopes(
+      envelopes
+    );
+
+    this.hullClient.logger.debug("outgoing.job.start", {
+      filter_results: filterResults
+    });
+
+    filterResults.toSkip.forEach(envelope => {
+      this.hullClient
+        .asAccount(envelope.message.account)
+        .logger.info("outgoing.account.skip", { reason: envelope.skipReason });
+    });
+
+    const accountsToUpdate = filterResults.toUpdate;
+    const accountsToInsert = [];
+
+    // first perform search for companies to be updated
+    await Promise.all(filterResults.toInsert.map(async (envelopeToInsert) => {
+      console.log("envelopeToInsert", envelopeToInsert.message.account.domain);
+      const domain = envelopeToInsert.message.account.domain; // TODO
+      const results = await this.hubspotClient.postCompanyDomainSearch(domain);
+      if (results.body.results && results.body.results.length > 0) {
+        const existingCompanies = _.sortBy(results.body.results, "properties.hs_lastmodifieddate.value");
+        const envelopeToUpdate = _.cloneDeep(envelopeToInsert);
+        envelopeToUpdate.hubspotWriteCompany.objectId = _.last(existingCompanies).companyId;
+        accountsToUpdate.push(envelopeToUpdate);
+      } else {
+        accountsToInsert.push(envelopeToInsert);
+      }
+    }));
+
+    // update companies
+    await this.hubspotClient
+      .postCompaniesUpdateEnvelopes(accountsToUpdate)
+      .then(resultEnvelopes => {
+        resultEnvelopes.forEach(envelope => {
+          if (envelope.error === undefined) {
+            this.hullClient
+              .asAccount(envelope.message.account)
+              .logger.info(
+                "outgoing.account.success",
+                envelope.hubspotWriteCompany
+              );
+          } else {
+            this.hullClient
+              .asAccount(envelope.message.account)
+              .logger.error("outgoing.account.error", envelope.error);
+          }
+        });
+      });
+
+    // insert companies
+  }
+
+  buildAccountUpdateMessageEnvelope(
+    message: THullAccountUpdateMessage
+  ): HubspotAccountUpdateMessageEnvelope {
+    const hubspotWriteCompany = this.mappingUtil.getHubspotCompany(message);
+    return {
+      message,
+      hubspotWriteCompany
+    };
+  }
+
   /**
    * Handles operation for automatic sync changes of hubspot profiles
    * to hull users.
@@ -287,7 +458,7 @@ class SyncAgent {
         .subtract(1, "hour")
         .format();
     const stopFetchAt = moment().format();
-    const propertiesToFetch = this.mappingUtil.getHubspotPropertiesKeys();
+    const propertiesToFetch = this.mappingUtil.getHubspotContactPropertiesKeys();
     let progress = 0;
 
     this.hullClient.logger.info("incoming.job.start", {
@@ -341,7 +512,7 @@ class SyncAgent {
    */
   async fetchAllContacts(): Promise<any> {
     await this.initialize();
-    const propertiesToFetch = this.mappingUtil.getHubspotPropertiesKeys();
+    const propertiesToFetch = this.mappingUtil.getHubspotContactPropertiesKeys();
     let progress = 0;
 
     this.hullClient.logger.info("incoming.job.start", {

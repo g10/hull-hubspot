@@ -1,5 +1,5 @@
 // @flow
-import type { THullUserUpdateMessage } from "hull";
+import type { THullUserUpdateMessage, THullAccountUpdateMessage } from "hull";
 
 export type HubspotError = {
   index: number,
@@ -11,7 +11,7 @@ export type HubspotError = {
   }
 };
 
-export type HubspotWriteProperties = Array<{
+export type HubspotWriteContactProperties = Array<{
   property: string,
   value: mixed
 }>;
@@ -19,7 +19,18 @@ export type HubspotWriteProperties = Array<{
 export type HubspotWriteContact = {
   vid?: string,
   email?: string,
-  properties: HubspotWriteProperties
+  properties: HubspotWriteContactProperties
+};
+
+export type HubspotWriteCompanyProperties = Array<{
+  property: string,
+  value: mixed
+}>;
+
+export type HubspotWriteCompany = {
+  vid?: string,
+  email?: string,
+  properties: HubspotWriteCompanyProperties
 };
 
 export type HubspotReadContact = {
@@ -48,9 +59,32 @@ export type HubspotReadContact = {
   }
 };
 
+export type HubspotReadCompany = {
+  companyId: string,
+  isDeleted: boolean,
+  portalId: string,
+  properties: {
+    [propertyName: string]: {
+      value: mixed
+    },
+    lastmodifieddate: {
+      value: string
+    }
+  }
+};
+
 export type HubspotUserUpdateMessageEnvelope = {
   message: THullUserUpdateMessage,
   hubspotWriteContact: HubspotWriteContact,
+  skipReason?: string,
+  error?: string,
+  errorProperty?: string,
+  hull_summary?: string
+};
+
+export type HubspotAccountUpdateMessageEnvelope = {
+  message: THullAccountUpdateMessage,
+  hubspotWriteCompany: HubspotWriteCompany,
   skipReason?: string,
   error?: string,
   errorProperty?: string,
@@ -97,6 +131,8 @@ export type HubspotContactProperty = {
   updatedUserId: null | any
 };
 
+export type HubspotCompanyProperty = HubspotContactProperty;
+
 export type HubspotContactPropertyWrite = {
   name: string,
   label: string,
@@ -119,6 +155,17 @@ export type HubspotContactPropertyGroup = {
 };
 
 export type HubspotContactPropertyGroups = Array<HubspotContactPropertyGroup>;
+
+export type HubspotCompanyPropertyGroup = {
+  name: string,
+  displayName: string,
+  displayOrder: number,
+  hubspotDefined: boolean,
+  properties: Array<HubspotCompanyProperty>
+};
+
+export type HubspotCompanyPropertyWrite = HubspotContactPropertyWrite;
+export type HubspotCompanyPropertyGroups = Array<HubspotCompanyPropertyGroup>;
 
 export type HullProperty = {
   id: string,
@@ -203,3 +250,25 @@ export type HubspotContactIncomingMapping = {
     "fieldType"
   >
 };
+
+export type HubspotDefaultCompanyMapping = {
+  hubspot: string,
+  hull: string,
+  type: string,
+  title: string,
+  read_only: boolean
+};
+
+export type HubspotCompanyAttributesIncomingSetting = {
+  hubspot: string,
+  hull: string
+};
+
+export type HubspotCompanyAttributesOutgoingSetting = {
+  hull: string,
+  hubspot: string,
+  overwrite: boolean
+};
+
+export type HubspotCompanyOutgoingMapping = HubspotContactOutgoingMapping;
+export type HubspotCompanyIncomingMapping = HubspotContactIncomingMapping;
