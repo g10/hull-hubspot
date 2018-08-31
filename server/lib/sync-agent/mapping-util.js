@@ -382,7 +382,7 @@ class MappingUtil {
 
   getHullAccountTraits(accountData: HubspotReadCompany): THullAttributes {
     const hullTraits = _.reduce(
-      this.contactIncomingMapping,
+      this.companyIncomingMapping,
       (traits, mappingEntry) => {
         if (!mappingEntry.hubspot_property_name) {
           this.hullClient

@@ -554,7 +554,7 @@ class HubspotClient {
   getCompanyPropertyGroups(): Promise<HubspotCompanyPropertyGroups> {
     return this.retryUnauthorized(() => {
       return this.agent
-        .get("/properties/v1/companies/groups/")
+        .get("/properties/v1/companies/groups")
         .query({ includeProperties: true })
         .then(response => response.body);
     });

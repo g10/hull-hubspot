@@ -101,7 +101,7 @@ class CompanyPropertyUtil {
       return Promise.resolve(group);
     }
     return this.hubspotClient.agent
-      .post("/properties/v1/companies/groups/")
+      .post("/properties/v1/companies/groups")
       .send({
         name: "hull",
         displayName: "Hull Properties",
@@ -165,7 +165,7 @@ class CompanyPropertyUtil {
     }
 
     return this.hubspotClient.agent
-      .post("/properties/v1/companies/properties/")
+      .post("/properties/v1/companies/properties")
       .send(property)
       .then(res => res.body);
   }
