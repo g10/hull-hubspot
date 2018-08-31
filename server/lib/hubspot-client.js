@@ -293,13 +293,16 @@ class HubspotClient {
     count: number = 100,
     offset: ?string = null
   ): Readable {
-    const getRecentlyUpdatedContacts = this.getRecentlyUpdatedContacts.bind(
-      this
-    );
-
-    function getRecentContactsPage(push, pageCount, pageOffset) {
-      return getRecentlyUpdatedContacts(properties, pageCount, pageOffset).then(
-        response => {
+    console.log("getRecentContactsStream1");
+    return promiseToReadableStream(push => {
+      console.log("getRecentContactsStream2");
+      const getRecentContactsPage = pageOffset => {
+        console.log("getRecentContactsPage2");
+        return this.getRecentlyUpdatedContacts(
+          properties,
+          count,
+          pageOffset
+        ).then(response => {
           const contacts = response.body.contacts.filter(c => {
             const time = moment(
               c.properties.lastmodifieddate.value,
@@ -321,16 +324,14 @@ class HubspotClient {
           if (contacts.length > 0) {
             push(contacts);
             if (hasMore) {
-              return getRecentContactsPage(push, pageCount, vidOffset);
+              return getRecentContactsPage(vidOffset);
             }
           }
           return Promise.resolve();
-        }
-      );
-    }
-
-    return promiseToReadableStream(push => {
-      return getRecentContactsPage(push, count, offset);
+        });
+      };
+      console.log("getRecentContactsPage1");
+      return getRecentContactsPage(offset);
     });
   }
 

@@ -344,6 +344,13 @@ const DEFAULT_MAPPING: Array<HubspotDefaultContactMapping> = [
     title: "",
     type: "number",
     read_only: true
+  },
+  {
+    name: "associatedcompanyid",
+    hull: "traits_hubspot/associatedcompanyid",
+    title: "",
+    type: "string",
+    read_only: false
   }
 ];
 

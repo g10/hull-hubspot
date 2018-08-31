@@ -17,7 +17,7 @@ const _ = require("lodash");
 const moment = require("moment");
 const debug = require("debug")("hull-hubspot:sync-agent");
 
-const { pipeStreamToPromise } = require("hull/lib/utils");
+const { pipeStreamToPromise, settingsUpdate } = require("hull/lib/utils");
 const HubspotClient = require("./hubspot-client");
 const ContactPropertyUtil = require("./sync-agent/contact-property-util");
 const CompanyPropertyUtil = require("./sync-agent/company-property-util");
@@ -44,6 +44,7 @@ class SyncAgent {
   accountsSegments: Array<THullSegment>;
   cache: Object;
   isBatch: boolean;
+  settingsUpdate: settingsUpdate;
 
   constructor(ctx: THullReqContext) {
     const {
@@ -67,6 +68,7 @@ class SyncAgent {
     this.hubspotClient = new HubspotClient(ctx);
     this.progressUtil = new ProgressUtil(ctx);
     this.filterUtil = new FilterUtil(ctx);
+    this.settingsUpdate = settingsUpdate.bind(null, ctx);
   }
 
   isInitialized(): boolean {
@@ -259,7 +261,8 @@ class SyncAgent {
     this.logger.debug("saveContacts", contacts.length);
     this.metric.value("ship.incoming.users", contacts.length);
     return Promise.all(
-      contacts.map(contact => {
+      contacts.map(async contact => {
+        console.log(">>>>> CONTACT", contact);
         const traits = this.mappingUtil.getHullUserTraits(contact);
         const ident = this.mappingUtil.getHullUserIdentFromHubspot(contact);
         if (!ident.email) {
@@ -278,6 +281,26 @@ class SyncAgent {
             error
           });
         }
+
+        if (this.connector.private_settings.link_users_in_hull === true && contact.properties.associatedcompanyid) {
+          const linkingClient = this.hullClient
+            .asUser(ident)
+            .account({ anonymous_id: `hubspot:${contact.properties.associatedcompanyid.value}` });
+          await linkingClient
+            .traits({})
+            .then(() => {
+              return linkingClient.logger.info(
+                "incoming.account.link.success"
+              );
+            })
+            .catch(error => {
+              return linkingClient.logger.error(
+                "incoming.account.link.error",
+                error
+              );
+            });
+        }
+
         return asUser.traits(traits).then(
           () => asUser.logger.info("incoming.user.success", { traits }),
           error =>
@@ -506,7 +529,7 @@ class SyncAgent {
       propertiesToFetch
     });
     await this.progressUtil.start();
-    await this.helpers.updateSettings({
+    await this.settingsUpdate({
       last_fetch_at: stopFetchAt
     });
 
