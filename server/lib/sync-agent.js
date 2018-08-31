@@ -626,7 +626,7 @@ class SyncAgent {
     this.logger.debug("saveContacts", companies.length);
     this.metric.value("ship.incoming.accounts", companies.length);
     return Promise.all(
-      companies.map(company => {
+      companies.map(async company => {
         const traits = this.mappingUtil.getHullAccountTraits(company);
         const ident = this.mappingUtil.getHullAccountIdentFromHubspot(company);
         // if (!ident.domain) {
@@ -645,7 +645,8 @@ class SyncAgent {
             error
           });
         }
-        return asAccount.traits(traits).then(
+
+        await asAccount.traits(traits).then(
           () => asAccount.logger.info("incoming.account.success", { traits }),
           error =>
             asAccount.logger.error("incoming.account.error", {
@@ -658,6 +659,24 @@ class SyncAgent {
               errors: error
             })
         );
+        if (this.connector.private_settings.link_users_in_hull !== true) {
+          return Promise.resolve();
+        }
+        const companyVidsStream = this.hubspotClient.getCompanyVidsStream(company.companyId);
+        return pipeStreamToPromise(companyVidsStream, vids => {
+          return Promise.all(vids.map(vid => {
+            const linkingClient = this.hullClient.asUser({ anonymous_id: `hubspot:${vid}` })
+              .account(ident);
+            return linkingClient
+              .traits({})
+              .then(() => {
+                return linkingClient.logger.info("incoming.account.link.success");
+              })
+              .catch(error => {
+                return linkingClient.logger.error("incoming.account.link.error", error);
+              });
+          }));
+        });
       })
     );
   }

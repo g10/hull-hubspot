@@ -559,6 +559,33 @@ class HubspotClient {
         .then(response => response.body);
     });
   }
+
+  getCompanyVids(companyId: string, vidOffset?: string) {
+    return this.retryUnauthorized(() => {
+      return this.agent
+        .get(`/companies/v2/companies/${companyId}/vids`)
+        .query({ vidOffset });
+    });
+  }
+
+  getCompanyVidsStream(companyId: string) {
+    return promiseToReadableStream(push => {
+      const getCompanyVidsPage = (offset?: string) => {
+        return this.getCompanyVids(companyId, offset).then(response => {
+          const vids = response.body.vids || [];
+          if (vids.length > 0) {
+            push(vids);
+          }
+          if (response.body.hasMore) {
+            return getCompanyVidsPage(response.body.vidOffset);
+          }
+          return Promise.resolve();
+        });
+      };
+
+      return getCompanyVidsPage();
+    });
+  }
 }
 
 module.exports = HubspotClient;
