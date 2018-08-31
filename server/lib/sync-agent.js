@@ -662,20 +662,30 @@ class SyncAgent {
         if (this.connector.private_settings.link_users_in_hull !== true) {
           return Promise.resolve();
         }
-        const companyVidsStream = this.hubspotClient.getCompanyVidsStream(company.companyId);
+        const companyVidsStream = this.hubspotClient.getCompanyVidsStream(
+          company.companyId
+        );
         return pipeStreamToPromise(companyVidsStream, vids => {
-          return Promise.all(vids.map(vid => {
-            const linkingClient = this.hullClient.asUser({ anonymous_id: `hubspot:${vid}` })
-              .account(ident);
-            return linkingClient
-              .traits({})
-              .then(() => {
-                return linkingClient.logger.info("incoming.account.link.success");
-              })
-              .catch(error => {
-                return linkingClient.logger.error("incoming.account.link.error", error);
-              });
-          }));
+          return Promise.all(
+            vids.map(vid => {
+              const linkingClient = this.hullClient
+                .asUser({ anonymous_id: `hubspot:${vid}` })
+                .account(ident);
+              return linkingClient
+                .traits({})
+                .then(() => {
+                  return linkingClient.logger.info(
+                    "incoming.account.link.success"
+                  );
+                })
+                .catch(error => {
+                  return linkingClient.logger.error(
+                    "incoming.account.link.error",
+                    error
+                  );
+                });
+            })
+          );
         });
       })
     );
