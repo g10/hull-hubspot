@@ -4,8 +4,8 @@ import type {
   HubspotContactOutgoingMapping,
   HubspotCompanyProperty,
   HullProperty,
-  HubspotCompanyPropertyGroup,
-  HubspotCompanyPropertyWrite
+  HubspotCompanyPropertyGroup
+  // HubspotCompanyPropertyWrite
 } from "../../types";
 
 const _ = require("lodash");

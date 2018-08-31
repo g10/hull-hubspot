@@ -222,7 +222,7 @@ class SyncAgent {
           })
         };
       })
-      .catch(err => {
+      .catch(() => {
         return { options: [] };
       });
   }
@@ -399,19 +399,32 @@ class SyncAgent {
     const accountsToInsert = [];
 
     // first perform search for companies to be updated
-    await Promise.all(filterResults.toInsert.map(async (envelopeToInsert) => {
-      console.log("envelopeToInsert", envelopeToInsert.message.account.domain);
-      const domain = envelopeToInsert.message.account.domain; // TODO
-      const results = await this.hubspotClient.postCompanyDomainSearch(domain);
-      if (results.body.results && results.body.results.length > 0) {
-        const existingCompanies = _.sortBy(results.body.results, "properties.hs_lastmodifieddate.value");
-        const envelopeToUpdate = _.cloneDeep(envelopeToInsert);
-        envelopeToUpdate.hubspotWriteCompany.objectId = _.last(existingCompanies).companyId;
-        accountsToUpdate.push(envelopeToUpdate);
-      } else {
-        accountsToInsert.push(envelopeToInsert);
-      }
-    }));
+    await Promise.all(
+      filterResults.toInsert.map(async envelopeToInsert => {
+        const domain = envelopeToInsert.message.account.domain; // TODO
+        const results = await this.hubspotClient.postCompanyDomainSearch(
+          domain
+        );
+        console.log(
+          "envelopeToInsert",
+          envelopeToInsert.message.account.domain,
+          results.body.results.length
+        );
+        if (results.body.results && results.body.results.length > 0) {
+          const existingCompanies = _.sortBy(
+            results.body.results,
+            "properties.hs_lastmodifieddate.value"
+          );
+          const envelopeToUpdate = _.cloneDeep(envelopeToInsert);
+          envelopeToUpdate.hubspotWriteCompany.objectId = _.last(
+            existingCompanies
+          ).companyId;
+          accountsToUpdate.push(envelopeToUpdate);
+        } else {
+          accountsToInsert.push(envelopeToInsert);
+        }
+      })
+    );
 
     // update companies
     await this.hubspotClient
@@ -419,21 +432,45 @@ class SyncAgent {
       .then(resultEnvelopes => {
         resultEnvelopes.forEach(envelope => {
           if (envelope.error === undefined) {
-            this.hullClient
+            return this.hullClient
               .asAccount(envelope.message.account)
-              .logger.info(
-                "outgoing.account.success",
-                envelope.hubspotWriteCompany
-              );
-          } else {
-            this.hullClient
-              .asAccount(envelope.message.account)
-              .logger.error("outgoing.account.error", envelope.error);
+              .logger.info("outgoing.account.success", {
+                hubspotWriteCompany: envelope.hubspotWriteCompany,
+                operation: "update"
+              });
           }
+          return this.hullClient
+            .asAccount(envelope.message.account)
+            .logger.error("outgoing.account.error", envelope.error);
         });
       });
 
     // insert companies
+    return this.hubspotClient
+      .postCompaniesEnvelopes(accountsToInsert)
+      .then(resultEnvelopes => {
+        resultEnvelopes.forEach(envelope => {
+          if (envelope.error === undefined && envelope.hubspotReadCompany) {
+            const accountTraits = this.mappingUtil.getHullAccountTraits(
+              envelope.hubspotReadCompany
+            );
+            return this.hullClient
+              .asAccount(envelope.message.account)
+              .traits(accountTraits)
+              .then(() => {
+                return this.hullClient
+                  .asAccount(envelope.message.account)
+                  .logger.info("outgoing.account.success", {
+                    hubspotWriteCompany: envelope.hubspotWriteCompany,
+                    operation: "insert"
+                  });
+              });
+          }
+          return this.hullClient
+            .asAccount(envelope.message.account)
+            .logger.error("outgoing.account.error", envelope.error);
+        });
+      });
   }
 
   buildAccountUpdateMessageEnvelope(
@@ -546,6 +583,83 @@ class SyncAgent {
           error: error.message
         });
       });
+  }
+
+  async fetchAllCompanies(): Promise<any> {
+    await this.initialize();
+    const propertiesToFetch = this.mappingUtil.getHubspotCompanyPropertiesKeys();
+    let progress = 0;
+
+    this.hullClient.logger.info("incoming.job.start", {
+      jobName: "fetchAllCompanies",
+      type: "user",
+      propertiesToFetch
+    });
+
+    const streamOfIncomingCompanies = this.hubspotClient.getAllCompaniesStream(
+      propertiesToFetch
+    );
+
+    return pipeStreamToPromise(streamOfIncomingCompanies, companies => {
+      progress += companies.length;
+      this.hullClient.logger.info("incoming.job.progress", {
+        jobName: "fetchAllCompanies",
+        type: "account",
+        progress
+      });
+      return this.saveCompanies(companies);
+    })
+      .then(() => {
+        this.hullClient.logger.info("incoming.job.success", {
+          jobName: "fetchAllCompanies"
+        });
+      })
+      .catch(error => {
+        this.hullClient.logger.info("incoming.job.error", {
+          jobName: "fetchAllCompanies",
+          error: error.message
+        });
+      });
+  }
+
+  saveCompanies(companies: Array<HubspotReadCompany>): Promise<any> {
+    this.logger.debug("saveContacts", companies.length);
+    this.metric.value("ship.incoming.accounts", companies.length);
+    return Promise.all(
+      companies.map(company => {
+        const traits = this.mappingUtil.getHullAccountTraits(company);
+        const ident = this.mappingUtil.getHullAccountIdentFromHubspot(company);
+        // if (!ident.domain) {
+        //   return this.logger.info("incoming.user.skip", {
+        //     contact,
+        //     reason: "missing email"
+        //   });
+        // }
+        this.logger.debug("incoming.account", { ident, traits });
+        let asAccount;
+        try {
+          asAccount = this.hullClient.asAccount(ident);
+        } catch (error) {
+          return this.logger.info("incoming.account.skip", {
+            company,
+            error
+          });
+        }
+        return asAccount.traits(traits).then(
+          () => asAccount.logger.info("incoming.account.success", { traits }),
+          error =>
+            asAccount.logger.error("incoming.account.error", {
+              hull_summary: `Fetching data from Hubspot returned an error: ${_.get(
+                error,
+                "message",
+                ""
+              )}`,
+              traits,
+              errors: error
+            })
+        );
+      })
+    );
   }
 }
 

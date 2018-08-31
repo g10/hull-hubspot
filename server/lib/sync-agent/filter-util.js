@@ -30,13 +30,20 @@ class FilterUtil {
     return false;
   }
 
-  isAccountWhitelisted(envelope: Array<HubspotUserUpdateMessageEnvelope>): boolean {
+  isAccountWhitelisted(
+    envelope: Array<HubspotUserUpdateMessageEnvelope>
+  ): boolean {
     const segmentIds =
       (this.connector.private_settings &&
         this.connector.private_settings.synchronized_account_segments) ||
       [];
     if (Array.isArray(envelope.message.account_segments)) {
-      return _.intersection(segmentIds, envelope.message.account_segments.map(s => s.id)).length > 0;
+      return (
+        _.intersection(
+          segmentIds,
+          envelope.message.account_segments.map(s => s.id)
+        ).length > 0
+      );
     }
     return false;
   }
@@ -89,7 +96,7 @@ class FilterUtil {
       toSkip: []
     };
     envelopes.forEach(envelope => {
-      const { account, changes = {}, segments = [] } = envelope.message;
+      const { changes = {} } = envelope.message;
       if (
         _.get(changes, "account['hubspot/fetched_at'][1]", false) &&
         _.isEmpty(_.get(changes, "segments"))

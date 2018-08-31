@@ -68,6 +68,7 @@ class MappingUtil {
     usersSegments,
     accountsSegments,
     hubspotContactProperties,
+    hubspotCompanyProperties,
     hullUserProperties,
     hullAccountProperties
   }: Object) {
@@ -78,6 +79,9 @@ class MappingUtil {
     this.accountsSegments = accountsSegments;
     this.hubspotContactProperties = _.flatten(
       hubspotContactProperties.map(group => group.properties)
+    );
+    this.hubspotCompanyProperties = _.flatten(
+      hubspotCompanyProperties.map(group => group.properties)
     );
     this.hullUserProperties = hullUserProperties;
     this.hullAccountProperties = hullAccountProperties;
@@ -251,9 +255,8 @@ class MappingUtil {
       (mapping, defaultMapping) => {
         const hullTrait = this.hullAccountProperties[defaultMapping.hull];
         const hubspotCompanyProperty = _.find(this.hubspotCompanyProperties, {
-          hubspot: defaultMapping.hubspot
+          name: defaultMapping.hubspot
         });
-
         if (hubspotCompanyProperty === undefined) {
           return mapping;
         }
@@ -316,6 +319,14 @@ class MappingUtil {
     return this.contactOutgoingMapping.map(prop => prop.hull_trait_name);
   }
 
+  getHubspotCompanyPropertiesKeys(): Array<string> {
+    return this.companyIncomingMapping.map(prop => prop.hubspot_property_name);
+  }
+
+  getHullAccountTraitsKeys(): Array<string> {
+    return this.companyOutgoingMapping.map(prop => prop.hull_trait_name);
+  }
+
   /**
    * Prepares a Hull User resolution object for `hull.as` method.
    * @param  {Object} hubspotUser
@@ -367,6 +378,54 @@ class MappingUtil {
     }
     debug("getIdentFromHubspot", ident);
     return ident;
+  }
+
+  getHullAccountTraits(accountData: HubspotReadCompany): THullAttributes {
+    const hullTraits = _.reduce(
+      this.contactIncomingMapping,
+      (traits, mappingEntry) => {
+        if (!mappingEntry.hubspot_property_name) {
+          this.hullClient
+            .asAccount(_.pick(accountData, ["id", "external_id", "domain"]))
+            .logger.warn("incoming.account.warning", {
+              warning: "cannot find mapped hubspot property",
+              mappingEntry
+            });
+        }
+        if (
+          accountData.properties &&
+          _.has(accountData.properties, mappingEntry.hubspot_property_name)
+        ) {
+          let val = _.get(
+            accountData,
+            `properties[${mappingEntry.hubspot_property_name}].value`
+          );
+          if (mappingEntry.hubspot_property_type === "number") {
+            const numVal = parseFloat(val);
+            // eslint-disable-next-line no-restricted-globals
+            if (!isNaN(val)) {
+              val = numVal;
+            }
+          }
+
+          if (
+            mappingEntry.hubspot_property_type === "enumeration" &&
+            mappingEntry.hubspot_property_field_type === "checkbox" &&
+            typeof val === "string"
+          ) {
+            val = val.split(";");
+          }
+          traits[mappingEntry.hull_trait_name] = val;
+        }
+        return traits;
+      },
+      {}
+    );
+
+    hullTraits["hubspot/id"] = accountData.companyId;
+
+    debug("getHullTraits", hullTraits);
+    return hullTraits;
   }
 
   /**
@@ -449,9 +508,7 @@ class MappingUtil {
   }
 
   getHubspotCompany(message: THullAccount): HubspotWriteCompany {
-    const hubspotWriteProperties = this.getHubspotCompanyProperties(
-      message
-    );
+    const hubspotWriteProperties = this.getHubspotCompanyProperties(message);
     const hubspotWriteCompany: HubspotWriteContact = {
       properties: hubspotWriteProperties
     };
@@ -461,6 +518,12 @@ class MappingUtil {
     ) {
       hubspotWriteCompany.objectId = message.account["hubspot/id"];
     }
+
+    hubspotWriteCompany.properties.push({
+      name: "domain",
+      value: message.account.domain
+    });
+
     return hubspotWriteCompany;
   }
 
@@ -588,7 +651,11 @@ class MappingUtil {
       this.contactOutgoingMapping,
       (contactProperties, mappingEntry) => {
         // const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
-        const accountIdent = _.pick(accountData, ["id", "external_id", "domain"]);
+        const accountIdent = _.pick(accountData, [
+          "id",
+          "external_id",
+          "domain"
+        ]);
 
         if (!mappingEntry.hubspot_property_name) {
           this.hullClient
@@ -664,7 +731,9 @@ class MappingUtil {
       []
     );
 
-    const accountSegments: Array<string> = Array.isArray(message.account_segments)
+    const accountSegments: Array<string> = Array.isArray(
+      message.account_segments
+    )
       ? message.account_segments
       : [];
     debug("accountSegments", accountSegments, this.accountsSegments);

@@ -23,6 +23,15 @@ declare type HubspotGetAllContactsResponse = {
   }
 };
 
+declare type HubspotGetAllCompaniesResponse = {
+  ...IncomingMessage,
+  body: {
+    companies: Array<HubspotReadCompany>,
+    "has-more": boolean,
+    offset: string
+  }
+};
+
 const _ = require("lodash");
 const Promise = require("bluebird");
 const superagent = require("superagent");
@@ -212,14 +221,14 @@ class HubspotClient {
    */
   getAllCompanies(
     properties: Array<string>,
-    count: number = 100,
+    limit: number = 100,
     offset: ?string = null
-  ): Promise<HubspotGetAllContactsResponse> {
+  ): Promise<HubspotGetAllCompaniesResponse> {
     return this.retryUnauthorized(() => {
       return this.agent.get("/companies/v2/companies/paged").query({
-        count,
-        vidOffset: offset,
-        property: properties
+        limit,
+        offset,
+        properties
       });
     });
   }
@@ -232,13 +241,13 @@ class HubspotClient {
     const getAllCompaniesPage = (push, pageCount, pageOffset) => {
       return this.getAllCompanies(properties, pageCount, pageOffset).then(
         response => {
-          const contacts = response.body.contacts;
+          const companies = response.body.companies;
           const hasMore = response.body["has-more"];
-          const vidOffset = response.body["vid-offset"];
-          if (contacts.length > 0) {
-            push(contacts);
+          const nextOffset = response.body.offset;
+          if (companies.length > 0) {
+            push(companies);
             if (hasMore) {
-              return getAllCompaniesPage(push, pageCount, vidOffset);
+              return getAllCompaniesPage(push, pageCount, nextOffset);
             }
           }
           return Promise.resolve();
@@ -426,12 +435,15 @@ class HubspotClient {
       return Promise.resolve([]);
     }
     const promises = envelopes.map(envelope => {
+      const resultEnvelope = _.cloneDeep(envelope);
       return this.postCompanies(envelope.hubspotWriteCompany)
-        .then(() => {
-          return envelope;
+        .then(response => {
+          resultEnvelope.hubspotReadCompany = response.body;
+          return resultEnvelope;
         })
         .catch(error => {
-          envelope.error = error;
+          resultEnvelope.error = error;
+          return resultEnvelope;
         });
     });
     return Promise.all(promises);
@@ -522,14 +534,11 @@ class HubspotClient {
 
   postCompanyDomainSearch(domain: string) {
     return this.retryUnauthorized(() => {
-      return this.agent.post(`/companies/v2/domains/${domain}/companies`)
-        .send({
-          requestOptions: {
-            properties: [
-              "domain", "hs_lastmodifieddate", "name"
-            ]
-          }
-        });
+      return this.agent.post(`/companies/v2/domains/${domain}/companies`).send({
+        requestOptions: {
+          properties: ["domain", "hs_lastmodifieddate", "name"]
+        }
+      });
     });
   }
 

@@ -3,346 +3,486 @@
 import type { HubspotDefaultCompanyMapping } from "../../types";
 const DEFAULT_MAPPING: Array<HubspotDefaultCompanyMapping> = [
   {
-    hubspot: "email",
-    hull: "email",
+    hubspot: "about_us",
+    hull: "hubspot/about_us",
     type: "string",
-    title: "Email",
+    title: "About Us",
     read_only: false
-  },
-  {
-    hubspot: "salutation",
-    hull: "traits_hubspot/salutation",
-    type: "string",
-    title: "Salutation",
-    read_only: false
-  },
-  {
-    hubspot: "firstname",
-    hull: "traits_hubspot/first_name",
-    type: "string",
-    title: "First Name",
-    read_only: false
-  },
-  {
-    hubspot: "lastname",
-    hull: "traits_hubspot/last_name",
-    type: "string",
-    title: "Last Name",
-    read_only: false
-  },
-  {
-    hubspot: "phone",
-    hull: "traits_hubspot/phone",
-    type: "string",
-    title: "Phone Number",
-    read_only: false
-  },
-  {
-    hubspot: "mobilephone",
-    hull: "traits_hubspot/mobile_phone",
-    type: "string",
-    title: "Mobile Phone Number",
-    read_only: false
-  },
-  {
-    hubspot: "address",
-    hull: "traits_hubspot/address_street",
-    type: "string",
-    title: "Street Address",
-    read_only: false
-  },
-  {
-    hubspot: "city",
-    hull: "traits_hubspot/address_city",
-    type: "string",
-    title: "City",
-    read_only: false
-  },
-  {
-    hubspot: "zip",
-    hull: "traits_hubspot/address_postal_code",
-    type: "string",
-    title: "Postal Code",
-    read_only: false
-  },
-  {
-    hubspot: "state",
-    hull: "traits_hubspot/address_state",
-    type: "string",
-    title: "State/Region",
-    read_only: false
-  },
-  {
-    hubspot: "country",
-    hull: "traits_hubspot/address_country",
-    type: "string",
-    title: "Country",
-    read_only: false
-  },
-  {
-    hubspot: "fax",
-    hull: "traits_hubspot/fax",
-    type: "string",
-    title: "Fax Number",
-    read_only: false
-  },
-  {
-    hubspot: "company",
-    hull: "traits_hubspot/company",
-    type: "string",
-    title: "Company Name",
-    read_only: false
-  },
-  {
-    hubspot: "industry",
-    hull: "traits_hubspot/industry",
-    type: "string",
-    title: "Industry",
-    read_only: false
-  },
-  {
-    hubspot: "jobtitle",
-    hull: "traits_hubspot/job_title",
-    type: "string",
-    title: "Job Title",
-    read_only: false
-  },
-  {
-    hubspot: "numemployees",
-    hull: "traits_hubspot/employees_count",
-    type: "number",
-    title: "Number of Employees",
-    read_only: false
-  },
-  {
-    hubspot: "website",
-    hull: "traits_hubspot/website",
-    type: "string",
-    title: "Website URL",
-    read_only: false
-  },
-  {
-    hubspot: "createdate",
-    hull: "traits_hubspot/created_at",
-    type: "date",
-    title: "Create Date",
-    read_only: false
-  },
-  {
-    hubspot: "closedate",
-    hull: "traits_hubspot/closed_at",
-    type: "date",
-    title: "Close Date",
-    read_only: false
-  },
-  {
-    hubspot: "lastmodifieddate",
-    hull: "traits_hubspot/updated_at",
-    type: "date",
-    title: "Last Modified Date",
-    read_only: false
-  },
-  {
-    hubspot: "annualrevenue",
-    hull: "traits_hubspot/annual_revenue",
-    type: "number",
-    title: "Annual Revenue",
-    read_only: false
-  },
-  {
-    hubspot: "total_revenue",
-    hull: "traits_hubspot/total_revenue",
-    type: "number",
-    title: "Total Revenue",
-    read_only: false
-  },
-  {
-    hubspot: "lifecyclestage",
-    hull: "traits_hubspot/lifecycle_stage",
-    type: "string",
-    title: "Lifecycle Stage",
-    read_only: false
-  },
-  {
-    hubspot: "days_to_close",
-    hull: "traits_hubspot/days_to_close",
-    type: "number",
-    title: "Days To Close",
-    read_only: true
   },
   {
     hubspot: "first_deal_created_date",
-    hull: "traits_hubspot/first_deal_created_at",
-    type: "date",
+    hull: "hubspot/first_deal_created_date",
+    type: "datetime",
     title: "First Deal Created Date",
+    read_only: true
+  },
+  {
+    hubspot: "founded_year",
+    hull: "hubspot/founded_year",
+    type: "string",
+    title: "Year Founded",
     read_only: false
   },
   {
+    hubspot: "hs_avatar_filemanager_key",
+    hull: "hubspot/hs_avatar_filemanager_key",
+    type: "string",
+    title: "Avatar FileManager key",
+    read_only: true
+  },
+  {
+    hubspot: "hs_lastmodifieddate",
+    hull: "hubspot/hs_lastmodifieddate",
+    type: "datetime",
+    title: "Last Modified Date",
+    read_only: true
+  },
+  {
+    hubspot: "hs_predictivecontactscore_v2",
+    hull: "hubspot/hs_predictivecontactscore_v2",
+    type: "number",
+    title: "Likelihood to close",
+    read_only: true
+  },
+  {
+    hubspot: "hubspot_owner_assigneddate",
+    hull: "hubspot/hubspot_owner_assigneddate",
+    type: "datetime",
+    title: "Owner Assigned Date",
+    read_only: true
+  },
+  {
+    hubspot: "is_public",
+    hull: "hubspot/is_public",
+    type: "bool",
+    title: "Is Public",
+    read_only: false
+  },
+  {
+    hubspot: "num_associated_contacts",
+    hull: "hubspot/num_associated_contacts",
+    type: "number",
+    title: "Associated Contacts",
+    read_only: true
+  },
+  {
     hubspot: "num_associated_deals",
-    hull: "traits_hubspot/associated_deals_count",
+    hull: "hubspot/num_associated_deals",
     type: "number",
     title: "Associated Deals",
     read_only: true
   },
   {
-    hubspot: "hubspot_owner_id",
-    hull: "traits_hubspot/hubspot_owner_id",
-    type: "string",
-    title: "HubSpot Owner",
-    read_only: false
-  },
-  {
-    hubspot: "hs_email_optout",
-    hull: "traits_hubspot/email_optout",
-    type: "boolean",
-    title: "Opted out of all email",
+    hubspot: "recent_deal_amount",
+    hull: "hubspot/recent_deal_amount",
+    type: "number",
+    title: "Recent Deal Amount",
     read_only: true
   },
   {
-    hubspot: "blog_default_hubspot_blog_subscription",
-    hull: "traits_hubspot/default_hubspot_blog_subscription",
-    type: "boolean",
-    title: "Default HubSpot Blog Email Subscription",
-    read_only: false
-  },
-  {
-    hubspot: "message",
-    hull: "traits_hubspot/message",
-    type: "string",
-    title: "Message",
-    read_only: false
-  },
-  {
-    hubspot: "recent_deal_amount",
-    hull: "traits_hubspot/recent_deal_amount",
-    type: "number",
-    title: "Recent Deal Amount",
-    read_only: false
-  },
-  {
     hubspot: "recent_deal_close_date",
-    hull: "traits_hubspot/recent_deal_closed_at",
-    type: "date",
+    hull: "hubspot/recent_deal_close_date",
+    type: "datetime",
     title: "Recent Deal Close Date",
+    read_only: true
+  },
+  {
+    hubspot: "timezone",
+    hull: "hubspot/timezone",
+    type: "string",
+    title: "Time Zone",
     read_only: false
+  },
+  {
+    hubspot: "total_money_raised",
+    hull: "hubspot/total_money_raised",
+    type: "string",
+    title: "Total Money Raised",
+    read_only: false
+  },
+  {
+    hubspot: "total_revenue",
+    hull: "hubspot/total_revenue",
+    type: "number",
+    title: "Total Revenue",
+    read_only: true
+  },
+  {
+    hubspot: "name",
+    hull: "name",
+    type: "string",
+    title: "Name",
+    read_only: false
+  },
+  {
+    hubspot: "phone",
+    hull: "hubspot/phone",
+    type: "string",
+    title: "Phone Number",
+    read_only: false
+  },
+  {
+    hubspot: "address",
+    hull: "hubspot/address",
+    type: "string",
+    title: "Street Address",
+    read_only: false
+  },
+  {
+    hubspot: "address2",
+    hull: "hubspot/address2",
+    type: "string",
+    title: "Street Address 2",
+    read_only: false
+  },
+  {
+    hubspot: "city",
+    hull: "hubspot/city",
+    type: "string",
+    title: "City",
+    read_only: false
+  },
+  {
+    hubspot: "state",
+    hull: "hubspot/state",
+    type: "string",
+    title: "State/Region",
+    read_only: false
+  },
+  {
+    hubspot: "hs_sales_email_last_replied",
+    hull: "hubspot/hs_sales_email_last_replied",
+    type: "datetime",
+    title: "Recent Sales Email Replied Date",
+    read_only: true
+  },
+  {
+    hubspot: "hubspot_owner_id",
+    hull: "hubspot/hubspot_owner_id",
+    type: "enumeration",
+    title: "Company owner",
+    read_only: false
+  },
+  {
+    hubspot: "notes_last_contacted",
+    hull: "hubspot/notes_last_contacted",
+    type: "datetime",
+    title: "Last Contacted",
+    read_only: true
+  },
+  {
+    hubspot: "notes_last_updated",
+    hull: "hubspot/notes_last_updated",
+    type: "datetime",
+    title: "Last Activity Date",
+    read_only: true
+  },
+  {
+    hubspot: "notes_next_activity_date",
+    hull: "hubspot/notes_next_activity_date",
+    type: "datetime",
+    title: "Next Activity Date",
+    read_only: true
+  },
+  {
+    hubspot: "num_contacted_notes",
+    hull: "hubspot/num_contacted_notes",
+    type: "number",
+    title: "Number of times contacted",
+    read_only: true
   },
   {
     hubspot: "num_notes",
-    hull: "traits_hubspot/notes_count",
+    hull: "hubspot/num_notes",
     type: "number",
     title: "Number of Sales Activities",
     read_only: true
   },
   {
-    hubspot: "num_contacted_notes",
-    hull: "traits_hubspot/contacted_notes_count",
+    hubspot: "zip",
+    hull: "hubspot/zip",
     type: "string",
-    title: "Number of times contacted",
+    title: "Postal Code",
+    read_only: false
+  },
+  {
+    hubspot: "country",
+    hull: "hubspot/country",
+    type: "string",
+    title: "Country",
+    read_only: false
+  },
+  {
+    hubspot: "hubspot_team_id",
+    hull: "hubspot/hubspot_team_id",
+    type: "enumeration",
+    title: "HubSpot Team",
     read_only: true
   },
   {
-    hubspot: "notes_last_contacted",
-    hull: "traits_hubspot/notes_last_contacted_at",
-    type: "date",
-    title: "Last Contacted",
+    hubspot: "hs_all_owner_ids",
+    hull: "hubspot/hs_all_owner_ids",
+    type: "enumeration",
+    title: "All owner ids",
+    read_only: true
+  },
+  {
+    hubspot: "website",
+    hull: "hubspot/website",
+    type: "string",
+    title: "Website URL",
     read_only: false
   },
   {
-    hubspot: "notes_last_updated",
-    hull: "traits_hubspot/last_activity_at",
-    type: "date",
-    title: "Last Activity Date",
+    hubspot: "domain",
+    hull: "domain",
+    type: "string",
+    title: "Company Domain Name",
     read_only: false
   },
   {
-    hubspot: "notes_next_activity_date",
-    hull: "traits_hubspot/next_activity_at",
-    type: "date",
-    title: "Next Activity Date",
+    hubspot: "hs_all_team_ids",
+    hull: "hubspot/hs_all_team_ids",
+    type: "enumeration",
+    title: "All team ids",
+    read_only: true
+  },
+  {
+    hubspot: "hs_all_accessible_team_ids",
+    hull: "hubspot/hs_all_accessible_team_ids",
+    type: "enumeration",
+    title: "All accessible team ids",
+    read_only: true
+  },
+  {
+    hubspot: "numberofemployees",
+    hull: "hubspot/numberofemployees",
+    type: "number",
+    title: "Number of Employees",
     read_only: false
   },
   {
-    hubspot: "hubspot_owner_assigneddate",
-    hull: "traits_hubspot/owner_assigned_at",
-    type: "date",
-    title: "Owner Assigned Date",
+    hubspot: "industry",
+    hull: "hubspot/industry",
+    type: "enumeration",
+    title: "Industry",
+    read_only: false
+  },
+  {
+    hubspot: "annualrevenue",
+    hull: "hubspot/annualrevenue",
+    type: "number",
+    title: "Annual Revenue",
+    read_only: false
+  },
+  {
+    hubspot: "lifecyclestage",
+    hull: "hubspot/lifecyclestage",
+    type: "enumeration",
+    title: "Lifecycle Stage",
     read_only: false
   },
   {
     hubspot: "hs_lead_status",
-    hull: "traits_hubspot/lead_status",
-    type: "string",
+    hull: "hubspot/hs_lead_status",
+    type: "enumeration",
     title: "Lead Status",
     read_only: false
   },
   {
-    hubspot: "hs_lifecyclestage_customer_date",
-    hull: "traits_hubspot/became_customer_at",
-    type: "date",
-    title: "Became a Customer Date",
-    read_only: false
-  },
-  {
-    hubspot: "hs_lifecyclestage_lead_date",
-    hull: "traits_hubspot/became_lead_at",
-    type: "date",
-    title: "Became a Lead Date",
-    read_only: false
-  },
-  {
-    hubspot: "hs_lifecyclestage_marketingqualifiedlead_date",
-    hull: "traits_hubspot/became_marketing_qualified_lead_at",
-    type: "date",
-    title: "Became a Marketing Qualified Lead Date",
-    read_only: false
-  },
-  {
-    hubspot: "hs_lifecyclestage_salesqualifiedlead_date",
-    hull: "traits_hubspot/became_sales_qualified_lead_at",
-    type: "date",
-    title: "Became a Sales Qualified Lead Date",
-    read_only: false
-  },
-  {
-    hubspot: "hs_lifecyclestage_subscriber_date",
-    hull: "traits_hubspot/became_subscriber_at",
-    type: "date",
-    title: "Became a Subscriber Date",
-    read_only: false
-  },
-  {
-    hubspot: "hs_lifecyclestage_evangelist_date",
-    hull: "traits_hubspot/became_evangelist_at",
-    type: "date",
-    title: "Became an Evangelist Date",
-    read_only: false
-  },
-  {
-    hubspot: "hs_lifecyclestage_opportunity_date",
-    hull: "traits_hubspot/became_opportunity_at",
-    type: "date",
-    title: "Became an Opportunity Date",
-    read_only: false
-  },
-  {
-    hubspot: "hs_lifecyclestage_other_date",
-    hull: "traits_hubspot/became_other_at",
-    type: "date",
-    title: "Became an Other Lifecycle Date",
-    read_only: false
-  },
-  {
-    hubspot: "hs_email_bounce",
-    hull: "traits_hubspot/emails_bounced_count",
-    title: "",
+    hubspot: "hs_parent_company_id",
+    hull: "hubspot/hs_parent_company_id",
     type: "number",
+    title: "Parent Company",
     read_only: true
   },
   {
-    hubspot: "hs_email_open",
-    hull: "traits_hubspot/opened_count",
-    title: "",
+    hubspot: "type",
+    hull: "hubspot/type",
+    type: "enumeration",
+    title: "Type",
+    read_only: false
+  },
+  {
+    hubspot: "description",
+    hull: "hubspot/description",
+    type: "string",
+    title: "Description",
+    read_only: false
+  },
+  {
+    hubspot: "hs_num_child_companies",
+    hull: "hubspot/hs_num_child_companies",
     type: "number",
+    title: "Number of child companies",
+    read_only: true
+  },
+  {
+    hubspot: "createdate",
+    hull: "hubspot/createdate",
+    type: "datetime",
+    title: "Create Date",
+    read_only: true
+  },
+  {
+    hubspot: "closedate",
+    hull: "hubspot/closedate",
+    type: "datetime",
+    title: "Close Date",
+    read_only: false
+  },
+  {
+    hubspot: "first_contact_createdate",
+    hull: "hubspot/first_contact_createdate",
+    type: "datetime",
+    title: "First Contact Create Date",
+    read_only: true
+  },
+  {
+    hubspot: "web_technologies",
+    hull: "hubspot/web_technologies",
+    type: "enumeration",
+    title: "Web Technologies",
+    read_only: false
+  },
+  {
+    hubspot: "facebookfans",
+    hull: "hubspot/facebookfans",
+    type: "number",
+    title: "Facebook Fans",
+    read_only: false
+  },
+  {
+    hubspot: "twitterhandle",
+    hull: "hubspot/twitterhandle",
+    type: "string",
+    title: "Twitter Handle",
+    read_only: false
+  },
+  {
+    hubspot: "twitterbio",
+    hull: "hubspot/twitterbio",
+    type: "string",
+    title: "Twitter Bio",
+    read_only: false
+  },
+  {
+    hubspot: "twitterfollowers",
+    hull: "hubspot/twitterfollowers",
+    type: "number",
+    title: "Twitter Followers",
+    read_only: false
+  },
+  {
+    hubspot: "facebook_company_page",
+    hull: "hubspot/facebook_company_page",
+    type: "string",
+    title: "Facebook Company Page",
+    read_only: false
+  },
+  {
+    hubspot: "linkedin_company_page",
+    hull: "hubspot/linkedin_company_page",
+    type: "string",
+    title: "LinkedIn Company Page",
+    read_only: false
+  },
+  {
+    hubspot: "linkedinbio",
+    hull: "hubspot/linkedinbio",
+    type: "string",
+    title: "LinkedIn Bio",
+    read_only: false
+  },
+  {
+    hubspot: "googleplus_page",
+    hull: "hubspot/googleplus_page",
+    type: "string",
+    title: "Google Plus Page",
+    read_only: false
+  },
+  {
+    hubspot: "hs_analytics_first_timestamp",
+    hull: "hubspot/hs_analytics_first_timestamp",
+    type: "datetime",
+    title: "Time First Seen",
+    read_only: true
+  },
+  {
+    hubspot: "hs_analytics_first_touch_converting_campaign",
+    hull: "hubspot/hs_analytics_first_touch_converting_campaign",
+    type: "string",
+    title: "First Touch Converting Campaign",
+    read_only: true
+  },
+  {
+    hubspot: "hs_analytics_first_visit_timestamp",
+    hull: "hubspot/hs_analytics_first_visit_timestamp",
+    type: "datetime",
+    title: "Time of First Visit",
+    read_only: true
+  },
+  {
+    hubspot: "hs_analytics_last_timestamp",
+    hull: "hubspot/hs_analytics_last_timestamp",
+    type: "datetime",
+    title: "Time Last Seen",
+    read_only: true
+  },
+  {
+    hubspot: "hs_analytics_last_touch_converting_campaign",
+    hull: "hubspot/hs_analytics_last_touch_converting_campaign",
+    type: "string",
+    title: "Last Touch Converting Campaign",
+    read_only: true
+  },
+  {
+    hubspot: "hs_analytics_last_visit_timestamp",
+    hull: "hubspot/hs_analytics_last_visit_timestamp",
+    type: "datetime",
+    title: "Time of Last Session",
+    read_only: true
+  },
+  {
+    hubspot: "hs_analytics_num_page_views",
+    hull: "hubspot/hs_analytics_num_page_views",
+    type: "number",
+    title: "Number of Pageviews",
+    read_only: true
+  },
+  {
+    hubspot: "hs_analytics_num_visits",
+    hull: "hubspot/hs_analytics_num_visits",
+    type: "number",
+    title: "Number of Visits",
+    read_only: true
+  },
+  {
+    hubspot: "hs_analytics_source",
+    hull: "hubspot/hs_analytics_source",
+    type: "enumeration",
+    title: "Original Source Type",
+    read_only: true
+  },
+  {
+    hubspot: "hs_analytics_source_data_1",
+    hull: "hubspot/hs_analytics_source_data_1",
+    type: "string",
+    title: "Original Source Data 1",
+    read_only: true
+  },
+  {
+    hubspot: "hs_analytics_source_data_2",
+    hull: "hubspot/hs_analytics_source_data_2",
+    type: "string",
+    title: "Original Source Data 2",
+    read_only: true
+  },
+  {
+    hubspot: "days_to_close",
+    hull: "hubspot/days_to_close",
+    type: "number",
+    title: "Days to Close",
     read_only: true
   }
 ];

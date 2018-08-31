@@ -1,3 +1,5 @@
+const _ = require("lodash");
+
 const SyncAgent = require("./lib/sync-agent");
 
 module.exports = {
@@ -36,6 +38,23 @@ module.exports = {
         in: 1
       });
     }
+    const syncAgent = new SyncAgent(ctx);
+    return syncAgent.syncConnector();
+  },
+  "accounts_segment:update": (ctx, messages) => {
+    if (ctx.smartNotifierResponse) {
+      ctx.smartNotifierResponse.setFlowControl({
+        type: "next",
+        size: 1,
+        in: 1
+      });
+    }
+    // FIXME: due to the fact the segments lists may be or may not be updated we need
+    // to make sure that we have the new segment there
+    ctx.accountsSegments = _.uniqBy(
+      ctx.accountsSegments.concat(messages),
+      "id"
+    );
     const syncAgent = new SyncAgent(ctx);
     return syncAgent.syncConnector();
   }
