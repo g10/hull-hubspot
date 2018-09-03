@@ -18,7 +18,11 @@ function server(app: $Application, deps: Object): $Application {
   );
   app.post("/sync", ...credsFromQueryMiddlewares(), actions.fetch);
 
-  app.post("/fetch-recent-companies", ...credsFromQueryMiddlewares(), actions.fetchRecentCompanies);
+  app.post(
+    "/fetch-recent-companies",
+    ...credsFromQueryMiddlewares(),
+    actions.fetchRecentCompanies
+  );
 
   app.use("/batch", batchHandler(notificationsConfiguration));
 

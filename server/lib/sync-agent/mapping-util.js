@@ -1,8 +1,6 @@
 // @flow
 import type {
-  THullUser,
   THullUserIdent,
-  THullAccount,
   THullAccountIdent,
   THullAttributes,
   THullConnector,

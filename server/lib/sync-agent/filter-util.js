@@ -1,5 +1,5 @@
 // @flow
-import type { THullConnector, THullUser, THullReqContext } from "hull";
+import type { THullConnector, THullReqContext } from "hull";
 import type {
   FilterUtilResults,
   HubspotUserUpdateMessageEnvelope,

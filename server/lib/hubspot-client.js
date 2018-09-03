@@ -591,13 +591,11 @@ class HubspotClient {
     offset: ?string = null
   ): Promise<HubspotGetAllCompaniesResponse> {
     return this.retryUnauthorized(() => {
-      return this.agent
-        .get("/companies/v2/companies/recent/modified")
-        .query({
-          count,
-          offset,
-          // property: properties
-        });
+      return this.agent.get("/companies/v2/companies/recent/modified").query({
+        count,
+        offset
+        // property: properties
+      });
     });
   }
 
