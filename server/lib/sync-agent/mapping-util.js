@@ -56,6 +56,8 @@ class MappingUtil {
     HubspotCompanyAttributesOutgoingSetting
   >;
 
+  outgoingLinking: boolean;
+
   contactOutgoingMapping: Array<HubspotContactOutgoingMapping>;
   contactIncomingMapping: Array<HubspotContactIncomingMapping>;
 
@@ -96,6 +98,8 @@ class MappingUtil {
       this.connector.private_settings.ingoing_account_attributes || [];
     this.companyAttributesOutgoingSettings =
       this.connector.private_settings.outgoing_account_attributes || [];
+
+    this.outgoingLinking = this.connector.private_settings.link_users_in_service;
 
     this.contactOutgoingMapping = this.getContactOutgoingMapping();
     this.contactIncomingMapping = this.getContactIncomingMapping();
@@ -469,7 +473,10 @@ class MappingUtil {
             val = val.split(";");
           }
 
-          const nameWithoutPrefix = _.trimStart(mappingEntry.hull_trait_name, "traits_");
+          const nameWithoutPrefix = _.trimStart(
+            mappingEntry.hull_trait_name,
+            "traits_"
+          );
           traits[nameWithoutPrefix] = val;
         }
         return traits;
@@ -645,10 +652,12 @@ class MappingUtil {
       value: segmentNames.join(";")
     });
 
-    console.log("<>>>> MESSAGE", userMessage);
-
     // link to company
-    if (userMessage.account && userMessage.account["hubspot/id"]) {
+    if (
+      this.outgoingLinking === true &&
+      userMessage.account &&
+      userMessage.account["hubspot/id"]
+    ) {
       contactProps.push({
         property: "associatedcompanyid",
         value: userMessage.account["hubspot/id"]

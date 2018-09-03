@@ -302,6 +302,11 @@ class SyncAgent {
                 error
               );
             });
+        } else {
+          asUser.logger.info("incoming.account.link.skip", {
+            reason:
+              "incoming linking is disabled, you can enabled it in the settings"
+          });
         }
 
         return asUser.traits(traits).then(
@@ -743,6 +748,10 @@ class SyncAgent {
             })
         );
         if (this.connector.private_settings.link_users_in_hull !== true) {
+          asAccount.logger.info("incoming.account.link.skip", {
+            reason:
+              "incoming linking is disabled, you can enabled it in the settings"
+          });
           return Promise.resolve();
         }
         const companyVidsStream = this.hubspotClient.getCompanyVidsStream(
