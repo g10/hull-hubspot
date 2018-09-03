@@ -350,7 +350,9 @@ class SyncAgent {
     );
 
     this.hullClient.logger.debug("outgoing.job.start", {
-      filter_results: filterResults
+      toSkip: filterResults.toSkip.length,
+      toInsert: filterResults.toInsert.length,
+      toUpdate: filterResults.toUpdate.length
     });
 
     filterResults.toSkip.forEach(envelope => {
@@ -385,8 +387,7 @@ class SyncAgent {
   buildUserUpdateMessageEnvelope(
     message: THullUserUpdateMessage
   ): HubspotUserUpdateMessageEnvelope {
-    const { user } = message;
-    const hubspotWriteContact = this.mappingUtil.getHubspotContact(user);
+    const hubspotWriteContact = this.mappingUtil.getHubspotContact(message);
     return {
       message,
       hubspotWriteContact
@@ -412,7 +413,9 @@ class SyncAgent {
     );
 
     this.hullClient.logger.debug("outgoing.job.start", {
-      filter_results: filterResults
+      toSkip: filterResults.toSkip.length,
+      toInsert: filterResults.toInsert.length,
+      toUpdate: filterResults.toUpdate.length
     });
 
     filterResults.toSkip.forEach(envelope => {

@@ -496,20 +496,23 @@ class MappingUtil {
     return hullTraits;
   }
 
-  getHubspotContact(userData: THullUser): HubspotWriteContact {
-    const hubspotWriteProperties = this.getHubspotContactProperties(userData);
+  getHubspotContact(message: THullUserUpdateMessage): HubspotWriteContact {
+    const hubspotWriteProperties = this.getHubspotContactProperties(message);
     const hubspotWriteContact: HubspotWriteContact = {
       properties: hubspotWriteProperties
     };
-    if (userData["hubspot/id"] && typeof userData["hubspot/id"] === "string") {
-      hubspotWriteContact.vid = userData["hubspot/id"];
+    if (
+      message.user["hubspot/id"] &&
+      typeof message.user["hubspot/id"] === "string"
+    ) {
+      hubspotWriteContact.vid = message.user["hubspot/id"];
     } else {
-      hubspotWriteContact.email = userData.email;
+      hubspotWriteContact.email = message.user.email;
     }
     return hubspotWriteContact;
   }
 
-  getHubspotCompany(message: THullAccount): HubspotWriteCompany {
+  getHubspotCompany(message: THullAccountUpdateMessage): HubspotWriteCompany {
     const hubspotWriteProperties = this.getHubspotCompanyProperties(message);
     const hubspotWriteCompany: HubspotWriteContact = {
       properties: hubspotWriteProperties
@@ -642,6 +645,8 @@ class MappingUtil {
       value: segmentNames.join(";")
     });
 
+    console.log("<>>>> MESSAGE", userMessage);
+
     // link to company
     if (userMessage.account && userMessage.account["hubspot/id"]) {
       contactProps.push({
@@ -656,11 +661,11 @@ class MappingUtil {
   getHubspotCompanyProperties(
     message: THullAccountUpdateMessage
   ): HubspotWriteCompanyProperties {
-    debug("getHubspotContactProperties", this.contactOutgoingMapping);
+    debug("getHubspotCompanyProperties", this.companyOutgoingMapping);
     // const userSegments = this.userSegments;
     const accountData = message.account;
     const contactProps = _.reduce(
-      this.contactOutgoingMapping,
+      this.companyOutgoingMapping,
       (contactProperties, mappingEntry) => {
         // const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
         const accountIdent = _.pick(accountData, [
@@ -681,7 +686,7 @@ class MappingUtil {
 
         let value = _.has(accountData, mappingEntry.hull_trait_name)
           ? _.get(accountData, mappingEntry.hull_trait_name)
-          : _.get(accountData, `traits_${mappingEntry.hull_trait_name}`);
+          : _.get({ account: accountData }, mappingEntry.hull_trait_name);
 
         if (
           !mappingEntry.hull_overwrite_hubspot &&
@@ -689,12 +694,9 @@ class MappingUtil {
         ) {
           value = _.has(
             accountData,
-            `traits_${_.get(mappingEntry, "hull_default_trait_name")}`
+            _.get(mappingEntry, "hull_default_trait_name")
           )
-            ? _.get(
-                accountData,
-                `traits_${_.get(mappingEntry, "hull_default_trait_name")}`
-              )
+            ? _.get(accountData, _.get(mappingEntry, "hull_default_trait_name"))
             : value;
         }
 

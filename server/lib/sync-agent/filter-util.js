@@ -19,19 +19,25 @@ class FilterUtil {
     debug("isBatch", this.isBatch);
   }
 
-  isUserWhitelisted(user: THullUser): boolean {
+  isUserWhitelisted(
+    envelope: Array<HubspotUserUpdateMessageEnvelope>
+  ): boolean {
     const segmentIds =
       (this.connector.private_settings &&
         this.connector.private_settings.synchronized_segments) ||
       [];
-    if (Array.isArray(user.segment_ids)) {
-      return _.intersection(segmentIds, user.segment_ids).length > 0;
+    console.log(">>> DEBUG", segmentIds, envelope.message.segments);
+    if (Array.isArray(envelope.message.segments)) {
+      return (
+        _.intersection(segmentIds, envelope.message.segments.map(s => s.id))
+          .length > 0
+      );
     }
     return false;
   }
 
   isAccountWhitelisted(
-    envelope: Array<HubspotUserUpdateMessageEnvelope>
+    envelope: Array<HubspotAccountUpdateMessageEnvelope>
   ): boolean {
     const segmentIds =
       (this.connector.private_settings &&
@@ -59,7 +65,7 @@ class FilterUtil {
       toSkip: []
     };
     envelopes.forEach(envelope => {
-      const { user, changes = {}, segments = [] } = envelope.message;
+      const { user, changes = {} } = envelope.message;
       if (
         _.get(changes, "user['traits_hubspot/fetched_at'][1]", false) &&
         _.isEmpty(_.get(changes, "segments"))
@@ -68,14 +74,9 @@ class FilterUtil {
         return filterUtilResults.toSkip.push(envelope);
       }
 
-      if (Array.isArray(user.segment_ids)) {
-        user.segment_ids = _.uniq(
-          (user.segment_ids || []).concat(segments.map(s => s.id))
-        );
-      }
       if (
         !this.isBatch &&
-        (!this.isUserWhitelisted(user) || _.isEmpty(user.email))
+        (!this.isUserWhitelisted(envelope) || _.isEmpty(user.email))
       ) {
         envelope.skipReason = "User doesn't match outgoing filter";
         return filterUtilResults.toSkip.push(envelope);

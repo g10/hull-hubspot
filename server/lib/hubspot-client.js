@@ -370,7 +370,6 @@ class HubspotClient {
       .then(handleSuccessResponse)
       .catch(responseError => {
         const errorInfo = responseError.response.body;
-
         if (errorInfo.status !== "error") {
           const erroredOutEnvelopes = envelopes.map(envelope => {
             envelope.error = "unknown response from hubspot";
@@ -389,7 +388,8 @@ class HubspotClient {
             const hubspotPropertyName =
               error.propertyValidationResult &&
               error.propertyValidationResult.name;
-            envelope.error = hubspotMessage || error.message;
+            envelope.error =
+              hubspotMessage || error.message || error.error.message;
             envelope.errorProperty = hubspotPropertyName;
             return envelope;
           }
@@ -505,7 +505,8 @@ class HubspotClient {
             const hubspotPropertyName =
               error.propertyValidationResult &&
               error.propertyValidationResult.name;
-            envelope.error = hubspotMessage || error.message;
+            envelope.error =
+              hubspotMessage || error.message || error.error.message;
             envelope.errorProperty = hubspotPropertyName;
             return envelope;
           }
