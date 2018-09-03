@@ -282,16 +282,19 @@ class SyncAgent {
           });
         }
 
-        if (this.connector.private_settings.link_users_in_hull === true && contact.properties.associatedcompanyid) {
-          const linkingClient = this.hullClient
-            .asUser(ident)
-            .account({ anonymous_id: `hubspot:${contact.properties.associatedcompanyid.value}` });
+        if (
+          this.connector.private_settings.link_users_in_hull === true &&
+          contact.properties.associatedcompanyid
+        ) {
+          const linkingClient = this.hullClient.asUser(ident).account({
+            anonymous_id: `hubspot:${
+              contact.properties.associatedcompanyid.value
+            }`
+          });
           await linkingClient
             .traits({})
             .then(() => {
-              return linkingClient.logger.info(
-                "incoming.account.link.success"
-              );
+              return linkingClient.logger.info("incoming.account.link.success");
             })
             .catch(error => {
               return linkingClient.logger.error(

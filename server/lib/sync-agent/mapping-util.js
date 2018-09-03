@@ -6,7 +6,9 @@ import type {
   THullAccountIdent,
   THullAttributes,
   THullConnector,
-  THullSegment
+  THullSegment,
+  THullUserUpdateMessage,
+  THullAccountUpdateMessage
 } from "hull";
 
 import type {
@@ -536,8 +538,9 @@ class MappingUtil {
    * @return {Array}           Hubspot properties array
    */
   getHubspotContactProperties(
-    userData: THullUser
+    userMessage: THullUserUpdateMessage
   ): HubspotWriteContactProperties {
+    const userData = userMessage.user;
     debug("getHubspotContactProperties", this.contactOutgoingMapping);
     // const userSegments = this.userSegments;
     const contactProps = _.reduce(
@@ -620,14 +623,15 @@ class MappingUtil {
       []
     );
 
-    const userSegments: Array<string> = Array.isArray(userData.segment_ids)
-      ? userData.segment_ids
+    // handle segments
+    const userSegments: Array<string> = Array.isArray(userMessage.segments)
+      ? userMessage.segments
       : [];
-    debug("userSegments", userData.segment_ids);
+    debug("userSegments", userMessage.segments);
     const segmentNames = _.uniq(
-      userSegments.map(segmentId => {
+      userSegments.map(segment => {
         return _.trim(
-          _.get(_.find(this.usersSegments, { id: segmentId }), "name")
+          _.get(_.find(this.usersSegments, { id: segment.id }), "name")
         );
       })
     );
@@ -638,11 +642,19 @@ class MappingUtil {
       value: segmentNames.join(";")
     });
 
+    // link to company
+    if (userMessage.account && userMessage.account["hubspot/id"]) {
+      contactProps.push({
+        property: "associatedcompanyid",
+        value: userMessage.account["hubspot/id"]
+      });
+    }
+
     return contactProps;
   }
 
   getHubspotCompanyProperties(
-    message: THullUser
+    message: THullAccountUpdateMessage
   ): HubspotWriteCompanyProperties {
     debug("getHubspotContactProperties", this.contactOutgoingMapping);
     // const userSegments = this.userSegments;
