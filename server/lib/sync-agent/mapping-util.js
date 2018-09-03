@@ -468,7 +468,9 @@ class MappingUtil {
           ) {
             val = val.split(";");
           }
-          traits[mappingEntry.hull_trait_name] = val;
+
+          const nameWithoutPrefix = _.trimStart(mappingEntry.hull_trait_name, "traits_");
+          traits[nameWithoutPrefix] = val;
         }
         return traits;
       },
