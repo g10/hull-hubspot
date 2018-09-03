@@ -617,7 +617,7 @@ class MappingUtil {
               });
           }
         }
-        console.log(">>>> TEST", mappingEntry, value);
+
         if (
           !_.isNil(value) &&
           value !== "" &&
@@ -738,7 +738,7 @@ class MappingUtil {
               });
           }
         }
-        console.log(">>>> TEST", mappingEntry, value);
+
         if (
           !_.isNil(value) &&
           value !== "" &&

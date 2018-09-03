@@ -16,7 +16,7 @@
   "private_settings": [
     {
       "name": "synchronized_segments",
-      "title": "Segments",
+      "title": "User Segments",
       "description": "Post to Hubspot when users match these segments",
       "default": [],
       "type": "array",
@@ -94,13 +94,6 @@
       "format": "accountSegment"
     },
     {
-      "name": "link_users_in_hull",
-      "title": "Link users in Hull",
-      "description": "Do you want to let Hubspot update links between Users and Accounts in Hull",
-      "type": "boolean",
-      "default": false
-    },
-    {
       "name": "outgoing_account_attributes",
       "title": "Custom Accounts Fields Sync (Hull to Hubspot)",
       "type": "array",
@@ -134,9 +127,9 @@
       }
     },
     {
-      "name": "link_users_in_service",
-      "title": "Link users in Hubspot",
-      "description": "Do you want to let Hull associate Users and Accounts in Hubspot (Be careful about conflicts with other connectors that would link users too)",
+      "name": "link_users_in_hull",
+      "title": "Link users in Hull",
+      "description": "Do you want to let Hubspot update links between Users and Accounts in Hull",
       "type": "boolean",
       "default": false
     },
@@ -169,6 +162,13 @@
           }
         }
       }
+    },
+    {
+      "name": "link_users_in_service",
+      "title": "Link users in Hubspot",
+      "description": "Do you want to let Hull associate Users and Accounts in Hubspot (Be careful about conflicts with other connectors that would link users too)",
+      "type": "boolean",
+      "default": false
     },
     {
       "name": "token",
