@@ -293,11 +293,8 @@ class HubspotClient {
     count: number = 100,
     offset: ?string = null
   ): Readable {
-    console.log("getRecentContactsStream1");
     return promiseToReadableStream(push => {
-      console.log("getRecentContactsStream2");
       const getRecentContactsPage = pageOffset => {
-        console.log("getRecentContactsPage2");
         return this.getRecentlyUpdatedContacts(
           properties,
           count,
@@ -330,7 +327,6 @@ class HubspotClient {
           return Promise.resolve();
         });
       };
-      console.log("getRecentContactsPage1");
       return getRecentContactsPage(offset);
     });
   }
@@ -586,6 +582,68 @@ class HubspotClient {
       };
 
       return getCompanyVidsPage();
+    });
+  }
+
+  getRecentlyUpdatedCompanies(
+    properties: Array<string>,
+    count: number = 100,
+    offset: ?string = null
+  ): Promise<HubspotGetAllCompaniesResponse> {
+    return this.retryUnauthorized(() => {
+      return this.agent
+        .get("/companies/v2/companies/recent/modified")
+        .query({
+          count,
+          offset,
+          // property: properties
+        });
+    });
+  }
+
+  getRecentCompaniesStream(
+    lastFetchAt: string,
+    stopFetchAt: string,
+    properties: Array<string>,
+    count: number = 100,
+    offset: ?string = null
+  ): Readable {
+    return promiseToReadableStream(push => {
+      const getRecentCompaniesPage = pageOffset => {
+        return this.getRecentlyUpdatedCompanies(
+          properties,
+          count,
+          pageOffset
+        ).then(response => {
+          const companies = response.body.results.filter(c => {
+            const time = moment(
+              c.properties.hs_lastmodifieddate.value,
+              "x"
+            ).milliseconds(0);
+            console.log(">>>> TIME", time);
+            return (
+              time.isAfter(lastFetchAt) &&
+              time
+                .subtract(
+                  process.env.HUBSPOT_FETCH_OVERLAP_SEC || 10,
+                  "seconds"
+                )
+                .isBefore(stopFetchAt)
+            );
+          });
+          const hasMore = response.body.hasMore;
+          const newOffset = response.body.offset;
+          // const timeOffset = response.body["time-offset"];
+          if (companies.length > 0) {
+            push(companies);
+            if (hasMore) {
+              return getRecentCompaniesPage(newOffset);
+            }
+          }
+          return Promise.resolve();
+        });
+      };
+      return getRecentCompaniesPage(offset);
     });
   }
 }

@@ -614,6 +614,60 @@ class SyncAgent {
       });
   }
 
+   /**
+   * Handles operation for automatic sync changes of hubspot profiles
+   * to hull users.
+   */
+  async fetchRecentCompanies(): Promise<any> {
+    await this.initialize();
+    const lastFetchAt =
+      this.connector.private_settings.companies_last_fetch_at ||
+      moment()
+        .subtract(1, "hour")
+        .format();
+    const stopFetchAt = moment().format();
+    const propertiesToFetch = this.mappingUtil.getHubspotCompanyPropertiesKeys();
+    let progress = 0;
+
+    this.hullClient.logger.info("incoming.job.start", {
+      jobName: "fetch",
+      type: "account",
+      lastFetchAt,
+      stopFetchAt,
+      propertiesToFetch
+    });
+    await this.settingsUpdate({
+      companies_last_fetch_at: stopFetchAt
+    });
+
+    const streamOfIncomingCompanies = this.hubspotClient.getRecentCompaniesStream(
+      lastFetchAt,
+      stopFetchAt,
+      propertiesToFetch
+    );
+
+    return pipeStreamToPromise(streamOfIncomingCompanies, companies => {
+      progress += companies.length;
+      this.hullClient.logger.info("incoming.job.progress", {
+        jobName: "fetch",
+        type: "account",
+        progress
+      });
+      return this.saveCompanies(companies);
+    })
+      .then(() => {
+        this.hullClient.logger.info("incoming.job.success", {
+          jobName: "fetch"
+        });
+      })
+      .catch(error => {
+        this.hullClient.logger.info("incoming.job.error", {
+          jobName: "fetch",
+          error
+        });
+      });
+  }
+
   async fetchAllCompanies(): Promise<any> {
     await this.initialize();
     const propertiesToFetch = this.mappingUtil.getHubspotCompanyPropertiesKeys();
