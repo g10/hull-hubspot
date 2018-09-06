@@ -207,7 +207,6 @@ class SyncAgent {
         return this.hubspotClient.getCompanyPropertyGroups();
       })
       .then(groups => {
-        console.log("?>>>>>> GROUPS", groups);
         return {
           options: groups.map(group => {
             return {
@@ -262,7 +261,6 @@ class SyncAgent {
     this.metric.value("ship.incoming.users", contacts.length);
     return Promise.all(
       contacts.map(async contact => {
-        console.log(">>>>> CONTACT", contact);
         const traits = this.mappingUtil.getHullUserTraits(contact);
         const ident = this.mappingUtil.getHullUserIdentFromHubspot(contact);
         if (!ident.email) {
@@ -438,11 +436,6 @@ class SyncAgent {
         const domain = envelopeToInsert.message.account.domain; // TODO
         const results = await this.hubspotClient.postCompanyDomainSearch(
           domain
-        );
-        console.log(
-          "envelopeToInsert",
-          envelopeToInsert.message.account.domain,
-          results.body.results.length
         );
         if (results.body.results && results.body.results.length > 0) {
           const existingCompanies = _.sortBy(

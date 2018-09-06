@@ -114,15 +114,17 @@ class MappingUtil {
         if (!setting.name || !setting.hull) {
           return outboundMapping;
         }
+        const defaultMapping = _.find(CONTACT_DEFAULT_MAPPING, {
+          name: setting.name
+        });
+
         const hubspotPropertyNameSlug = slug(setting.name, {
           replacement: "_",
           lower: true
         });
-        const hubspotPropertyName = `hull_${hubspotPropertyNameSlug}`;
+        const hubspotPropertyName =
+          defaultMapping.name || `hull_${hubspotPropertyNameSlug}`;
 
-        const defaultMapping = _.find(CONTACT_DEFAULT_MAPPING, {
-          name: setting.name
-        });
         const hullTrait = _.find(this.hullUserProperties, { id: setting.hull });
         const hubspotContactProperty = _.find(this.hubspotContactProperties, {
           name: hubspotPropertyName
@@ -213,15 +215,18 @@ class MappingUtil {
         if (!setting.hubspot || !setting.hull) {
           return outboundMapping;
         }
+
+        const defaultMapping = _.find(COMPANY_DEFAULT_MAPPING, {
+          name: setting.hubspot
+        });
+
         const hubspotPropertyNameSlug = slug(setting.hubspot, {
           replacement: "_",
           lower: true
         });
-        const hubspotPropertyName = `hull_${hubspotPropertyNameSlug}`;
+        const hubspotPropertyName =
+          defaultMapping.hubspot || `hull_${hubspotPropertyNameSlug}`;
 
-        const defaultMapping = _.find(COMPANY_DEFAULT_MAPPING, {
-          name: setting.name
-        });
         const hullTrait = _.find(this.hullUserProperties, { id: setting.hull });
         const hubspotCompanyProperty = _.find(this.hubspotCompanyProperties, {
           hubspot: hubspotPropertyName

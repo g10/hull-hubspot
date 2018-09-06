@@ -476,12 +476,10 @@ class HubspotClient {
       });
       return Promise.resolve(erroredOutEnvelopes);
     }
-    console.log(">>>> BODY", body[0]);
     return this.postCompaniesUpdate(body)
       .then(handleSuccessResponse)
       .catch(responseError => {
         const errorInfo = responseError.response.body;
-        console.log(">>>>> errorInfo", errorInfo);
 
         if (errorInfo.status !== "error") {
           const erroredOutEnvelopes = envelopes.map(envelope => {
@@ -618,7 +616,6 @@ class HubspotClient {
               c.properties.hs_lastmodifieddate.value,
               "x"
             ).milliseconds(0);
-            console.log(">>>> TIME", time);
             return (
               time.isAfter(lastFetchAt) &&
               time
