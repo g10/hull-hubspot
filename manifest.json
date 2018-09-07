@@ -147,7 +147,7 @@
             "format": "select",
             "options" : {
               "allowCreate": false,
-              "loadOptions" : "/schema/contact_properties"
+              "loadOptions" : "/schema/company_properties"
             }
           },
           "hull": {

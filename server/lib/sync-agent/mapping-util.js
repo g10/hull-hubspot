@@ -95,7 +95,7 @@ class MappingUtil {
       this.connector.private_settings.sync_fields_to_hubspot || [];
 
     this.companyAttributesIncomingSettings =
-      this.connector.private_settings.ingoing_account_attributes || [];
+      this.connector.private_settings.incoming_account_attributes || [];
     this.companyAttributesOutgoingSettings =
       this.connector.private_settings.outgoing_account_attributes || [];
 
@@ -123,8 +123,7 @@ class MappingUtil {
           lower: true
         });
         const hubspotPropertyName =
-          defaultMapping.name || `hull_${hubspotPropertyNameSlug}`;
-
+          (defaultMapping && defaultMapping.name) || `hull_${hubspotPropertyNameSlug}`;
         const hullTrait = _.find(this.hullUserProperties, { id: setting.hull });
         const hubspotContactProperty = _.find(this.hubspotContactProperties, {
           name: hubspotPropertyName
@@ -217,7 +216,7 @@ class MappingUtil {
         }
 
         const defaultMapping = _.find(COMPANY_DEFAULT_MAPPING, {
-          name: setting.hubspot
+          hubspot: setting.hubspot
         });
 
         const hubspotPropertyNameSlug = slug(setting.hubspot, {
@@ -225,8 +224,7 @@ class MappingUtil {
           lower: true
         });
         const hubspotPropertyName =
-          defaultMapping.hubspot || `hull_${hubspotPropertyNameSlug}`;
-
+          (defaultMapping && defaultMapping.hubspot) || `hull_${hubspotPropertyNameSlug}`;
         const hullTrait = _.find(this.hullUserProperties, { id: setting.hull });
         const hubspotCompanyProperty = _.find(this.hubspotCompanyProperties, {
           hubspot: hubspotPropertyName
@@ -289,7 +287,7 @@ class MappingUtil {
         }
         const hullTrait = this.hullAccountProperties[setting.hull];
         const hubspotCompanyProperty = _.find(this.hubspotCompanyProperties, {
-          name: setting.name
+          name: setting.hubspot
         });
         if (hubspotCompanyProperty === undefined) {
           return mapping;
@@ -424,7 +422,11 @@ class MappingUtil {
           ) {
             val = val.split(";");
           }
-          traits[mappingEntry.hull_trait_name] = val;
+          const nameWithoutPrefix = _.trimStart(
+            mappingEntry.hull_trait_name,
+            "traits_"
+          );
+          traits[nameWithoutPrefix] = val;
         }
         return traits;
       },

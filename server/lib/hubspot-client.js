@@ -439,7 +439,7 @@ class HubspotClient {
           return resultEnvelope;
         })
         .catch(error => {
-          resultEnvelope.error = error;
+          resultEnvelope.error = error && error.response && error.response.body;
           return resultEnvelope;
         });
     });
