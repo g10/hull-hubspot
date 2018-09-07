@@ -532,7 +532,6 @@ class SyncAgent {
       stopFetchAt,
       propertiesToFetch
     });
-    await this.progressUtil.start();
     await this.settingsUpdate({
       last_fetch_at: stopFetchAt
     });
@@ -545,7 +544,6 @@ class SyncAgent {
 
     return pipeStreamToPromise(streamOfIncomingContacts, contacts => {
       progress += contacts.length;
-      this.progressUtil.update(progress);
       this.hullClient.logger.info("incoming.job.progress", {
         jobName: "fetch",
         type: "user",
@@ -557,14 +555,12 @@ class SyncAgent {
         this.hullClient.logger.info("incoming.job.success", {
           jobName: "fetch"
         });
-        this.progressUtil.stop();
       })
       .catch(error => {
         this.hullClient.logger.info("incoming.job.error", {
           jobName: "fetch",
           error
         });
-        this.progressUtil.stop();
       });
   }
 
