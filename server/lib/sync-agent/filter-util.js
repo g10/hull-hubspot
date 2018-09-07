@@ -26,7 +26,6 @@ class FilterUtil {
       (this.connector.private_settings &&
         this.connector.private_settings.synchronized_segments) ||
       [];
-    console.log(">>> DEBUG", segmentIds, envelope.message.segments);
     if (Array.isArray(envelope.message.segments)) {
       return (
         _.intersection(segmentIds, envelope.message.segments.map(s => s.id))
