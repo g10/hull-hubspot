@@ -271,7 +271,7 @@ class HubspotClient {
    * @return {Promise -> Array}
    */
   getRecentlyUpdatedContacts(
-    properties: Array<string>,
+    properties: Array<string> = [],
     count: number = 100,
     offset: ?string = null
   ): Promise<HubspotGetAllContactsResponse> {

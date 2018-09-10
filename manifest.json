@@ -227,23 +227,23 @@
   "schedules": [
     {
       "url": "/sync",
-      "type": "cron",
-      "value": "*/5 * * * *"
+      "type": "interval",
+      "value": "5"
     },
     {
       "url": "/fetch-recent-companies",
-      "type": "cron",
-      "value": "*/5 * * * *"
+      "type": "interval",
+      "value": "5"
     },
     {
       "url": "/monitor/checkToken",
-      "type": "cron",
-      "value": "*/5 * * * *"
+      "type": "interval",
+      "value": "5"
     },
     {
       "url": "/status",
-      "type": "cron",
-      "value": "*/30 * * * *"
+      "type": "interval",
+      "value": "30"
     }
   ]
 }
