@@ -85,13 +85,13 @@ class ContactPropertyUtil {
       )
       .catch(err => {
         debug("sync error", err);
-        // this.logger.error("connector.sync.error", {
-        //   error: err.response && err.response.body && err.response.body.message
-        // });
-        this.metric.event({
-          title: "connector.sync.error",
-          text: JSON.stringify(err.response && err.response.body)
+        this.logger.error("connector.sync.error", {
+          error: err.response && err.response.body && err.response.body.message
         });
+        // this.metric.event({
+        //   title: "connector.sync.error",
+        //   text: JSON.stringify(err.response && err.response.body)
+        // });
       });
   }
 
