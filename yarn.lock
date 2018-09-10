@@ -4110,9 +4110,9 @@ mini-application@^1.0.5:
     faker "^4.1.0"
     moment "^2.18.1"
 
-mini-application@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/mini-application/-/mini-application-1.1.0.tgz#67ee742a4b57672164010263d608754117c371e2"
+mini-application@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/mini-application/-/mini-application-1.1.1.tgz#983bf7b8cbacc60138affe11547201b348ba4708"
   dependencies:
     bluebird "^3.5.1"
     body-parser "^1.18.3"
@@ -4120,21 +4120,21 @@ mini-application@^1.1.0:
     lodash "^4.17.10"
     lowdb "^1.0.0"
     shelljs "^0.8.2"
-    sinon "^6.1.0"
+    sinon "6.1.2"
     superagent "^3.8.3"
   optionalDependencies:
     faker "^4.1.0"
     moment "^2.18.1"
 
-minihull@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/minihull/-/minihull-3.0.0.tgz#3608261dff84e85c41346581240a5d10e2db9930"
+minihull@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/minihull/-/minihull-3.0.2.tgz#566f173b8b2e3663f1af3e614111c43090a48138"
   dependencies:
     bluebird "^3.5.0"
     faker "^4.1.0"
     lodash "^4.17.4"
     lodash-id "^0.14.0"
-    mini-application "^1.1.0"
+    mini-application "^1.1.1"
     shelljs "^0.8.2"
   optionalDependencies:
     ngrok "^2.2.14"
@@ -5811,6 +5811,18 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
 
+sinon@6.1.2:
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/sinon/-/sinon-6.1.2.tgz#bb21d99e3ca7c9cf2913dd4f09f546e6876d343b"
+  dependencies:
+    "@sinonjs/formatio" "^2.0.0"
+    diff "^3.5.0"
+    lodash.get "^4.4.2"
+    lolex "^2.4.2"
+    nise "^1.3.3"
+    supports-color "^5.4.0"
+    type-detect "^4.0.8"
+
 sinon@^2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/sinon/-/sinon-2.3.2.tgz#c43a9c570f32baac1159505cfeed19108855df89"
@@ -5835,18 +5847,6 @@ sinon@^4.0.2:
     nise "^1.2.0"
     supports-color "^4.4.0"
     type-detect "^4.0.0"
-
-sinon@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/sinon/-/sinon-6.1.0.tgz#9ee3d3900616333078464aa3969ba5688456fea3"
-  dependencies:
-    "@sinonjs/formatio" "^2.0.0"
-    diff "^3.5.0"
-    lodash.get "^4.4.2"
-    lolex "^2.4.2"
-    nise "^1.3.3"
-    supports-color "^5.4.0"
-    type-detect "^4.0.8"
 
 slash@^1.0.0:
   version "1.0.0"

@@ -55,6 +55,7 @@ describe("Hubspot properties formatting", function test() {
       .callsFake((req, res) => {
         res.status(202).end();
       });
+    minihull.stubApp("/search/account_reports/bootstrap").respond({});
     minihull.stubApp("/search/user_reports/bootstrap").respond({
       tree: [{
         text: "User",
@@ -73,7 +74,7 @@ describe("Hubspot properties formatting", function test() {
     }]);
     minihubspot.on("incoming.request", req => console.log("MINIHUBSPOT", req.method, req.url));
     minihull.batchUsersConnector(connector, "http://localhost:8000/batch");
-    minihubspot.on("incoming.request#2", (req) => {
+    minihubspot.on("incoming.request#3", (req) => {
       const lastReq = minihubspot.requests.get("incoming").last().value();
       expect(lastReq.url).to.be.eq("/contacts/v1/contact/batch/?auditId=Hull");
       expect(lastReq.body).to.be.an("array");

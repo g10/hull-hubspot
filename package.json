@@ -86,7 +86,7 @@
     "flow-bin": "^0.73.0",
     "flow-typed": "^2.4.0",
     "mini-application": "^1.0.5",
-    "minihull": "^3.0.0",
+    "minihull": "^3.0.2",
     "mocha": "^2.5.2",
     "prettier": "^1.12.1",
     "sinon": "^4.0.2",
