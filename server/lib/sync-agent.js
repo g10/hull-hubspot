@@ -391,6 +391,7 @@ class SyncAgent {
     message: THullUserUpdateMessage
   ): HubspotUserUpdateMessageEnvelope {
     const hubspotWriteContact = this.mappingUtil.getHubspotContact(message);
+    message.user.account = message.account;
     return {
       message,
       hubspotWriteContact
