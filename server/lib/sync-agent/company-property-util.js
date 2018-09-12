@@ -125,7 +125,7 @@ class CompanyPropertyUtil {
       )
     ).then((...props) =>
       this.logger.debug(
-        "ContactProperty.ensureCustomProperties",
+        "CompanyProperty.ensureCustomProperties",
         _.map(props[0], p => p.name)
       )
     );

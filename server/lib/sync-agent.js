@@ -390,8 +390,8 @@ class SyncAgent {
   buildUserUpdateMessageEnvelope(
     message: THullUserUpdateMessage
   ): HubspotUserUpdateMessageEnvelope {
-    const hubspotWriteContact = this.mappingUtil.getHubspotContact(message);
     message.user.account = message.account;
+    const hubspotWriteContact = this.mappingUtil.getHubspotContact(message);
     return {
       message,
       hubspotWriteContact

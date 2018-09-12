@@ -142,14 +142,7 @@ class MappingUtil {
           });
         }
 
-        // try to find ordinary user trait
-        let hullTrait = _.find(this.hullUserProperties, { id: setting.hull });
-        if (setting.hull.match("account.")) {
-          hullTrait = _.find(this.hullAccountProperties, {
-            id: setting.hull.replace("account.", "")
-          });
-        }
-
+        const hullTrait = _.find(this.hullUserProperties, { id: setting.hull });
         if (hullTrait === undefined) {
           return outboundMapping;
         }
