@@ -114,21 +114,35 @@ class MappingUtil {
         if (!setting.name || !setting.hull) {
           return outboundMapping;
         }
+        // let's find a default mapping
         const defaultMapping = _.find(CONTACT_DEFAULT_MAPPING, {
           name: setting.name
         });
 
-        const hubspotPropertyNameSlug = slug(setting.name, {
+        // let's generate a slug version of the hubspot property
+        let hubspotPropertyName = slug(setting.name, {
           replacement: "_",
           lower: true
         });
-        const hubspotPropertyName =
-          (defaultMapping && defaultMapping.name) ||
-          `hull_${hubspotPropertyNameSlug}`;
-        const hullTrait = _.find(this.hullUserProperties, { id: setting.hull });
-        const hubspotContactProperty = _.find(this.hubspotContactProperties, {
+
+        // let's try to find an existing contact property directly by slug
+        let hubspotContactProperty = _.find(this.hubspotContactProperties, {
           name: hubspotPropertyName
         });
+
+        // if we couldn't find the existing contact property
+        // we will prepend it with `hull_` and see if this was
+        // a property created by this connector
+        if (hubspotContactProperty === undefined) {
+          hubspotPropertyName =
+            (defaultMapping && defaultMapping.name) ||
+            `hull_${hubspotPropertyName}`;
+          hubspotContactProperty = _.find(this.hubspotContactProperties, {
+            name: hubspotPropertyName
+          });
+        }
+
+        const hullTrait = _.find(this.hullUserProperties, { id: setting.hull });
         if (hullTrait === undefined) {
           return outboundMapping;
         }
