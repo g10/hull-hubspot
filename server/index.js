@@ -12,8 +12,16 @@ const {
   CACHE_REDIS_URL,
   SECRET = "1234",
   PORT = 8082,
-  OVERRIDE_FIREHOSE_URL
+  OVERRIDE_FIREHOSE_URL,
+  CLIENT_ID = null,
+  CLIENT_SECRET = null,
+  SERVER,
+  COMBINED
 } = process.env;
+
+if (!CACHE_REDIS_URL || !CLIENT_ID || !CLIENT_SECRET) {
+  throw new Error("some environment variables missing");
+}
 
 if (LOG_LEVEL) {
   Hull.Client.logger.transports.console.level = LOG_LEVEL;
@@ -39,14 +47,14 @@ const connector = new Hull.Connector({
 });
 
 const deps = {
-  clientID: process.env.CLIENT_ID,
-  clientSecret: process.env.CLIENT_SECRET,
+  clientID: CLIENT_ID,
+  clientSecret: CLIENT_SECRET,
   hostSecret: SECRET
 };
 
 connector.setupApp(app);
 
-if (process.env.SERVER || process.env.COMBINED) {
+if (SERVER || COMBINED) {
   server(app, deps);
   connector.startApp(app);
 }

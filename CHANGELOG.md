@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.5.13
+- hotfix support `account` properties inside Contacts
+
+## v0.5.11
+- disable verbose instrumentation event
+
+## v0.5.10
+- handle outgoing.user.success correct
+
 ## v0.5.9
 - skip user when we have email mismatch
 
