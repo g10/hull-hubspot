@@ -1,6 +1,7 @@
 /* @flow */
 const HubspotStrategy = require("passport-hubspot-oauth2.0");
-const { oAuthHandler } = require("hull").handlers;
+const { oAuthHandler } = require("hull/lib/handlers");
+const { settingsUpdate } = require("hull/lib/utils");
 const moment = require("moment");
 const Promise = require("bluebird");
 const debug = require("debug")("hull-hubspot:oauth");
@@ -47,7 +48,6 @@ function oAuthAction(deps: Object) {
     },
     onAuthorize: req => {
       debug("onAuthorize req.account", req.account);
-      const { helpers } = req.hull;
       const { refreshToken, accessToken } = req.account || {};
       const { expires_in } = req.account.params;
       const syncAgent = new SyncAgent(req.hull);
@@ -65,7 +65,7 @@ function oAuthAction(deps: Object) {
               .format("x")
           };
           debug("onAuthorize updating settings", newConnector);
-          return helpers.updateSettings(newConnector);
+          return settingsUpdate(req.hull, newConnector);
         });
     },
     views: {

@@ -2,15 +2,15 @@
 import type { THullSegment } from "hull";
 import type {
   HubspotContactOutgoingMapping,
-  HubspotContactProperty,
+  HubspotCompanyProperty,
   HullProperty,
-  HubspotContactPropertyGroup,
-  HubspotContactPropertyWrite
+  HubspotCompanyPropertyGroup
+  // HubspotCompanyPropertyWrite
 } from "../../types";
 
 const _ = require("lodash");
 const Promise = require("bluebird");
-const debug = require("debug")("hull-hubspot:contact-property-util");
+const debug = require("debug")("hull-hubspot:company-property-util");
 
 const TYPES_MAPPING = {
   string: { type: "string", fieldType: "text" },
@@ -42,27 +42,27 @@ const TYPES_MAPPING = {
   }
 };
 
-class ContactPropertyUtil {
+class CompanyPropertyUtil {
   hubspotClient: Object;
   logger: Object;
   metric: Object;
-  usersSegments: Array<THullSegment>;
+  accountsSegments: Array<THullSegment>;
 
-  hubspotProperties: Array<HubspotContactPropertyGroup>;
+  hubspotProperties: Array<HubspotCompanyPropertyGroup>;
   hullProperties: Array<HullProperty>;
 
   constructor({
     logger,
     metric,
     hubspotClient,
-    usersSegments,
+    accountsSegments,
     hubspotProperties,
     hullProperties
   }: Object) {
     this.hubspotClient = hubspotClient;
     this.logger = logger;
     this.metric = metric;
-    this.usersSegments = usersSegments;
+    this.accountsSegments = accountsSegments;
 
     this.hubspotProperties = hubspotProperties;
     this.hullProperties = hullProperties;
@@ -70,7 +70,7 @@ class ContactPropertyUtil {
 
   sync(outboundMapping: Array<HubspotContactOutgoingMapping>): Promise<*> {
     debug("outboundMapping %o", outboundMapping);
-    const uniqueSegments = _.uniqBy(this.usersSegments, "name");
+    const uniqueSegments = _.uniqBy(this.accountsSegments, "name");
     debug("uniqueSegments %o", uniqueSegments.map(s => s.name));
     const expectedPropertiesList = [
       this.getHullSegmentsProperty(uniqueSegments)
@@ -84,7 +84,7 @@ class ContactPropertyUtil {
         )
       )
       .catch(err => {
-        debug("sync error", err);
+        debug("CompanyPropertyUtil.sync error", err);
         this.logger.error("connector.sync.error", {
           error: err.response && err.response.body && err.response.body.message
         });
@@ -101,7 +101,7 @@ class ContactPropertyUtil {
       return Promise.resolve(group);
     }
     return this.hubspotClient.agent
-      .post("/contacts/v2/groups")
+      .post("/properties/v1/companies/groups")
       .send({
         name: "hull",
         displayName: "Hull Properties",
@@ -125,14 +125,14 @@ class ContactPropertyUtil {
       )
     ).then((...props) =>
       this.logger.debug(
-        "ContactProperty.ensureCustomProperties",
+        "CompanyProperty.ensureCustomProperties",
         _.map(props[0], p => p.name)
       )
     );
   }
 
   shouldUpdateProperty(
-    currentValue: HubspotContactProperty,
+    currentValue: HubspotCompanyProperty,
     newValue: HubspotContactPropertyWrite
   ): boolean {
     if (newValue.name === "hull_segments") {
@@ -157,7 +157,7 @@ class ContactPropertyUtil {
       if (this.shouldUpdateProperty(existing, property)) {
         debug("ensureProperty %o", property);
         return this.hubspotClient.agent
-          .put(`/contacts/v2/properties/named/${property.name}`)
+          .put(`/properties/v1/companies/properties/named/${property.name}`)
           .send(property)
           .then(res => res.body);
       }
@@ -165,7 +165,7 @@ class ContactPropertyUtil {
     }
 
     return this.hubspotClient.agent
-      .post("/contacts/v2/properties")
+      .post("/properties/v1/companies/properties")
       .send(property)
       .then(res => res.body);
   }
@@ -196,7 +196,7 @@ class ContactPropertyUtil {
     const options = _.map(segments, (s, i) => this.optionsHash(s.name, i));
     return {
       options,
-      description: "All the Segments the User belongs to in Hull",
+      description: "All the Segments the Account belongs to in Hull",
       label: "Hull Segments",
       groupName: "hull",
       fieldType: "checkbox",
@@ -220,4 +220,4 @@ class ContactPropertyUtil {
   }
 }
 
-module.exports = ContactPropertyUtil;
+module.exports = CompanyPropertyUtil;

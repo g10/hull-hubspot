@@ -16,7 +16,18 @@ class Minihubspot extends MiniApplication {
       res.json([]);
     });
 
+    this.app.get("/properties/v1/companies/groups", (req, res) => {
+      res.json([]);
+    });
+    this.app.post("/properties/v1/companies/groups", (req, res) => {
+      res.json([]);
+    });
+
     this.app.post("/contacts/v2/properties", (req, res) => {
+      res.json([]);
+    });
+
+    this.app.post("/properties/v1/companies/properties", (req, res) => {
       res.json([]);
     });
   }
