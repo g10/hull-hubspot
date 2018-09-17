@@ -66,3 +66,187 @@ docker-compose up dev # with autoreloading enabled
   * `Could not get response from Hubspot due to error {error}` - when integration with hubspot fails
   * `Connector is missing configuration` - when hubspotAgent is undefined 
   
+
+# New documentation
+
+
+## Authorization
+- we perform the oauth flow to obtain the `access_token` and `refresh_token`.
+- the `access_token` is valid for 6 hours, so we have a `schedule` which is checking if the `access_token` is about to expire and perform the refresh rotating the `access_token` in connector settings
+
+**logs**
+
+*TBD*
+
+**metrics**
+
+*TBD*
+
+**external API endpoints**
+
+- `GET https://app.hubspot.com/oauth/authorize`
+- `POST /oauth/v1/token`
+
+---
+
+## Required Configuration
+- none, after the connector is authorized it starts to operate
+
+---
+
+## Optional Configuration
+- outgoing user segment filter
+- outgoing user attributes mapping
+- incoming user attributes mapping
+- outgoing account segment filter
+- outgoing account attributes mapping
+- outgoing user to account linking toggle
+- incoming account attributes mapping
+- incoming user to account linking toggle
+
+**logs**
+
+*TBD*
+
+**metrics**
+
+*TBD*
+
+**external API endpoints**
+
+- `GET /properties/v1/contacts/properties`
+- `GET /properties/v1/companies/properties`
+
+---
+
+## Config synchronization
+
+- following attributes mapping logic is the same for both users and accounts
+- for both contacts and companies we create a custom property group called `Hull`
+- in connector codebase we store information about all default fields to fetch
+- then if the customer adds new entry to the mapper we check if this is an existing property, if it exists we write data there, if it does not, we create new property in our custom property group and prepend it with `hull_` prefix
+
+**logs**
+
+*TBD*
+
+**metrics**
+
+*TBD*
+
+**external API endpoints**
+
+- `POST /contacts/v2/groups`
+- `PUT /contacts/v2/properties/named/{{propertyName}}`
+- `POST /contacts/v2/properties`
+- `POST /properties/v1/companies/groups`
+- `PUT /properties/v1/companies/properties/named/{{propertyName}}`
+- `POST /properties/v1/companies/properties`
+
+---
+
+## Incoming flow
+
+### Users
+- we provide a button on the workspace of the connector to fetch all contacts
+- additionaly we register a schedule to run every 5 minutes to fetch contacts which are updated in previous 5 minutes, we store a timestamp in `connector private settings` to know when to stop next pagination. The endpoint returns the most recently modified record first and we move back in the history, but each record apprears there once. The pagination can be done via id offset.
+- in both cases we apply attributes mapper with default fields being fetched at all times and with custom mapping provided in the settings
+- we set `email` and `anonymous_id` as `user indentification claims`
+
+**logs**
+
+*TBD*
+
+**metrics**
+
+*TBD*
+
+**external API endpoints**
+
+- `GET /contacts/v1/lists/all/contacts/all`
+- `GET /contacts/v1/lists/recently_updated/contacts/recent`
+
+### UserEvents
+*NOT IMPLEMENTED*
+
+### Accounts
+- we provide a button on the workspace of the connector to fetch all companies
+- additionaly we register a schedule to run every 5 minutes to fetch companies which are updated in previous 5 minutes, we store a timestamp in `connector private settings` to know when to stop next pagination. The endpoint returns the most recently modified record first and we move back in the history, but each record apprears there once. The pagination can be done via id offset.
+- in both cases we apply attributes mapper with default fields being fetched at all times and with custom mapping provided in the settings
+- we set `domain` and `anonymous_id` as `account indentification claims`
+
+**logs**
+
+TBD
+
+**metrics**
+
+TBD
+
+**external API endpoints**
+
+- `GET /companies/v2/companies/paged`
+- `GET /companies/v2/companies/recent/modified`
+
+---
+
+## Outgoing flow
+
+### Users
+
+*TBD*
+
+**logs**
+
+*TBD*
+
+**metrics**
+
+*TBD*
+
+**external API endpoints**
+
+*TBD*
+
+### UserEvents
+*NOT IMPLEMENTED*
+
+### Accounts
+
+- if this is a change we skip accounts based on the outgoing account segment settings, in case of batch we do not skip here
+- then before doing an update and insert operations we perform a search by `domain` trait for each, if we have any result we take the oldest company and make the account update this specific company
+- then we perform an update and insert operations separately
+
+
+**logs**
+
+*TBD*
+
+**metrics**
+
+*TBD*
+
+**external API endpoints**
+
+---
+
+## Status Check
+
+*TBD*
+
+**logs**
+
+*TBD*
+
+**metrics**
+
+*TBD*
+
+**external API endpoints**
+
+*TBD*
+
+---
+
+## Destroy
+*NOT IMPLEMENTED*
