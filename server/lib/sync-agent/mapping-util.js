@@ -569,7 +569,7 @@ class MappingUtil {
       message.account["hubspot/id"] !== null &&
       message.account["hubspot/id"] !== undefined
     ) {
-      hubspotWriteCompany.objectId = message.account["hubspot/id"];
+      hubspotWriteCompany.objectId = message.account["hubspot/id"].toString();
     }
 
     hubspotWriteCompany.properties.push({
