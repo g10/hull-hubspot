@@ -4,7 +4,7 @@
   "source": "hubspot",
   "logo": "logo.png",
   "picture": "picture.png",
-  "version": "0.5.13",
+  "version": "0.6.0",
   "tags": [
     "outgoing",
     "incoming",
@@ -104,7 +104,7 @@
           "hull": {
             "title": "Hull Field ID",
             "type": "string",
-            "format": "trait",
+            "format": "accountTrait",
             "options": {
               "placeholder": "Enter a Hull field id"
             }
@@ -153,7 +153,7 @@
           "hull": {
             "title": "Hull Field ID",
             "type": "string",
-            "format": "trait",
+            "format": "accountTrait",
             "options": {
               "placeholder": "Enter a Hull field id",
               "allowCreate": true,

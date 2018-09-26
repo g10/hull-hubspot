@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.0
+- adds companies and accounts support
+- refactor code and upgrade hull-node to beta version
+
 ## v0.5.13
 - hotfix support `account` properties inside Contacts
 
