@@ -35,9 +35,7 @@ class FilterUtil {
     return false;
   }
 
-  isAccountWhitelisted(
-    envelope: Array<HubspotAccountUpdateMessageEnvelope>
-  ): boolean {
+  isAccountWhitelisted(envelope: HubspotAccountUpdateMessageEnvelope): boolean {
     const segmentIds =
       (this.connector.private_settings &&
         this.connector.private_settings.synchronized_account_segments) ||
@@ -86,8 +84,8 @@ class FilterUtil {
   }
 
   filterAccountUpdateMessageEnvelopes(
-    envelopes: Array<HubspotUserAccountMessageEnvelope>
-  ): FilterUtilResults<HubspotUserAccountMessageEnvelope> {
+    envelopes: Array<HubspotAccountUpdateMessageEnvelope>
+  ): FilterUtilResults<HubspotAccountUpdateMessageEnvelope> {
     const filterUtilResults: FilterUtilResults<
       HubspotAccountUpdateMessageEnvelope
     > = {
@@ -108,6 +106,11 @@ class FilterUtil {
         envelope.skipReason = "Account doesn't match outgoing filter";
         return filterUtilResults.toSkip.push(envelope);
       }
+
+      if (envelope.message.account["hubspot/id"]) {
+        return filterUtilResults.toUpdate.push(envelope);
+      }
+
       return filterUtilResults.toInsert.push(envelope);
     });
     return filterUtilResults;

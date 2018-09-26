@@ -19,7 +19,7 @@ const {
   COMBINED
 } = process.env;
 
-if (!CACHE_REDIS_URL || !CLIENT_ID || !CLIENT_SECRET) {
+if (!CLIENT_ID || !CLIENT_SECRET) {
   throw new Error("some environment variables missing");
 }
 

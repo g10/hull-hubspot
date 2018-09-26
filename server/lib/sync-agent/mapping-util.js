@@ -12,6 +12,8 @@ import type {
 import type {
   HubspotWriteContact,
   HubspotWriteContactProperties,
+  HubspotWriteCompany,
+  HubspotWriteCompanyProperties,
   HubspotReadContact,
   HubspotReadCompany,
   HubspotContactOutgoingMapping,
@@ -234,17 +236,33 @@ class MappingUtil {
           hubspot: setting.hubspot
         });
 
-        const hubspotPropertyNameSlug = slug(setting.hubspot, {
+        // let's generate a slug version of the hubspot property
+        let hubspotPropertyName = slug(setting.hubspot, {
           replacement: "_",
           lower: true
         });
-        const hubspotPropertyName =
-          (defaultMapping && defaultMapping.hubspot) ||
-          `hull_${hubspotPropertyNameSlug}`;
-        const hullTrait = _.find(this.hullUserProperties, { id: setting.hull });
-        const hubspotCompanyProperty = _.find(this.hubspotCompanyProperties, {
-          hubspot: hubspotPropertyName
+
+        // let's try to find an existing contact property directly by slug
+        let hubspotCompanyProperty = _.find(this.hubspotCompanyProperties, {
+          name: hubspotPropertyName
         });
+
+        // if we couldn't find the existing contact property
+        // we will prepend it with `hull_` and see if this was
+        // a property created by this connector
+        if (hubspotCompanyProperty === undefined) {
+          hubspotPropertyName =
+            (defaultMapping && defaultMapping.hubspot) ||
+            `hull_${hubspotPropertyName}`;
+          hubspotCompanyProperty = _.find(this.hubspotCompanyProperties, {
+            name: hubspotPropertyName
+          });
+        }
+
+        const hullTrait = _.find(this.hullAccountProperties, {
+          id: setting.hull.replace("account.", "")
+        });
+
         if (hullTrait === undefined) {
           return outboundMapping;
         }
@@ -544,12 +562,12 @@ class MappingUtil {
 
   getHubspotCompany(message: THullAccountUpdateMessage): HubspotWriteCompany {
     const hubspotWriteProperties = this.getHubspotCompanyProperties(message);
-    const hubspotWriteCompany: HubspotWriteContact = {
+    const hubspotWriteCompany: HubspotWriteCompany = {
       properties: hubspotWriteProperties
     };
     if (
-      message.account["hubspot/id"] &&
-      typeof message.account["hubspot/id"] === "string"
+      message.account["hubspot/id"] !== null &&
+      message.account["hubspot/id"] !== undefined
     ) {
       hubspotWriteCompany.objectId = message.account["hubspot/id"];
     }
@@ -748,14 +766,16 @@ class MappingUtil {
           // try to parse the date/time to date only
           if (moment(value).isValid()) {
             value = moment(value)
+              .utc()
               .hours(0)
               .minutes(0)
               .seconds(0)
+              .milliseconds(0)
               .format("x");
           } else {
             this.hullClient
               .asAccount(accountIdent)
-              .logger.warn("outgoing.user.warning", {
+              .logger.warn("outgoing.account.warning", {
                 warning: "cannot parse datetime trait to date",
                 mappingEntry
               });

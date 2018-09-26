@@ -408,7 +408,6 @@ class SyncAgent {
       });
       return Promise.resolve();
     }
-
     const envelopes = messages.map(message =>
       this.buildAccountUpdateMessageEnvelope(message)
     );

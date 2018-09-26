@@ -28,7 +28,7 @@ export type HubspotWriteCompanyProperties = Array<{
 }>;
 
 export type HubspotWriteCompany = {
-  vid?: string,
+  objectId?: string,
   email?: string,
   properties: HubspotWriteCompanyProperties
 };
