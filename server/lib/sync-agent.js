@@ -445,7 +445,7 @@ class SyncAgent {
           const envelopeToUpdate = _.cloneDeep(envelopeToInsert);
           envelopeToUpdate.hubspotWriteCompany.objectId = _.last(
             existingCompanies
-          ).companyId;
+          ).companyId.toString();
           accountsToUpdate.push(envelopeToUpdate);
         } else {
           accountsToInsert.push(envelopeToInsert);
