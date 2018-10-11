@@ -408,10 +408,12 @@ class MappingUtil {
     const domainIdentity: string = _.get(
       hubspotCompany,
       "properties.website.value",
-      ""
+      null
     );
-    if (domainIdentity !== undefined) {
-      ident.domain = domainIdentity;
+    if (!_.isNil(domainIdentity)) {
+      if (domainIdentity.trim() !== "") {
+        ident.domain = domainIdentity;
+      }
     }
 
     if (hubspotCompany.companyId) {
