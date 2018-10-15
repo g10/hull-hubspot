@@ -407,7 +407,7 @@ class MappingUtil {
 
     const domainIdentity: string = _.get(
       hubspotCompany,
-      "properties.website.value",
+      "properties.domain.value",
       null
     );
     if (!_.isNil(domainIdentity)) {
@@ -470,6 +470,14 @@ class MappingUtil {
     );
 
     hullTraits["hubspot/id"] = accountData.companyId;
+
+    const hubspotName = _.get(accountData, "properties.name.value");
+    if (!_.isEmpty(hubspotName)) {
+      _.set(hullTraits, "name", {
+        value: hubspotName,
+        operation: "setIfNull"
+      });
+    }
 
     debug("getHullTraits", hullTraits);
     return hullTraits;
