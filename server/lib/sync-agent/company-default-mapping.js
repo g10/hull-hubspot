@@ -109,7 +109,7 @@ const DEFAULT_MAPPING: Array<HubspotDefaultCompanyMapping> = [
   },
   {
     hubspot: "name",
-    hull: "name",
+    hull: "hubspot/name",
     type: "string",
     title: "Name",
     read_only: false
@@ -235,7 +235,7 @@ const DEFAULT_MAPPING: Array<HubspotDefaultCompanyMapping> = [
   },
   {
     hubspot: "domain",
-    hull: "domain",
+    hull: "hubspot/domain",
     type: "string",
     title: "Company Domain Name",
     read_only: false
