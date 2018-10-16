@@ -111,6 +111,14 @@ class FilterUtil {
         return filterUtilResults.toUpdate.push(envelope);
       }
 
+      if (
+        typeof envelope.message.account.domain !== "string" ||
+        envelope.message.account.domain.trim() === ""
+      ) {
+        envelope.skipReason = "Account doesn't have value for domain";
+        return filterUtilResults.toSkip.push(envelope);
+      }
+
       return filterUtilResults.toInsert.push(envelope);
     });
     return filterUtilResults;
