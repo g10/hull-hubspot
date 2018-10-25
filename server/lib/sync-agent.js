@@ -706,11 +706,13 @@ class SyncAgent {
       companies.map(async company => {
         const traits = this.mappingUtil.getHullAccountTraits(company);
         const ident = this.mappingUtil.getHullAccountIdentFromHubspot(company);
-        if (!_.has(ident, "domain")) {
+        const canFetchAccount = this.filterUtil.filterIncomingAccountIdent(
+          ident
+        );
+        if (canFetchAccount !== true) {
           return this.logger.info("incoming.account.skip", {
             company,
-            reason:
-              "The company does not have a domain defined.  Please define a domain in hubspot for this company in order for it to be imported"
+            reason: canFetchAccount
           });
         }
         this.logger.debug("incoming.account", { ident, traits });

@@ -101,6 +101,8 @@ class MappingUtil {
     this.companyAttributesOutgoingSettings =
       this.connector.private_settings.outgoing_account_attributes || [];
 
+    this.incomingAccountIdentHull = this.connector.incoming_account_ident_hull;
+    this.incomingAccountIdentService = this.connector.incoming_account_ident_service;
     this.outgoingLinking = this.connector.private_settings.link_users_in_service;
 
     this.contactOutgoingMapping = this.getContactOutgoingMapping();
@@ -405,15 +407,32 @@ class MappingUtil {
   ): THullAccountIdent {
     const ident: THullAccountIdent = {};
 
-    const domainIdentity: string = _.get(
-      hubspotCompany,
-      "properties.domain.value",
-      null
-    );
-    if (!_.isNil(domainIdentity)) {
-      if (domainIdentity.trim() !== "") {
-        ident.domain = domainIdentity;
+    // if we have external_id selected we do external_id AND domain
+    // otherwise we do only `domain` which is the only other option
+    // for the setting
+    if (this.incomingAccountIdentHull === "external_id") {
+      const hubspotIdentValue =
+        hubspotCompany.properties[this.incomingAccountIdentService] &&
+        hubspotCompany.properties[this.incomingAccountIdentService].value;
+      if (
+        hubspotIdentValue !== undefined &&
+        hubspotIdentValue !== null &&
+        hubspotIdentValue.trim() !== ""
+      ) {
+        ident[this.incomingAccountIdentHull] = hubspotIdentValue;
       }
+    }
+
+    const domainIdentity =
+      hubspotCompany.properties.domain &&
+      hubspotCompany.properties.domain.value;
+
+    if (
+      domainIdentity !== undefined &&
+      domainIdentity !== null &&
+      domainIdentity.trim() !== ""
+    ) {
+      ident.domain = domainIdentity;
     }
 
     if (hubspotCompany.companyId) {
