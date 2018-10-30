@@ -76,7 +76,9 @@ class HubspotClient {
         )
       )
       .set("Authorization", `Bearer ${accessToken}`)
-      .timeout({ response: 5000 });
+      .timeout({
+        response: 5000
+      });
   }
 
   refreshAccessToken(): Promise<*> {
@@ -111,13 +113,19 @@ class HubspotClient {
     return promise().catch(err => {
       if (err.response.unauthorized) {
         this.client.logger.debug("retrying query", _.get(err, "response.body"));
-        return this.checkToken({ force: true }).then(() => promise());
+        return this.checkToken({
+          force: true
+        }).then(() => promise());
       }
       return Promise.reject(err);
     });
   }
 
-  checkToken({ force = false }: { force: boolean } = {}): Promise<*> {
+  checkToken({
+    force = false
+  }: {
+    force: boolean
+  } = {}): Promise<*> {
     let { token_fetched_at, expires_in } = this.connector.private_settings;
     if (!token_fetched_at || !expires_in) {
       this.client.logger.error(
@@ -191,6 +199,7 @@ class HubspotClient {
     offset: ?string = null
   ): Readable {
     const getAllContacts = this.getAllContacts.bind(this);
+
     function getAllContactsPage(push, pageCount, pageOffset) {
       return getAllContacts(properties, pageCount, pageOffset).then(
         response => {
@@ -323,10 +332,11 @@ class HubspotClient {
           // const timeOffset = response.body["time-offset"];
           if (contacts.length > 0) {
             push(contacts);
-            if (hasMore) {
-              return getRecentContactsPage(vidOffset);
-            }
           }
+          if (hasMore) {
+            return getRecentContactsPage(vidOffset);
+          }
+
           return Promise.resolve();
         });
       };
@@ -395,7 +405,9 @@ class HubspotClient {
         );
 
         const retryEnvelopes = envelopes.filter((envelope, index) => {
-          return !_.find(errorInfo.failureMessages, { index });
+          return !_.find(errorInfo.failureMessages, {
+            index
+          });
         });
 
         if (retryEnvelopes.length === 0) {
@@ -496,7 +508,9 @@ class HubspotClient {
           []
         ).map(error => {
           const envelope = _.find(envelopes, {
-            hubspotWriteCompany: { objectId: error.id }
+            hubspotWriteCompany: {
+              objectId: error.id
+            }
           });
           const hubspotMessage =
             error.propertyValidationResult &&
@@ -551,7 +565,9 @@ class HubspotClient {
     return this.retryUnauthorized(() => {
       return this.agent
         .get("/contacts/v2/groups")
-        .query({ includeProperties: true })
+        .query({
+          includeProperties: true
+        })
         .then(response => response.body);
     });
   }
@@ -560,16 +576,18 @@ class HubspotClient {
     return this.retryUnauthorized(() => {
       return this.agent
         .get("/properties/v1/companies/groups")
-        .query({ includeProperties: true })
+        .query({
+          includeProperties: true
+        })
         .then(response => response.body);
     });
   }
 
   getCompanyVids(companyId: string, vidOffset?: string) {
     return this.retryUnauthorized(() => {
-      return this.agent
-        .get(`/companies/v2/companies/${companyId}/vids`)
-        .query({ vidOffset });
+      return this.agent.get(`/companies/v2/companies/${companyId}/vids`).query({
+        vidOffset
+      });
     });
   }
 
@@ -640,10 +658,11 @@ class HubspotClient {
           // const timeOffset = response.body["time-offset"];
           if (companies.length > 0) {
             push(companies);
-            if (hasMore) {
-              return getRecentCompaniesPage(newOffset);
-            }
           }
+          if (hasMore) {
+            return getRecentCompaniesPage(newOffset);
+          }
+
           return Promise.resolve();
         });
       };
