@@ -66,6 +66,9 @@ class MappingUtil {
   companyOutgoingMapping: Array<HubspotCompanyOutgoingMapping>;
   companyIncomingMapping: Array<HubspotCompanyIncomingMapping>;
 
+  incomingAccountIdentHull: string;
+  incomingAccountIdentService: string;
+
   constructor({
     connector,
     hullClient,
@@ -101,8 +104,8 @@ class MappingUtil {
     this.companyAttributesOutgoingSettings =
       this.connector.private_settings.outgoing_account_attributes || [];
 
-    this.incomingAccountIdentHull = this.connector.incoming_account_ident_hull;
-    this.incomingAccountIdentService = this.connector.incoming_account_ident_service;
+    this.incomingAccountIdentHull = this.connector.private_settings.incoming_account_ident_hull;
+    this.incomingAccountIdentService = this.connector.private_settings.incoming_account_ident_service;
     this.outgoingLinking = this.connector.private_settings.link_users_in_service;
 
     this.contactOutgoingMapping = this.getContactOutgoingMapping();
