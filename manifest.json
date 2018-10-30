@@ -86,6 +86,13 @@
       }
     },
     {
+      "name": "outgoing_account_title",
+      "title": "Outgoing accounts configuration",
+      "description": "Outgoing accounts are matched on Hubspot end by `account.domain`. Accounts without domain are skipped. If you want to send out `account.external_id` add it to the table below.",
+      "format": "title",
+      "type": "string"
+    },
+    {
       "name": "synchronized_account_segments",
       "title": "Account Segments",
       "description": "Defines the list of Account Segments to send. Nothing sent by default.",
@@ -127,11 +134,36 @@
       }
     },
     {
-      "name": "link_users_in_hull",
-      "title": "Link users in Hull",
-      "description": "Do you want to let Hubspot update links between Users and Accounts in Hull",
+      "name": "link_users_in_service",
+      "title": "Link users in Hubspot",
+      "description": "Do you want to let Hull associate Users and Accounts in Hubspot",
       "type": "boolean",
       "default": false
+    },
+    {
+      "name": "ingoing_account_title",
+      "title": "Incoming accounts configuration",
+      "description": "By default we create/update accounts in Hull using company `domain` property. If you have an `external_id` present in Hubspot pick it below. When using `external_id` for incoming traffic `domain` will be fetched too if present.",
+      "format": "title",
+      "type": "string"
+    },
+    {
+      "name": "incoming_account_ident_service",
+      "title": "Unique account identifier in Hubspot",
+      "description": "We will skip all companies which does not have value for this field",
+      "format": "select",
+      "type": "string",
+      "options": {
+        "loadOptions": "/schema/company_properties"
+      },
+      "default": "domain"
+    },
+    {
+      "name": "incoming_account_ident_hull",
+      "title": "Corresponding identifier field in Hull",
+      "enum": ["domain", "external_id"],
+      "type": "string",
+      "default": "domain"
     },
     {
       "name": "incoming_account_attributes",
@@ -164,9 +196,9 @@
       }
     },
     {
-      "name": "link_users_in_service",
-      "title": "Link users in Hubspot",
-      "description": "Do you want to let Hull associate Users and Accounts in Hubspot (Be careful about conflicts with other connectors that would link users too)",
+      "name": "link_users_in_hull",
+      "title": "Link users in Hull",
+      "description": "Do you want to let Hubspot update links between Users and Accounts in Hull (Be careful about conflicts with other connectors that would link users too)",
       "type": "boolean",
       "default": false
     },

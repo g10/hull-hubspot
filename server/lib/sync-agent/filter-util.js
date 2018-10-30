@@ -1,5 +1,5 @@
 // @flow
-import type { THullConnector, THullReqContext } from "hull";
+import type { THullConnector, THullReqContext, HullAccountIdent } from "hull";
 import type {
   FilterUtilResults,
   HubspotUserUpdateMessageEnvelope,
@@ -12,10 +12,15 @@ const _ = require("lodash");
 class FilterUtil {
   connector: THullConnector;
   isBatch: boolean;
+  incomingAccountIdentHull: string;
+  incomingAccountIdentService: string;
 
   constructor(ctx: THullReqContext) {
     this.connector = ctx.connector;
     this.isBatch = ctx.isBatch;
+    this.incomingAccountIdentHull = this.connector.incoming_account_ident_hull;
+    this.incomingAccountIdentService = this.connector.incoming_account_ident_service;
+
     debug("isBatch", this.isBatch);
   }
 
@@ -122,6 +127,23 @@ class FilterUtil {
       return filterUtilResults.toInsert.push(envelope);
     });
     return filterUtilResults;
+  }
+
+  filterIncomingAccountIdent(accountIdent: HullAccountIdent): true | string {
+    const valueToTest =
+      accountIdent && accountIdent[this.incomingAccountIdentHull];
+    if (
+      valueToTest !== undefined &&
+      valueToTest !== null &&
+      valueToTest.trim() !== ""
+    ) {
+      return true;
+    }
+    return `The Hubspot company does not have a ${
+      this.incomingAccountIdentService
+    } defined. Please define a ${
+      this.incomingAccountIdentService
+    } in Hubspot for this company in order for it to be imported"`;
   }
 }
 

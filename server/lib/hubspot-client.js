@@ -51,6 +51,9 @@ class HubspotClient {
   agent: superagent;
   settingsUpdate: Function;
 
+  incomingAccountIdentHull: string;
+  incomingAccountIdentService: string;
+
   constructor(ctx: THullReqContext) {
     this.connector = ctx.connector;
     this.client = ctx.client;
