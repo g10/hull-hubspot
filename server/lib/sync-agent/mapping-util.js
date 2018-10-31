@@ -851,6 +851,31 @@ class MappingUtil {
 
     return contactProps;
   }
+
+  patchHubspotCompanyProperties(
+    envelope: HubspotAccountUpdateMessageEnvelope
+  ): HubspotAccountUpdateMessageEnvelope {
+    _.forEach(this.companyOutgoingMapping, mapping => {
+      if (mapping.hull_overwrite_hubspot === false) {
+        if (
+          !_.isNil(
+            _.get(
+              envelope,
+              `existingHubspotCompany.properties.${
+                mapping.hubspot_property_name
+              }.value`
+            )
+          )
+        ) {
+          _.remove(envelope.hubspotWriteCompany.properties, {
+            property: mapping.hubspot_property_name
+          });
+        }
+      }
+    });
+
+    return envelope;
+  }
 }
 
 module.exports = MappingUtil;

@@ -427,12 +427,12 @@ class SyncAgent {
         .logger.info("outgoing.account.skip", { reason: envelope.skipReason });
     });
 
-    const accountsToUpdate = filterResults.toUpdate;
+    const accountsToUpdate = [];//filterResults.toUpdate;
     const accountsToInsert = [];
 
     await Promise.all(
-      accountsToUpdate.map(async envelopeToInsert => {
-        const results = await this.hubspotClient.getCompanyById(envelopeToInsert.hubspotWriteCompany.objectId)
+      filterResults.toUpdate.map(async envelopeToUpdate => {
+        const results = await this.hubspotClient.getCompanyById(envelopeToUpdate.hubspotWriteCompany.objectId)
         if (results.body.results && results.body.results.length > 0) {
           const existingCompanies = _.sortBy(
             results.body.results,
@@ -441,8 +441,10 @@ class SyncAgent {
           envelopeToUpdate.hubspotExistingCompany = _.last(
             existingCompanies
           );
+          accountsToUpdate.push(this.mappingUtil.patchHubspotCompanyProperties(envelopeToUpdate));
         } else {
-          // this is bad, why didn't look up by id work?
+          _.unset(envelopeToUpdate.hubspotWriteCompany.objectId);
+          accountsToInsert.push(envelopeToUpdate);
         }
       })
     );
@@ -465,7 +467,7 @@ class SyncAgent {
           );
           envelopeToUpdate.hubspotExistingCompany = latestCompany;
           envelopeToUpdate.hubspotWriteCompany.objectId = latestCompany.companyId.toString();
-          accountsToUpdate.push(envelopeToUpdate);
+          accountsToUpdate.push(this.mappingUtil.patchHubspotCompanyProperties(envelopeToUpdate));
         } else {
           accountsToInsert.push(envelopeToInsert);
         }
