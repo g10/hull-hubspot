@@ -428,26 +428,37 @@ class SyncAgent {
     });
 
     const accountsToUpdate = [];
-    const accountsToInsert = [];
+    let accountsToInsert = [];
 
     await Promise.all(
       filterResults.toUpdate.map(async envelopeToUpdate => {
-        const results = await this.hubspotClient.getCompanyById(envelopeToUpdate.hubspotWriteCompany.objectId)
-        const companyId = _.get(results, "body.companyId");
+        try {
 
-        if (results.body && !_.isEmpty(companyId) && companyId === envelopeToUpdate.hubspotWriteCompany.objectId) {
-          envelopeToUpdate.hubspotExistingCompany = results.body;
-          accountsToUpdate.push(this.mappingUtil.patchHubspotCompanyProperties(envelopeToUpdate));
-        } else {
-          _.unset(envelopeToUpdate.hubspotWriteCompany.objectId);
+          const results = await this.hubspotClient.getCompanyById(envelopeToUpdate.hubspotWriteCompany.objectId);
+          console.log("### BODY:", results);
+          const companyId = _.get(results, "body.companyId");
+
+          if (results.body && !_.isEmpty(companyId) && companyId === envelopeToUpdate.hubspotWriteCompany.objectId) {
+            envelopeToUpdate.hubspotExistingCompany = results.body;
+            accountsToUpdate.push(this.mappingUtil.patchHubspotCompanyProperties(envelopeToUpdate));
+          } else {
+            _.unset(envelopeToUpdate.hubspotWriteCompany, "objectId");
+            accountsToInsert.push(envelopeToUpdate);
+          }
+        } catch(error) {
+          console.error("### ERROR", error);
+          _.unset(envelopeToUpdate.hubspotWriteCompany, "objectId");
           accountsToInsert.push(envelopeToUpdate);
         }
       })
     );
 
+    const combinedInsertResults = _.concat(accountsToInsert, filterResults.toInsert);
+    accountsToInsert = [];
+
     // first perform search for companies to be updated
     await Promise.all(
-      filterResults.toInsert.map(async envelopeToInsert => {
+      combinedInsertResults.map(async envelopeToInsert => {
         const domain = envelopeToInsert.message.account.domain; // TODO
         const results = await this.hubspotClient.postCompanyDomainSearch(
           domain
