@@ -433,7 +433,8 @@ class SyncAgent {
     await Promise.all(
       filterResults.toUpdate.map(async envelopeToUpdate => {
         const results = await this.hubspotClient.getCompanyById(envelopeToUpdate.hubspotWriteCompany.objectId)
-        if (results.body.results && results.body.results.length > 0) {
+        const companyId = _.get(results, "body.companyId");
+        if (results.body && !_.isEmpty(companyId) && companyId === envelopeToUpdate.hubspotWriteCompany.objectId) {
           const existingCompanies = _.sortBy(
             results.body.results,
             "properties.hs_lastmodifieddate.value"
