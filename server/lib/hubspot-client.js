@@ -245,6 +245,14 @@ class HubspotClient {
     });
   }
 
+  getCompanyById(
+    id: number
+  ): Promise<HubspotGetAllCompaniesResponse> {
+    return this.retryUnauthorized(() => {
+      return this.agent.get(`/companies/v2/companies/${id}`);
+    });
+  }
+
   getAllCompaniesStream(
     properties: Array<string>,
     count: number = 100,

@@ -430,6 +430,23 @@ class SyncAgent {
     const accountsToUpdate = filterResults.toUpdate;
     const accountsToInsert = [];
 
+    await Promise.all(
+      accountsToUpdate.map(async envelopeToInsert => {
+        const results = await this.hubspotClient.getCompanyById(envelopeToInsert.hubspotWriteCompany.objectId)
+        if (results.body.results && results.body.results.length > 0) {
+          const existingCompanies = _.sortBy(
+            results.body.results,
+            "properties.hs_lastmodifieddate.value"
+          );
+          envelopeToUpdate.hubspotExistingCompany = _.last(
+            existingCompanies
+          );
+        } else {
+          // this is bad, why didn't look up by id work?
+        }
+      })
+    );
+
     // first perform search for companies to be updated
     await Promise.all(
       filterResults.toInsert.map(async envelopeToInsert => {
@@ -443,9 +460,11 @@ class SyncAgent {
             "properties.hs_lastmodifieddate.value"
           );
           const envelopeToUpdate = _.cloneDeep(envelopeToInsert);
-          envelopeToUpdate.hubspotWriteCompany.objectId = _.last(
+          const latestCompany = _.last(
             existingCompanies
-          ).companyId.toString();
+          );
+          envelopeToUpdate.hubspotExistingCompany = latestCompany;
+          envelopeToUpdate.hubspotWriteCompany.objectId = latestCompany.companyId.toString();
           accountsToUpdate.push(envelopeToUpdate);
         } else {
           accountsToInsert.push(envelopeToInsert);
