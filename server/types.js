@@ -84,7 +84,7 @@ export type HubspotUserUpdateMessageEnvelope = {
 
 export type HubspotAccountUpdateMessageEnvelope = {
   message: THullAccountUpdateMessage,
-  existingHubspotCompany: HubspotWriteCompany,
+  existingHubspotCompany: HubspotReadCompany,
   hubspotWriteCompany: HubspotWriteCompany,
   hubspotReadCompany?: HubspotReadCompany, // when we do insert we get back the HubspotReadCompany as a response
   skipReason?: string,

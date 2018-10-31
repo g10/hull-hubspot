@@ -439,7 +439,7 @@ class SyncAgent {
           const companyId = _.get(results, "body.companyId");
 
           if (results.body && !_.isEmpty(companyId) && companyId === envelopeToUpdate.hubspotWriteCompany.objectId) {
-            envelopeToUpdate.hubspotExistingCompany = results.body;
+            envelopeToUpdate.existingHubspotCompany = results.body;
             accountsToUpdate.push(this.mappingUtil.patchHubspotCompanyProperties(envelopeToUpdate));
           } else {
             _.unset(envelopeToUpdate.hubspotWriteCompany, "objectId");
@@ -472,7 +472,7 @@ class SyncAgent {
           const latestCompany = _.last(
             existingCompanies
           );
-          envelopeToUpdate.hubspotExistingCompany = latestCompany;
+          envelopeToUpdate.existingHubspotCompany = latestCompany;
           envelopeToUpdate.hubspotWriteCompany.objectId = latestCompany.companyId.toString();
           accountsToUpdate.push(this.mappingUtil.patchHubspotCompanyProperties(envelopeToUpdate));
         } else {

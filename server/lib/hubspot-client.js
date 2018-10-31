@@ -251,7 +251,7 @@ class HubspotClient {
   }
 
   getCompanyById(
-    id: number
+    id: string
   ): Promise<HubspotGetCompanyResponse> {
     return this.retryUnauthorized(() => {
       return this.agent.get(`/companies/v2/companies/${id}`);
