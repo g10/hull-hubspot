@@ -434,14 +434,9 @@ class SyncAgent {
       filterResults.toUpdate.map(async envelopeToUpdate => {
         const results = await this.hubspotClient.getCompanyById(envelopeToUpdate.hubspotWriteCompany.objectId)
         const companyId = _.get(results, "body.companyId");
+
         if (results.body && !_.isEmpty(companyId) && companyId === envelopeToUpdate.hubspotWriteCompany.objectId) {
-          const existingCompanies = _.sortBy(
-            results.body.results,
-            "properties.hs_lastmodifieddate.value"
-          );
-          envelopeToUpdate.hubspotExistingCompany = _.last(
-            existingCompanies
-          );
+          envelopeToUpdate.hubspotExistingCompany = results.body;
           accountsToUpdate.push(this.mappingUtil.patchHubspotCompanyProperties(envelopeToUpdate));
         } else {
           _.unset(envelopeToUpdate.hubspotWriteCompany.objectId);

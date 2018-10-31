@@ -32,6 +32,11 @@ declare type HubspotGetAllCompaniesResponse = {
   }
 };
 
+declare type HubspotGetCompanyResponse = {
+  ...IncomingMessage,
+  body: HubspotReadCompany
+};
+
 const _ = require("lodash");
 const Promise = require("bluebird");
 const superagent = require("superagent");
@@ -247,7 +252,7 @@ class HubspotClient {
 
   getCompanyById(
     id: number
-  ): Promise<HubspotGetAllCompaniesResponse> {
+  ): Promise<HubspotGetCompanyResponse> {
     return this.retryUnauthorized(() => {
       return this.agent.get(`/companies/v2/companies/${id}`);
     });
