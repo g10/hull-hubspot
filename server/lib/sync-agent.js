@@ -427,7 +427,7 @@ class SyncAgent {
         .logger.info("outgoing.account.skip", { reason: envelope.skipReason });
     });
 
-    const accountsToUpdate = [];//filterResults.toUpdate;
+    const accountsToUpdate = [];
     const accountsToInsert = [];
 
     await Promise.all(
