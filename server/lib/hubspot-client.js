@@ -250,9 +250,7 @@ class HubspotClient {
     });
   }
 
-  getCompanyById(
-    id: string
-  ): Promise<HubspotGetCompanyResponse> {
+  getCompanyById(id: string): Promise<HubspotGetCompanyResponse> {
     return this.retryUnauthorized(() => {
       return this.agent.get(`/companies/v2/companies/${id}`);
     });

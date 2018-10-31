@@ -867,13 +867,12 @@ class MappingUtil {
             )
           )
         ) {
-          _.remove(envelope.hubspotWriteCompany.properties, {
-            property: mapping.hubspot_property_name
+          _.remove(envelope.hubspotWriteCompany.properties, v => {
+            return v.name === mapping.hubspot_property_name;
           });
         }
       }
     });
-
     return envelope;
   }
 }

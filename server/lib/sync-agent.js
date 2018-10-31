@@ -433,27 +433,35 @@ class SyncAgent {
     await Promise.all(
       filterResults.toUpdate.map(async envelopeToUpdate => {
         try {
-
-          const results = await this.hubspotClient.getCompanyById(envelopeToUpdate.hubspotWriteCompany.objectId);
-          console.log("### BODY:", results);
+          const results = await this.hubspotClient.getCompanyById(
+            envelopeToUpdate.hubspotWriteCompany.objectId
+          );
           const companyId = _.get(results, "body.companyId");
-
-          if (results.body && !_.isEmpty(companyId) && companyId === envelopeToUpdate.hubspotWriteCompany.objectId) {
+          if (
+            results.body &&
+            !_.isEmpty(_.toString(companyId)) &&
+            _.toString(companyId) ===
+              envelopeToUpdate.hubspotWriteCompany.objectId
+          ) {
             envelopeToUpdate.existingHubspotCompany = results.body;
-            accountsToUpdate.push(this.mappingUtil.patchHubspotCompanyProperties(envelopeToUpdate));
+            accountsToUpdate.push(
+              this.mappingUtil.patchHubspotCompanyProperties(envelopeToUpdate)
+            );
           } else {
             _.unset(envelopeToUpdate.hubspotWriteCompany, "objectId");
             accountsToInsert.push(envelopeToUpdate);
           }
-        } catch(error) {
-          console.error("### ERROR", error);
+        } catch (error) {
           _.unset(envelopeToUpdate.hubspotWriteCompany, "objectId");
           accountsToInsert.push(envelopeToUpdate);
         }
       })
     );
 
-    const combinedInsertResults = _.concat(accountsToInsert, filterResults.toInsert);
+    const combinedInsertResults = _.concat(
+      accountsToInsert,
+      filterResults.toInsert
+    );
     accountsToInsert = [];
 
     // first perform search for companies to be updated
@@ -469,12 +477,12 @@ class SyncAgent {
             "properties.hs_lastmodifieddate.value"
           );
           const envelopeToUpdate = _.cloneDeep(envelopeToInsert);
-          const latestCompany = _.last(
-            existingCompanies
-          );
+          const latestCompany = _.last(existingCompanies);
           envelopeToUpdate.existingHubspotCompany = latestCompany;
           envelopeToUpdate.hubspotWriteCompany.objectId = latestCompany.companyId.toString();
-          accountsToUpdate.push(this.mappingUtil.patchHubspotCompanyProperties(envelopeToUpdate));
+          accountsToUpdate.push(
+            this.mappingUtil.patchHubspotCompanyProperties(envelopeToUpdate)
+          );
         } else {
           accountsToInsert.push(envelopeToInsert);
         }
