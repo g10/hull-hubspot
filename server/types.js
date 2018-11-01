@@ -1,5 +1,9 @@
 // @flow
-import type { THullUserUpdateMessage, THullAccountUpdateMessage } from "hull";
+import type {
+  THullUserUpdateMessage,
+  THullAccountUpdateMessage,
+  THullSegment
+} from "hull";
 
 export type HubspotError = {
   index: number,
@@ -23,7 +27,7 @@ export type HubspotWriteContact = {
 };
 
 export type HubspotWriteCompanyProperties = Array<{
-  property: string,
+  name: string,
   value: mixed
 }>;
 
@@ -274,3 +278,51 @@ export type HubspotCompanyAttributesOutgoingSetting = {
 
 export type HubspotCompanyOutgoingMapping = HubspotContactOutgoingMapping;
 export type HubspotCompanyIncomingMapping = HubspotContactIncomingMapping;
+
+export type ConnectorPrivateSettings = {
+  synchronized_segments: Array<string>,
+  is_fetch_completed: boolean,
+  portal_id: number,
+  refresh_token: string,
+  token: string,
+  token_fetched_at: string,
+  last_fetch_started_at: string,
+  fetch_count: number,
+  sync_fields_to_hull: Array<HubspotContactAttributesIncomingSetting>,
+  sync_fields_to_hubspot: Array<HubspotContactAttributesOutgoingSetting>,
+  last_fetch_at: string,
+  expires_in: number,
+  companies_last_fetch_at: string,
+  synchronized_account_segments: Array<string>,
+  outgoing_account_attributes: Array<HubspotCompanyAttributesOutgoingSetting>,
+  link_users_in_hull: boolean,
+  incoming_account_attributes: Array<HubspotCompanyAttributesIncomingSetting>,
+  link_users_in_service: boolean,
+  incoming_account_ident_service: string,
+  incoming_account_ident_hull: string
+};
+
+export type HullProperties = {
+  [string]: HullProperty
+};
+
+export type MappingUtilConfiguration = {
+  usersSegments: Array<THullSegment>,
+  accountsSegments: Array<THullSegment>,
+  hubspotContactPropertyGroups: HubspotContactPropertyGroups,
+  hubspotCompanyPropertyGroups: HubspotCompanyPropertyGroups,
+  hullUserProperties: HullProperties,
+  hullAccountProperties: HullProperties,
+  connectorSettings: ConnectorPrivateSettings
+};
+
+export type LoggerData = {
+  message: string,
+  data?: Object
+};
+
+export type MappingResult<T> = {
+  result: null | T,
+  warnings: Array<LoggerData>,
+  errors: Array<LoggerData>
+};

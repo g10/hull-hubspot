@@ -1,0 +1,92 @@
+{
+    "results": [
+        {
+            "portalId": 9999999,
+            "companyId": 1031042231,
+            "isDeleted": false,
+            "properties": {
+                "hs_lastmodifieddate": {
+                    "value": "1541022160666",
+                    "timestamp": 1541022160666,
+                    "source": "CALCULATED",
+                    "sourceId": null,
+                    "versions": [
+                        {
+                            "name": "hs_lastmodifieddate",
+                            "value": "1541022160666",
+                            "timestamp": 1541022160666,
+                            "source": "CALCULATED",
+                            "sourceVid": [],
+                            "requestId": "d0c302d0-e2b6-4d1a-ae70-b26c63eaef22"
+                        }
+                    ]
+                },
+                "domain": {
+                    "value": "initech.com",
+                    "timestamp": 1541016710156,
+                    "source": "BIDEN",
+                    "sourceId": "sven@hull.io",
+                    "versions": [
+                        {
+                            "name": "domain",
+                            "value": "initech.com",
+                            "timestamp": 1541016710156,
+                            "sourceId": "sven@hull.io",
+                            "source": "BIDEN",
+                            "sourceVid": [
+                                1031047393
+                            ],
+                            "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                        }
+                    ]
+                },
+                "name": {
+                    "value": "Initech",
+                    "timestamp": 1541016710156,
+                    "source": "CRM_UI",
+                    "sourceId": "sven@hull.io",
+                    "versions": [
+                        {
+                            "name": "name",
+                            "value": "Initech",
+                            "timestamp": 1541016710156,
+                            "sourceId": "sven@hull.io",
+                            "source": "CRM_UI",
+                            "sourceVid": [
+                                1031047393
+                            ],
+                            "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                        }
+                    ]
+                },
+                "createdate": {
+                    "value": "1541008027814",
+                    "timestamp": 1541016710156,
+                    "source": "CONTACTS",
+                    "sourceId": "CRM_UI",
+                    "versions": [
+                        {
+                            "name": "createdate",
+                            "value": "1541008027814",
+                            "timestamp": 1541016710156,
+                            "sourceId": "CRM_UI",
+                            "source": "CONTACTS",
+                            "sourceVid": [
+                                1031047393
+                            ],
+                            "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                        }
+                    ]
+                }
+            },
+            "additionalDomains": [],
+            "stateChanges": [],
+            "mergeAudits": []
+        }
+    ],
+    "hasMore": false,
+    "offset": {
+        "companyId": 1031042231,
+        "isPrimary": true
+    }
+}

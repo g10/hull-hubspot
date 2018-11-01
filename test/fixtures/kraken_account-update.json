@@ -1,0 +1,435 @@
+{
+  "notification_id": "2182e082-059f-4968-b7e8-ab240f7ddfee",
+  "configuration": {
+      "id": "ad8114bc797343609700",
+      "organization": "CwUAAQUGAQQKAwoEBAACAA.hullapp.io",
+      "secret": "5cf46c88a4aa4b33-95688631b801f73d"
+  },
+  "connector": {
+      "tags": [],
+      "source_url": "https://hubspot-testing.hullapp.net/",
+      "private_settings": {
+          "synchronized_segments": [],
+          "refresh_token": "1acfb3f2-a9e4-4034-936a-65422d0b1ee9",
+          "outgoing_account_attributes": [
+              {
+                  "overwrite": false,
+                  "hull": "source",
+                  "hubspot": "source"
+              }
+          ],
+          "token_fetched_at": "1541008993611",
+          "is_fetch_completed": false,
+          "sync_fields_to_hull": [
+              {}
+          ],
+          "last_fetch_at": "2018-10-31T21:26:07+00:00",
+          "token": "CLmI0-TsLBLRAAMZpse3AiDK7esBKK6DAjIZAD_iAqUGHgxmL4yL-0nreIwjOccP6haoxzoWCVoCRwAADIADAAhCGQA_0gKgT8jPw6wKGIhKvuALXHtOzNrkj2Y",
+          "companies_last_fetch_at": "2018-10-31T21:35:55+00:00",
+          "incoming_account_ident_hull": "domain",
+          "link_users_in_service": false,
+          "incoming_account_ident_service": "domain",
+          "expires_in": 21600,
+          "portal_id": 9999999,
+          "sync_fields_to_hubspot": [
+              {
+                  "overwrite": false
+              }
+          ],
+          "synchronized_account_segments": [
+              "5bd1e52a23d8c6d4d700d7f2"
+          ],
+          "incoming_account_attributes": [
+              {}
+          ],
+          "link_users_in_hull": false
+      },
+      "index": "https://hubspot-testing.hullapp.net/",
+      "name": "Hubspot",
+      "extra": {},
+      "settings": {},
+      "type": "ship",
+      "manifest": {
+          "description": "Sync a Hubspot Channel whenever a User enters or leaves a Segment",
+          "tags": [
+              "outgoing",
+              "incoming",
+              "batch",
+              "oneColumn",
+              "smart-notifier"
+          ],
+          "private_settings": [
+              {
+                  "name": "synchronized_segments",
+                  "title": "User Segments",
+                  "description": "Post to Hubspot when users match these segments",
+                  "default": [],
+                  "type": "array",
+                  "format": "segment"
+              },
+              {
+                  "name": "sync_fields_to_hubspot",
+                  "title": "Custom Fields Sync (Hull to Hubspot)",
+                  "type": "array",
+                  "format": "table",
+                  "items": {
+                      "type": "object",
+                      "properties": {
+                          "hull": {
+                              "title": "Hull Field ID",
+                              "type": "string",
+                              "format": "trait",
+                              "options": {
+                                  "placeholder": "Enter a Hull field id"
+                              }
+                          },
+                          "name": {
+                              "title": "Hubspot Field ID",
+                              "type": "string",
+                              "format": "select",
+                              "options": {
+                                  "allowCreate": true,
+                                  "loadOptions": "/schema/contact_properties"
+                              }
+                          },
+                          "overwrite": {
+                              "type": "boolean",
+                              "title": "Hull overwrites Hubspot",
+                              "default": false
+                          }
+                      }
+                  }
+              },
+              {
+                  "name": "sync_fields_to_hull",
+                  "title": "Custom Fields Sync (Hubspot to Hull)",
+                  "type": "array",
+                  "format": "table",
+                  "items": {
+                      "type": "object",
+                      "properties": {
+                          "name": {
+                              "title": "Hubspot Field ID",
+                              "type": "string",
+                              "format": "select",
+                              "options": {
+                                  "allowCreate": false,
+                                  "loadOptions": "/schema/contact_properties"
+                              }
+                          },
+                          "hull": {
+                              "title": "Hull Field ID",
+                              "type": "string",
+                              "format": "trait",
+                              "options": {
+                                  "placeholder": "Enter a Hull field id",
+                                  "allowCreate": true,
+                                  "source": "hubspot"
+                              }
+                          }
+                      }
+                  }
+              },
+              {
+                  "name": "outgoing_account_title",
+                  "title": "Outgoing accounts configuration",
+                  "description": "Outgoing accounts are matched on Hubspot end by `account.domain`. Accounts without domain are skipped. If you want to send out `account.external_id` add it to the table below.",
+                  "format": "title",
+                  "type": "string"
+              },
+              {
+                  "name": "synchronized_account_segments",
+                  "title": "Account Segments",
+                  "description": "Defines the list of Account Segments to send. Nothing sent by default.",
+                  "default": [],
+                  "type": "array",
+                  "format": "accountSegment"
+              },
+              {
+                  "name": "outgoing_account_attributes",
+                  "title": "Custom Accounts Fields Sync (Hull to Hubspot)",
+                  "type": "array",
+                  "format": "table",
+                  "items": {
+                      "type": "object",
+                      "properties": {
+                          "hull": {
+                              "title": "Hull Field ID",
+                              "type": "string",
+                              "format": "accountTrait",
+                              "options": {
+                                  "placeholder": "Enter a Hull field id"
+                              }
+                          },
+                          "hubspot": {
+                              "title": "Hubspot Field ID",
+                              "type": "string",
+                              "format": "select",
+                              "options": {
+                                  "allowCreate": true,
+                                  "loadOptions": "/schema/company_properties"
+                              }
+                          },
+                          "overwrite": {
+                              "type": "boolean",
+                              "title": "Hull overwrites Hubspot",
+                              "default": false
+                          }
+                      }
+                  }
+              },
+              {
+                  "name": "link_users_in_service",
+                  "title": "Link users in Hubspot",
+                  "description": "Do you want to let Hull associate Users and Accounts in Hubspot",
+                  "type": "boolean",
+                  "default": false
+              },
+              {
+                  "name": "ingoing_account_title",
+                  "title": "Incoming accounts configuration",
+                  "description": "By default we create/update accounts in Hull using company `domain` property. If you have an `external_id` present in Hubspot pick it below. When using `external_id` for incoming traffic `domain` will be fetched too if present.",
+                  "format": "title",
+                  "type": "string"
+              },
+              {
+                  "name": "incoming_account_ident_service",
+                  "title": "Unique account identifier in Hubspot",
+                  "description": "We will skip all companies which does not have value for this field",
+                  "format": "select",
+                  "type": "string",
+                  "options": {
+                      "loadOptions": "/schema/company_properties"
+                  },
+                  "default": "domain"
+              },
+              {
+                  "name": "incoming_account_ident_hull",
+                  "title": "Corresponding identifier field in Hull",
+                  "enum": [
+                      "domain",
+                      "external_id"
+                  ],
+                  "type": "string",
+                  "default": "domain"
+              },
+              {
+                  "name": "incoming_account_attributes",
+                  "title": "Custom Fields Sync (Hubspot to Hull)",
+                  "type": "array",
+                  "format": "table",
+                  "items": {
+                      "type": "object",
+                      "properties": {
+                          "hubspot": {
+                              "title": "Hubspot Field ID",
+                              "type": "string",
+                              "format": "select",
+                              "options": {
+                                  "allowCreate": false,
+                                  "loadOptions": "/schema/company_properties"
+                              }
+                          },
+                          "hull": {
+                              "title": "Hull Field ID",
+                              "type": "string",
+                              "format": "accountTrait",
+                              "options": {
+                                  "placeholder": "Enter a Hull field id",
+                                  "allowCreate": true,
+                                  "source": "hubspot"
+                              }
+                          }
+                      }
+                  }
+              },
+              {
+                  "name": "link_users_in_hull",
+                  "title": "Link users in Hull",
+                  "description": "Do you want to let Hubspot update links between Users and Accounts in Hull (Be careful about conflicts with other connectors that would link users too)",
+                  "type": "boolean",
+                  "default": false
+              },
+              {
+                  "name": "token",
+                  "title": "Token",
+                  "type": "string",
+                  "format": "hidden"
+              },
+              {
+                  "name": "portal_id",
+                  "title": "Portal ID",
+                  "type": "string",
+                  "format": "hidden"
+              },
+              {
+                  "name": "refresh_token",
+                  "title": "RefreshToken",
+                  "type": "string",
+                  "format": "hidden"
+              },
+              {
+                  "name": "last_fetch_started_at",
+                  "description": "Last time fetched at operation was started",
+                  "type": "string",
+                  "format": "hidden"
+              },
+              {
+                  "name": "fetch_count",
+                  "description": "Count of contacts already fetched from Hubspot",
+                  "type": "number",
+                  "format": "hidden"
+              },
+              {
+                  "name": "is_fetch_completed",
+                  "type": "boolean",
+                  "default": false,
+                  "format": "hidden"
+              }
+          ],
+          "tabs": [
+              {
+                  "title": "Credentials & Actions",
+                  "url": "/auth/",
+                  "size": "small",
+                  "editable": false
+              }
+          ],
+          "name": "Hubspot",
+          "settings": [],
+          "subscriptions": [
+              {
+                  "url": "/smart-notifier"
+              }
+          ],
+          "ui": false,
+          "picture": "picture.png",
+          "readme": "readme.md",
+          "schedules": [
+              {
+                  "url": "/sync",
+                  "type": "interval",
+                  "value": "5"
+              },
+              {
+                  "url": "/fetch-recent-companies",
+                  "type": "interval",
+                  "value": "5"
+              },
+              {
+                  "url": "/monitor/checkToken",
+                  "type": "interval",
+                  "value": "5"
+              },
+              {
+                  "url": "/status",
+                  "type": "interval",
+                  "value": "30"
+              }
+          ],
+          "version": "0.6.0",
+          "resources": [],
+          "deployment_settings": []
+      },
+      "secret": "f1236e5d1abb456574bb04aec2673cf8",
+      "updated_at": "2018-10-31T21:51:49Z",
+      "status": {
+          "status": "ok",
+          "messages": [],
+          "updated_at": "2018-10-31T18:03:14Z",
+          "name": "Hubspot",
+          "id": "5bd9eb94ac4766cc75000a28"
+      },
+      "id": "5bd9eb94ac4766cc75000a28",
+      "picture": "https://hull-hubspot.herokuapp.com/picture.png",
+      "homepage_url": "https://svendevops1.hullapp.io/ships/5bd9eb94ac4766cc75000a28",
+      "manifest_url": "https://hubspot-testing.hullapp.net/manifest.json",
+      "created_at": "2018-10-31T17:51:17Z"
+  },
+  "channel": "account:update",
+  "messages": [
+      {
+          "changes": {
+              "is_new": false,
+              "account": {
+                  "updated_at": [
+                      "2018-10-31T21:42:06Z",
+                      "2018-10-31T21:47:22Z"
+                  ],
+                  "hubspot/hs_lastmodifieddate": [
+                      "1541016711262",
+                      "1541022160666"
+                  ]
+              },
+              "account_segments": {}
+          },
+          "account": {
+              "hubspot/hubspot_owner_assigneddate": "1541016662615",
+              "hubspot/domain": "initech.com",
+              "hubspot/city": "Seoul",
+              "hubspot/hs_all_owner_ids": "34096952",
+              "external_id": "CgsFCg0EAQIGAggPBAQBCA",
+              "hubspot/linkedin_company_page": "https://www.linkedin.com/company/initech",
+              "hubspot/hubspot_owner_id": "34096952",
+              "hubspot/annualrevenue": 1000000,
+              "id": "5bc8c1ec63b804df6104fc19",
+              "hubspot/is_public": true,
+              "hubspot/founded_year": "1997",
+              "name": "Initech",
+              "updated_at": "2018-10-31T21:47:22Z",
+              "hubspot/linkedinbio": "INITECH Co., Ltd is a Korea-based company engaged in the provision of data encryption and authentication solutions for the Internet security market. The Company’s business divisions include authentication and encryption division, engaged in the issue of electronic licenses and the provision of encryption and decryption services in the Web environment; integrated security management division, providing integrated authority management services and account integrated management of Windows systems and others; security device division, providing hardware security modules; financial application service provider (ASP) division, providing ASP services for electronic financial systems and Internet banking services; system integration (SI) division, providing solutions for electronic finance transactions, as well as system management division. It also involves in the provision of maintenance and technology services, as well as distributes software, computers, peripherals and others.",
+              "anonymous_ids": [
+                  "hubspot:1031042231"
+              ],
+              "domain": "initech.com",
+              "indexed_at": "2018-10-31T21:54:25+00:00",
+              "hubspot/createdate": "1541008027814",
+              "hubspot/description": "INITECH Co., Ltd is a Korea-based company engaged in the provision of data encryption and authentication solutions for the Internet security market. The Company’s business divisions include authentication and encryption division, engaged in the issue of electronic licenses and the provision of encryption and decryption services in the Web environment; integrated security management division, providing integrated authority management services and account integrated management of Windows systems and others; security device division, providing hardware security modules; financial application service provider (ASP) division, providing ASP services for electronic financial systems and Internet banking services; system integration (SI) division, providing solutions for electronic finance transactions, as well as system management division. It also involves in the provision of maintenance and technology services, as well as distributes software, computers, peripherals and others.",
+              "source": "fail",
+              "hubspot/web_technologies": [
+                  "apache"
+              ],
+              "hubspot/hs_lastmodifieddate": "1541022160666",
+              "hubspot/numberofemployees": 200,
+              "created_at": "2018-10-18T17:25:00Z",
+              "hubspot/id": 1031042231,
+              "hubspot/twitterhandle": "iminitech",
+              "hubspot/address": "11F, Acehighend Tower 2-Cha 61, Digitalro 26-Gil Guro-Gu",
+              "hubspot/industry": "INFORMATION_TECHNOLOGY_AND_SERVICES",
+              "account_status": "activated",
+              "hubspot/name": "Initech",
+              "hubspot/website": "initech.jp"
+          },
+          "account_segments": [
+              {
+                  "id": "5bd1e52a23d8c6d4d700d7f2",
+                  "name": "Activated accounts",
+                  "updated_at": "2018-10-25T15:45:46Z",
+                  "type": "accounts_segment",
+                  "created_at": "2018-10-25T15:45:46Z"
+              }
+          ],
+          "message_id": "f2931badda8386990186097bd1a3904c2f7204b5"
+      }
+  ],
+  "accounts_segments": [
+      {
+          "id": "5bd1e52a23d8c6d4d700d7f2",
+          "updated_at": "2018-10-25T15:45:46Z",
+          "created_at": "2018-10-25T15:45:46Z",
+          "name": "Activated accounts",
+          "type": "accounts_segment",
+          "stats": {}
+      }
+  ],
+  "segments": [
+      {
+          "id": "5bd1e587450dc1fe7f007845",
+          "updated_at": "2018-10-25T15:47:19Z",
+          "created_at": "2018-10-25T15:47:19Z",
+          "name": "Customers",
+          "type": "users_segment",
+          "stats": {}
+      }
+  ]
+}

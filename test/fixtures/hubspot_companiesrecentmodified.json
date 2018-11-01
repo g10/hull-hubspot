@@ -1,0 +1,540 @@
+{
+  "results": [
+      {
+          "portalId": 9999999,
+          "companyId": 1031359311,
+          "isDeleted": false,
+          "properties": {
+              "website": {
+                  "value": "hubspottech1.com",
+                  "timestamp": 1541026147539,
+                  "source": "CALCULATED",
+                  "sourceId": null,
+                  "versions": [
+                      {
+                          "name": "website",
+                          "value": "hubspottech1.com",
+                          "timestamp": 1541026147539,
+                          "source": "CALCULATED",
+                          "sourceVid": [],
+                          "requestId": "2028fecc-5394-4ed8-8582-159998277fa6"
+                      }
+                  ]
+              },
+              "hull_segments": {
+                  "value": "Activated accounts",
+                  "timestamp": 1541026147539,
+                  "source": "API",
+                  "sourceId": null,
+                  "versions": [
+                      {
+                          "name": "hull_segments",
+                          "value": "Activated accounts",
+                          "timestamp": 1541026147539,
+                          "source": "API",
+                          "sourceVid": [],
+                          "requestId": "2028fecc-5394-4ed8-8582-159998277fa6"
+                      }
+                  ]
+              },
+              "hs_lastmodifieddate": {
+                  "value": "1541026155410",
+                  "timestamp": 1541026155410,
+                  "source": "CALCULATED",
+                  "sourceId": null,
+                  "versions": [
+                      {
+                          "name": "hs_lastmodifieddate",
+                          "value": "1541026155410",
+                          "timestamp": 1541026155410,
+                          "source": "CALCULATED",
+                          "sourceVid": []
+                      }
+                  ]
+              },
+              "domain": {
+                  "value": "hubspottech1.com",
+                  "timestamp": 1541026147539,
+                  "source": "API",
+                  "sourceId": null,
+                  "versions": [
+                      {
+                          "name": "domain",
+                          "value": "hubspottech1.com",
+                          "timestamp": 1541026147539,
+                          "source": "API",
+                          "sourceVid": [],
+                          "requestId": "2028fecc-5394-4ed8-8582-159998277fa6"
+                      }
+                  ]
+              },
+              "name": {
+                  "value": "hubspottech1.com",
+                  "timestamp": 1541026155410,
+                  "source": "BIDEN",
+                  "sourceId": "BidenPropertyMappings",
+                  "versions": [
+                      {
+                          "name": "name",
+                          "value": "hubspottech1.com",
+                          "timestamp": 1541026155410,
+                          "sourceId": "BidenPropertyMappings",
+                          "source": "BIDEN",
+                          "sourceVid": []
+                      }
+                  ]
+              },
+              "createdate": {
+                  "value": "1541026147539",
+                  "timestamp": 1541026147539,
+                  "source": "API",
+                  "sourceId": "API",
+                  "versions": [
+                      {
+                          "name": "createdate",
+                          "value": "1541026147539",
+                          "timestamp": 1541026147539,
+                          "sourceId": "API",
+                          "source": "API",
+                          "sourceVid": [],
+                          "requestId": "2028fecc-5394-4ed8-8582-159998277fa6"
+                      }
+                  ]
+              },
+              "source": {
+                  "value": "test",
+                  "timestamp": 1541026147539,
+                  "source": "API",
+                  "sourceId": null,
+                  "versions": [
+                      {
+                          "name": "source",
+                          "value": "test",
+                          "timestamp": 1541026147539,
+                          "source": "API",
+                          "sourceVid": [],
+                          "requestId": "2028fecc-5394-4ed8-8582-159998277fa6"
+                      }
+                  ]
+              }
+          },
+          "additionalDomains": [],
+          "stateChanges": [],
+          "mergeAudits": []
+      },
+      {
+          "portalId": 5088166,
+          "companyId": 1031042231,
+          "isDeleted": false,
+          "properties": {
+              "website": {
+                  "value": "initech.jp",
+                  "timestamp": 1541016662615,
+                  "source": "CALCULATED",
+                  "sourceId": null,
+                  "versions": [
+                      {
+                          "name": "website",
+                          "value": "initech.jp",
+                          "timestamp": 1541016662615,
+                          "source": "CALCULATED",
+                          "sourceVid": [
+                              1031047393
+                          ],
+                          "requestId": "1d72de6d-f5f3-4b36-ac12-1a29edad1c38"
+                      }
+                  ]
+              },
+              "address": {
+                  "value": "11F, Acehighend Tower 2-Cha 61, Digitalro 26-Gil Guro-Gu",
+                  "timestamp": 1541008027814,
+                  "source": "BIDEN",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "address",
+                          "value": "11F, Acehighend Tower 2-Cha 61, Digitalro 26-Gil Guro-Gu",
+                          "timestamp": 1541008027814,
+                          "sourceId": "sven@hull.io",
+                          "source": "BIDEN",
+                          "sourceVid": [],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "hull_segments": {
+                  "value": "Activated accounts",
+                  "timestamp": 1541009547152,
+                  "source": "API",
+                  "sourceId": "CompaniesBatchMutation",
+                  "versions": [
+                      {
+                          "name": "hull_segments",
+                          "value": "Activated accounts",
+                          "timestamp": 1541009547152,
+                          "sourceId": "CompaniesBatchMutation",
+                          "source": "API",
+                          "sourceVid": [],
+                          "requestId": "e6230de9-e5c3-4d07-9a8b-12d24c627c57"
+                      }
+                  ]
+              },
+              "city": {
+                  "value": "Seoul",
+                  "timestamp": 1541008027814,
+                  "source": "BIDEN",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "city",
+                          "value": "Seoul",
+                          "timestamp": 1541008027814,
+                          "sourceId": "sven@hull.io",
+                          "source": "BIDEN",
+                          "sourceVid": [],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "description": {
+                  "value": "INITECH Co., Ltd is a Korea-based company engaged in the provision of data encryption and authentication solutions for the Internet security market. The Company’s business divisions include authentication and encryption division, engaged in the issue of electronic licenses and the provision of encryption and decryption services in the Web environment; integrated security management division, providing integrated authority management services and account integrated management of Windows systems and others; security device division, providing hardware security modules; financial application service provider (ASP) division, providing ASP services for electronic financial systems and Internet banking services; system integration (SI) division, providing solutions for electronic finance transactions, as well as system management division. It also involves in the provision of maintenance and technology services, as well as distributes software, computers, peripherals and others.",
+                  "timestamp": 1541008027814,
+                  "source": "BIDEN",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "description",
+                          "value": "INITECH Co., Ltd is a Korea-based company engaged in the provision of data encryption and authentication solutions for the Internet security market. The Company’s business divisions include authentication and encryption division, engaged in the issue of electronic licenses and the provision of encryption and decryption services in the Web environment; integrated security management division, providing integrated authority management services and account integrated management of Windows systems and others; security device division, providing hardware security modules; financial application service provider (ASP) division, providing ASP services for electronic financial systems and Internet banking services; system integration (SI) division, providing solutions for electronic finance transactions, as well as system management division. It also involves in the provision of maintenance and technology services, as well as distributes software, computers, peripherals and others.",
+                          "timestamp": 1541008027814,
+                          "sourceId": "sven@hull.io",
+                          "source": "BIDEN",
+                          "sourceVid": [],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "createdate": {
+                  "value": "1541008027814",
+                  "timestamp": 1541016710156,
+                  "source": "CONTACTS",
+                  "sourceId": "CRM_UI",
+                  "versions": [
+                      {
+                          "name": "createdate",
+                          "value": "1541008027814",
+                          "timestamp": 1541016710156,
+                          "sourceId": "CRM_UI",
+                          "source": "CONTACTS",
+                          "sourceVid": [
+                              1031047393
+                          ],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "web_technologies": {
+                  "value": "apache",
+                  "timestamp": 1541008027814,
+                  "source": "BIDEN",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "web_technologies",
+                          "value": "apache",
+                          "timestamp": 1541008027814,
+                          "sourceId": "sven@hull.io",
+                          "source": "BIDEN",
+                          "sourceVid": [],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "industry": {
+                  "value": "INFORMATION_TECHNOLOGY_AND_SERVICES",
+                  "timestamp": 1541008027814,
+                  "source": "BIDEN",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "industry",
+                          "value": "INFORMATION_TECHNOLOGY_AND_SERVICES",
+                          "timestamp": 1541008027814,
+                          "sourceId": "sven@hull.io",
+                          "source": "BIDEN",
+                          "sourceVid": [],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "source": {
+                  "value": "fail",
+                  "timestamp": 1541022160390,
+                  "source": "API",
+                  "sourceId": "CompaniesBatchMutation",
+                  "versions": [
+                      {
+                          "name": "source",
+                          "value": "fail",
+                          "timestamp": 1541022160390,
+                          "sourceId": "CompaniesBatchMutation",
+                          "source": "API",
+                          "sourceVid": [],
+                          "requestId": "d0c302d0-e2b6-4d1a-ae70-b26c63eaef22"
+                      }
+                  ]
+              },
+              "numberofemployees": {
+                  "value": "200",
+                  "timestamp": 1541008027814,
+                  "source": "BIDEN",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "numberofemployees",
+                          "value": "200",
+                          "timestamp": 1541008027814,
+                          "sourceId": "sven@hull.io",
+                          "source": "BIDEN",
+                          "sourceVid": [],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "linkedin_company_page": {
+                  "value": "https://www.linkedin.com/company/initech",
+                  "timestamp": 1541008027814,
+                  "source": "BIDEN",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "linkedin_company_page",
+                          "value": "https://www.linkedin.com/company/initech",
+                          "timestamp": 1541008027814,
+                          "sourceId": "sven@hull.io",
+                          "source": "BIDEN",
+                          "sourceVid": [],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "twitterhandle": {
+                  "value": "iminitech",
+                  "timestamp": 1541008027814,
+                  "source": "BIDEN",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "twitterhandle",
+                          "value": "iminitech",
+                          "timestamp": 1541008027814,
+                          "sourceId": "sven@hull.io",
+                          "source": "BIDEN",
+                          "sourceVid": [],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "hubspot_owner_id": {
+                  "value": "34096952",
+                  "timestamp": 1541016662615,
+                  "source": "CRM_UI",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "hubspot_owner_id",
+                          "value": "34096952",
+                          "timestamp": 1541016662615,
+                          "sourceId": "sven@hull.io",
+                          "source": "CRM_UI",
+                          "sourceVid": [
+                              1031047393
+                          ],
+                          "requestId": "1d72de6d-f5f3-4b36-ac12-1a29edad1c38"
+                      }
+                  ]
+              },
+              "hs_lastmodifieddate": {
+                  "value": "1541022160666",
+                  "timestamp": 1541022160666,
+                  "source": "CALCULATED",
+                  "sourceId": null,
+                  "versions": [
+                      {
+                          "name": "hs_lastmodifieddate",
+                          "value": "1541022160666",
+                          "timestamp": 1541022160666,
+                          "source": "CALCULATED",
+                          "sourceVid": [],
+                          "requestId": "d0c302d0-e2b6-4d1a-ae70-b26c63eaef22"
+                      }
+                  ]
+              },
+              "hubspot_owner_assigneddate": {
+                  "value": "1541016662615",
+                  "timestamp": 1541016662615,
+                  "source": "CRM_UI",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "hubspot_owner_assigneddate",
+                          "value": "1541016662615",
+                          "timestamp": 1541016662615,
+                          "sourceId": "sven@hull.io",
+                          "source": "CRM_UI",
+                          "sourceVid": [
+                              1031047393
+                          ],
+                          "requestId": "1d72de6d-f5f3-4b36-ac12-1a29edad1c38"
+                      }
+                  ]
+              },
+              "annualrevenue": {
+                  "value": "1000000",
+                  "timestamp": 1541008027814,
+                  "source": "BIDEN",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "annualrevenue",
+                          "value": "1000000",
+                          "timestamp": 1541008027814,
+                          "sourceId": "sven@hull.io",
+                          "source": "BIDEN",
+                          "sourceVid": [],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "founded_year": {
+                  "value": "1997",
+                  "timestamp": 1541008027814,
+                  "source": "BIDEN",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "founded_year",
+                          "value": "1997",
+                          "timestamp": 1541008027814,
+                          "sourceId": "sven@hull.io",
+                          "source": "BIDEN",
+                          "sourceVid": [],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "domain": {
+                  "value": "initech.com",
+                  "timestamp": 1541016710156,
+                  "source": "BIDEN",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "domain",
+                          "value": "initech.com",
+                          "timestamp": 1541016710156,
+                          "sourceId": "sven@hull.io",
+                          "source": "BIDEN",
+                          "sourceVid": [
+                              1031047393
+                          ],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "name": {
+                  "value": "Initech",
+                  "timestamp": 1541016710156,
+                  "source": "CRM_UI",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "name",
+                          "value": "Initech",
+                          "timestamp": 1541016710156,
+                          "sourceId": "sven@hull.io",
+                          "source": "CRM_UI",
+                          "sourceVid": [
+                              1031047393
+                          ],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "is_public": {
+                  "value": "true",
+                  "timestamp": 1541008027814,
+                  "source": "BIDEN",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "is_public",
+                          "value": "true",
+                          "timestamp": 1541008027814,
+                          "sourceId": "sven@hull.io",
+                          "source": "BIDEN",
+                          "sourceVid": [],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              },
+              "hs_all_owner_ids": {
+                  "value": "34096952",
+                  "timestamp": 1541016664619,
+                  "source": "CRM_UI",
+                  "sourceId": "PermissionsUpdater",
+                  "versions": [
+                      {
+                          "name": "hs_all_owner_ids",
+                          "value": "34096952",
+                          "timestamp": 1541016664619,
+                          "sourceId": "PermissionsUpdater",
+                          "source": "CRM_UI",
+                          "sourceVid": [
+                              1031047393
+                          ]
+                      }
+                  ]
+              },
+              "linkedinbio": {
+                  "value": "INITECH Co., Ltd is a Korea-based company engaged in the provision of data encryption and authentication solutions for the Internet security market. The Company’s business divisions include authentication and encryption division, engaged in the issue of electronic licenses and the provision of encryption and decryption services in the Web environment; integrated security management division, providing integrated authority management services and account integrated management of Windows systems and others; security device division, providing hardware security modules; financial application service provider (ASP) division, providing ASP services for electronic financial systems and Internet banking services; system integration (SI) division, providing solutions for electronic finance transactions, as well as system management division. It also involves in the provision of maintenance and technology services, as well as distributes software, computers, peripherals and others.",
+                  "timestamp": 1541008027814,
+                  "source": "BIDEN",
+                  "sourceId": "sven@hull.io",
+                  "versions": [
+                      {
+                          "name": "linkedinbio",
+                          "value": "INITECH Co., Ltd is a Korea-based company engaged in the provision of data encryption and authentication solutions for the Internet security market. The Company’s business divisions include authentication and encryption division, engaged in the issue of electronic licenses and the provision of encryption and decryption services in the Web environment; integrated security management division, providing integrated authority management services and account integrated management of Windows systems and others; security device division, providing hardware security modules; financial application service provider (ASP) division, providing ASP services for electronic financial systems and Internet banking services; system integration (SI) division, providing solutions for electronic finance transactions, as well as system management division. It also involves in the provision of maintenance and technology services, as well as distributes software, computers, peripherals and others.",
+                          "timestamp": 1541008027814,
+                          "sourceId": "sven@hull.io",
+                          "source": "BIDEN",
+                          "sourceVid": [],
+                          "requestId": "40ca6ca0-4a7c-448a-9e31-48c888c5cd3a"
+                      }
+                  ]
+              }
+          },
+          "additionalDomains": [
+              {
+                  "domain": "initech.jp",
+                  "timestamp": 1541016710156,
+                  "source": "MERGE_COMPANIES",
+                  "sourceId": "1031047393"
+              }
+          ],
+          "stateChanges": [],
+          "mergeAudits": [
+              {
+                  "mergedCompanyId": 1031047393,
+                  "canonicalCompanyId": 1031042231,
+                  "movedProperties": [],
+                  "sourceId": "3864266",
+                  "entityId": "AuthSource{authName=app-cookie, authLevel=APP, hubId=5088166, userId=3864266, originIpAddress=/73.7.88.73, loginId=sven@hull.io-1541006995443, correlationId=381bd57d-fe23-45df-9f2e-53bb8e62e1b1}",
+                  "timestamp": 1541016710156
+              }
+          ]
+      }
+  ],
+  "hasMore": false,
+  "offset": 2,
+  "total": 2
+}
