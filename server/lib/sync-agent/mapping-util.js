@@ -3,7 +3,6 @@ import type {
   THullUserIdent,
   THullAccountIdent,
   THullAttributes,
-  THullConnector,
   THullSegment,
   THullUserUpdateMessage,
   THullAccountUpdateMessage
@@ -21,7 +20,15 @@ import type {
   HubspotContactAttributesIncomingSetting,
   HubspotContactIncomingMapping,
   HubspotContactProperty,
-  HullProperty
+  HubspotCompanyOutgoingMapping,
+  HubspotCompanyIncomingMapping,
+  HubspotCompanyAttributesIncomingSetting,
+  HubspotCompanyAttributesOutgoingSetting,
+  HubspotCompanyProperty,
+  HullProperties,
+  MappingUtilConfiguration,
+  MappingResult,
+  HubspotAccountUpdateMessageEnvelope
 } from "../../types";
 
 const _ = require("lodash");
@@ -33,16 +40,16 @@ const CONTACT_DEFAULT_MAPPING = require("./contact-default-mapping");
 const COMPANY_DEFAULT_MAPPING = require("./company-default-mapping");
 
 class MappingUtil {
-  connector: THullConnector;
-  hullClient: Object;
-  logger: Object;
+  // connector: THullConnector;
+  // hullClient: Object;
+  // logger: Object;
   usersSegments: Array<THullSegment>;
   accountsSegments: Array<THullSegment>;
 
   hubspotContactProperties: Array<HubspotContactProperty>;
   hubspotCompanyProperties: Array<HubspotCompanyProperty>;
-  hullUserProperties: { [string]: HullProperty };
-  hullAccountProperties: { [string]: HullProperty };
+  hullUserProperties: HullProperties;
+  hullAccountProperties: HullProperties;
 
   contactAttributesIncomingSettings: Array<
     HubspotContactAttributesIncomingSetting
@@ -69,44 +76,47 @@ class MappingUtil {
   incomingAccountIdentHull: string;
   incomingAccountIdentService: string;
 
-  constructor({
-    connector,
-    hullClient,
-    usersSegments,
-    accountsSegments,
-    hubspotContactProperties,
-    hubspotCompanyProperties,
-    hullUserProperties,
-    hullAccountProperties
-  }: Object) {
-    this.connector = connector;
-    this.hullClient = hullClient;
-    this.logger = hullClient.logger;
-    this.usersSegments = usersSegments;
-    this.accountsSegments = accountsSegments;
+  constructor(config: MappingUtilConfiguration) {
+    // this.connector = connector;
+    // this.hullClient = hullClient;
+    // this.logger = hullClient.logger;
+    this.usersSegments = config.usersSegments;
+    this.accountsSegments = config.accountsSegments;
     this.hubspotContactProperties = _.flatten(
-      hubspotContactProperties.map(group => group.properties)
+      config.hubspotContactPropertyGroups.map(group => group.properties)
     );
     this.hubspotCompanyProperties = _.flatten(
-      hubspotCompanyProperties.map(group => group.properties)
+      config.hubspotCompanyPropertyGroups.map(group => group.properties)
     );
-    this.hullUserProperties = hullUserProperties;
-    this.hullAccountProperties = hullAccountProperties;
+    this.hullUserProperties = config.hullUserProperties;
+    this.hullAccountProperties = config.hullAccountProperties;
 
     // pick stuff from private settings
     this.contactAttributesIncomingSettings =
-      this.connector.private_settings.sync_fields_to_hull || [];
+      config.connectorSettings.sync_fields_to_hull || [];
     this.contactAttributesOutgoingSettings =
-      this.connector.private_settings.sync_fields_to_hubspot || [];
+      config.connectorSettings.sync_fields_to_hubspot || [];
 
     this.companyAttributesIncomingSettings =
-      this.connector.private_settings.incoming_account_attributes || [];
+      config.connectorSettings.incoming_account_attributes || [];
     this.companyAttributesOutgoingSettings =
-      this.connector.private_settings.outgoing_account_attributes || [];
+      config.connectorSettings.outgoing_account_attributes || [];
 
-    this.incomingAccountIdentHull = this.connector.private_settings.incoming_account_ident_hull;
-    this.incomingAccountIdentService = this.connector.private_settings.incoming_account_ident_service;
-    this.outgoingLinking = this.connector.private_settings.link_users_in_service;
+    this.incomingAccountIdentHull = _.get(
+      config,
+      "connectorSettings.incoming_account_ident_hull",
+      "domain"
+    );
+    this.incomingAccountIdentService = _.get(
+      config,
+      "connectorSettings.incoming_account_ident_service",
+      "domain"
+    );
+    this.outgoingLinking = _.get(
+      config,
+      "connectorSettings.link_users_in_service",
+      false
+    );
 
     this.contactOutgoingMapping = this.getContactOutgoingMapping();
     this.contactIncomingMapping = this.getContactIncomingMapping();
@@ -592,26 +602,6 @@ class MappingUtil {
     return hubspotWriteContact;
   }
 
-  getHubspotCompany(message: THullAccountUpdateMessage): HubspotWriteCompany {
-    const hubspotWriteProperties = this.getHubspotCompanyProperties(message);
-    const hubspotWriteCompany: HubspotWriteCompany = {
-      properties: hubspotWriteProperties
-    };
-    if (
-      message.account["hubspot/id"] !== null &&
-      message.account["hubspot/id"] !== undefined
-    ) {
-      hubspotWriteCompany.objectId = message.account["hubspot/id"].toString();
-    }
-
-    hubspotWriteCompany.properties.push({
-      name: "domain",
-      value: message.account.domain
-    });
-
-    return hubspotWriteCompany;
-  }
-
   /**
    * Maps Hull user data to Hubspot contact properties.
    * It sends only the properties which are not read only - this is controlled
@@ -740,30 +730,83 @@ class MappingUtil {
     return contactProps;
   }
 
-  getHubspotCompanyProperties(
+  /**
+   * Map the account within the message to a Hubspot company object.
+   *
+   * @param {THullAccountUpdateMessage} message The notification message.
+   * @returns {MappingResult<HubspotWriteCompany>} The mapping result for the company.
+   * @memberof MappingUtil
+   */
+  mapToHubspotCompany(
     message: THullAccountUpdateMessage
-  ): HubspotWriteCompanyProperties {
-    debug("getHubspotCompanyProperties", this.companyOutgoingMapping);
-    // const userSegments = this.userSegments;
-    const accountData = message.account;
-    const contactProps = _.reduce(
-      this.companyOutgoingMapping,
-      (contactProperties, mappingEntry) => {
-        // const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
-        const accountIdent = _.pick(accountData, [
-          "id",
-          "external_id",
-          "domain"
-        ]);
+  ): MappingResult<HubspotWriteCompany> {
+    const propsMappingResult = this.mapHubspotCompanyProperties(message);
+    const mappingResult: MappingResult<HubspotWriteCompany> = {
+      result: null,
+      warnings: propsMappingResult.warnings,
+      errors: propsMappingResult.errors
+    };
+    // Early return if the property mapping yielded errors
+    // or a null result
+    if (
+      propsMappingResult.errors.length > 0 ||
+      propsMappingResult.result === null
+    ) {
+      return mappingResult;
+    }
 
+    const hubspotWriteProperties = propsMappingResult.result;
+    const hubspotWriteCompany: HubspotWriteCompany = {
+      properties: hubspotWriteProperties
+    };
+    // Add the identifier if present in the Hull account attributes
+    if (!_.isNil(message.account["hubspot/id"])) {
+      hubspotWriteCompany.objectId = _.toString(message.account["hubspot/id"]);
+    }
+    // Always make sure that we do have the domain in the
+    // properties if not present
+    if (!_.find(hubspotWriteCompany.properties, ["name", "domain"])) {
+      hubspotWriteCompany.properties.push({
+        name: "domain",
+        value: message.account.domain
+      });
+    }
+
+    mappingResult.result = hubspotWriteCompany;
+    return mappingResult;
+  }
+
+  /**
+   * Map properties object for Hubspot companies based on the account
+   * within the message.
+   *
+   * @param {THullAccountUpdateMessage} message The notification message.
+   * @returns {MappingResult<HubspotWriteCompanyProperties>} The mapping result.
+   * @memberof MappingUtil
+   */
+  mapHubspotCompanyProperties(
+    message: THullAccountUpdateMessage
+  ): MappingResult<HubspotWriteCompanyProperties> {
+    // Create the result object
+    const mapResult: MappingResult<HubspotWriteCompanyProperties> = {
+      result: [],
+      warnings: [],
+      errors: []
+    };
+    debug("getHubspotCompanyProperties", this.companyOutgoingMapping);
+
+    // Compose the properties
+    const accountData = message.account;
+    const accountProps = _.reduce(
+      this.companyOutgoingMapping,
+      (accountProperties, mappingEntry) => {
         if (!mappingEntry.hubspot_property_name) {
-          this.hullClient
-            .asAccount(accountIdent)
-            .logger.warn("outgoing.user.warning", {
-              warning: "cannot find mapped hubspot property",
-              mappingEntry
-            });
-          return contactProperties;
+          mapResult.warnings.push({
+            message:
+              "Cannot find mapped Hubspot property, see data for details.",
+            data: mappingEntry
+          });
+          return accountProperties;
         }
 
         let value = _.has(accountData, mappingEntry.hull_trait_name)
@@ -805,12 +848,11 @@ class MappingUtil {
               .milliseconds(0)
               .format("x");
           } else {
-            this.hullClient
-              .asAccount(accountIdent)
-              .logger.warn("outgoing.account.warning", {
-                warning: "cannot parse datetime trait to date",
-                mappingEntry
-              });
+            mapResult.warnings.push({
+              message:
+                "Cannot parse datetime attribute from Hull to date for Hubspot",
+              data: mappingEntry
+            });
           }
         }
 
@@ -819,16 +861,16 @@ class MappingUtil {
           value !== "" &&
           mappingEntry.hubspot_property_read_only !== true
         ) {
-          contactProperties.push({
+          accountProperties.push({
             name: mappingEntry.hubspot_property_name,
             value
           });
         }
-        return contactProperties;
+        return accountProperties;
       },
       []
     );
-
+    // Compose the account segments
     const accountSegments: Array<string> = Array.isArray(
       message.account_segments
     )
@@ -844,12 +886,13 @@ class MappingUtil {
     );
     debug("segmentNames", segmentNames);
 
-    contactProps.push({
+    accountProps.push({
       name: "hull_segments",
       value: segmentNames.join(";")
     });
 
-    return contactProps;
+    mapResult.result = accountProps;
+    return mapResult;
   }
 
   /**

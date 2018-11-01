@@ -1,0 +1,18 @@
+{
+  "collectCoverage": true,
+  "coverageThreshold": {
+    "global": {
+      "branches": 10,
+      "functions": 10,
+      "lines": 10,
+      "statements": 10
+    }
+  },
+  "coveragePathIgnorePatterns": [
+    "/node_modules/",
+    "/test/"
+  ],
+  "transform": {
+    "^.+\\.js?$": "babel-jest"
+  }
+}
