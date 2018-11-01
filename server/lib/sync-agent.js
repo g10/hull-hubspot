@@ -9,7 +9,8 @@ import type {
 
 import type {
   HubspotUserUpdateMessageEnvelope,
-  HubspotReadContact
+  HubspotReadContact,
+  HubspotAccountUpdateMessageEnvelope
 } from "../types";
 
 // const Promise = require("bluebird");
@@ -539,7 +540,14 @@ class SyncAgent {
   buildAccountUpdateMessageEnvelope(
     message: THullAccountUpdateMessage
   ): HubspotAccountUpdateMessageEnvelope {
-    const hubspotWriteCompany = this.mappingUtil.getHubspotCompany(message);
+    const mapResult = this.mappingUtil.mapToHubspotCompany(message);
+    // Log all warnings
+    _.forEach(mapResult.warnings, warning => {
+      this.hullClient
+        .asAccount(message.account)
+        .logger.warn(warning.message, { details: warning.data });
+    });
+    const hubspotWriteCompany = mapResult.result || { properties: [] };
     return {
       message,
       hubspotWriteCompany

@@ -99,6 +99,13 @@ class FilterUtil {
       toSkip: []
     };
     envelopes.forEach(envelope => {
+      // Companies with a mapping error
+      if (envelope.hubspotWriteCompany.properties.length === 0) {
+        envelope.skipReason =
+          "Mapping account attributes to Hubspot company properties resulted in no data to synchronize.";
+        return filterUtilResults.toSkip.push(envelope);
+      }
+
       const { changes = {} } = envelope.message;
       if (
         _.get(changes, "account['hubspot/fetched_at'][1]", false) &&
