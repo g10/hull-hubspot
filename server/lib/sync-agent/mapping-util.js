@@ -852,6 +852,14 @@ class MappingUtil {
     return contactProps;
   }
 
+  /**
+   * This method takes in an envelope, and checks if the customer has set
+   * the !overwrite flag which means they don't want to overwrite a value in the target system
+   * if that's the case, then we remove any properties that's already been set
+   * so we don't overwrite it
+   * @type {[type]}
+   */
+ */
   patchHubspotCompanyProperties(
     envelope: HubspotAccountUpdateMessageEnvelope
   ): HubspotAccountUpdateMessageEnvelope {

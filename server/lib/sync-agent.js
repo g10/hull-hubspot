@@ -430,6 +430,11 @@ class SyncAgent {
     const accountsToUpdate = [];
     let accountsToInsert = [];
 
+    // This loop is to look up existing companies primarily to handle the attribute overwrite feature
+    // If the customer does not want to overwrite an attribute in hubspot if it exists
+    // setIfNull behavior
+    // so we look up the company by id, if we don't find it, we put it in the "accountsToInsert"
+    // most likely it was deleted
     await Promise.all(
       filterResults.toUpdate.map(async envelopeToUpdate => {
         try {
@@ -478,6 +483,10 @@ class SyncAgent {
           );
           const envelopeToUpdate = _.cloneDeep(envelopeToInsert);
           const latestCompany = _.last(existingCompanies);
+
+          // this is additional logic if we found a company to filter
+          // attributes for the overwrite attribute feature
+          // if the customer does not want to overwrite target value
           envelopeToUpdate.existingHubspotCompany = latestCompany;
           envelopeToUpdate.hubspotWriteCompany.objectId = latestCompany.companyId.toString();
           accountsToUpdate.push(

@@ -10,7 +10,8 @@ import type {
   HubspotReadContact,
   HubspotWriteContact,
   HubspotWriteCompany,
-  HubspotReadCompany
+  HubspotReadCompany,
+  HubspotReadMultipleContact
 } from "../types";
 
 declare type HubspotGetAllContactsResponse = {
@@ -195,6 +196,14 @@ class HubspotClient {
         vidOffset: offset,
         property: properties
       });
+    });
+  }
+
+  getContactByIds(ids: Array<string>): Promise<HubspotReadMultipleContact> {
+    return this.retryUnauthorized(() => {
+      return this.agent.get(`/contacts/v1/contact/vids/batch/`).query({
+        vid: ids
+        });
     });
   }
 
