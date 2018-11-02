@@ -30,7 +30,7 @@ import type {
   MappingResult,
   HubspotAccountUpdateMessageEnvelope,
   HubspotUserUpdateMessageEnvelope,
-  HubspotReadMultipleContactRead
+  HubspotReadMultipleContactMap
 } from "../../types";
 
 const _ = require("lodash");
@@ -922,7 +922,7 @@ class MappingUtil {
    * @type {[type]}
    */
   patchHubspotCompanyProperties(
-    existingHubspotCompany: HubspotAccountRead
+    existingHubspotCompany: HubspotReadCompany,
     envelope: HubspotAccountUpdateMessageEnvelope
   ): HubspotAccountUpdateMessageEnvelope {
     _.forEach(this.companyOutgoingMapping, mapping => {
@@ -945,13 +945,11 @@ class MappingUtil {
     });
     return envelope;
   }
-}
-
 
   patchHubspotContactProperties(
     existingHubspotContact: HubspotReadMultipleContactRead,
     envelope: HubspotUserUpdateMessageEnvelope
-    ): HubspotUserUpdateMessageEnvelope {
+  ): HubspotUserUpdateMessageEnvelope {
 
     _.forEach(this.contactOutgoingMapping, mapping => {
       if (mapping.hull_overwrite_hubspot === false) {
@@ -973,6 +971,7 @@ class MappingUtil {
     });
     return envelope;
   }
+
 }
 
 module.exports = MappingUtil;

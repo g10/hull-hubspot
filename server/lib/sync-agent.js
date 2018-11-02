@@ -12,7 +12,8 @@ import type {
   HubspotReadContact,
   HubspotAccountUpdateMessageEnvelope,
   FilterUtilResults,
-  HubspotGetMultipleContactsResponse
+  HubspotGetMultipleContactsResponse,
+  HubspotGetCompanyResponse
 } from "../types";
 
 // const Promise = require("bluebird");
@@ -531,9 +532,10 @@ class SyncAgent {
       filterResults.toUpdate.map(async envelopeToUpdate => {
         try {
 
-          const results = await this.hubspotClient.getCompanyById(
-            envelopeToUpdate.hubspotWriteCompany.objectId
-          );
+          const results: HubspotGetCompanyResponse =
+            await this.hubspotClient.getCompanyById(
+              envelopeToUpdate.hubspotWriteCompany.objectId
+              );
 
           const companyId = _.toString(_.get(results, "body.companyId"));
 
