@@ -1,0 +1,440 @@
+{
+    "id": {
+        "id": "id",
+        "text": "Hull Id",
+        "type": "string",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "Hull Id",
+        "key": "id"
+    },
+    "external_id": {
+        "id": "external_id",
+        "text": "External Id",
+        "type": "string",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "External Id",
+        "key": "external_id"
+    },
+    "domain": {
+        "id": "domain",
+        "text": "Domain",
+        "type": "string",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "Domain",
+        "key": "domain"
+    },
+    "name": {
+        "id": "name",
+        "text": "Name",
+        "type": "string",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "Name",
+        "key": "name"
+    },
+    "created_at": {
+        "id": "created_at",
+        "text": "created_at",
+        "type": "date",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "created_at",
+        "key": "created_at"
+    },
+    "anonymous_ids": {
+        "id": "anonymous_ids",
+        "text": "Anonymous IDs",
+        "type": "string",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "Anonymous IDs",
+        "key": "anonymous_ids"
+    },
+    "is_customer": {
+        "id": "is_customer",
+        "text": "Is customer",
+        "type": "boolean",
+        "id_path": [
+            "Traits",
+            "Traits"
+        ],
+        "path": [
+            "Traits",
+            "Traits"
+        ],
+        "title": "Is customer",
+        "key": "is_customer"
+    },
+    "source": {
+        "id": "source",
+        "text": "Source",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Traits"
+        ],
+        "path": [
+            "Traits",
+            "Traits"
+        ],
+        "title": "Source",
+        "key": "source"
+    },
+    "account_status": {
+        "id": "account_status",
+        "text": "Account status",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Traits"
+        ],
+        "path": [
+            "Traits",
+            "Traits"
+        ],
+        "title": "Account status",
+        "key": "account_status"
+    },
+    "hubspot/hs_lastmodifieddate": {
+        "id": "hubspot/hs_lastmodifieddate",
+        "text": "Hs lastmodifieddate",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Hs lastmodifieddate",
+        "key": "hubspot/hs_lastmodifieddate"
+    },
+    "hubspot/name": {
+        "id": "hubspot/name",
+        "text": "Name",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Name",
+        "key": "hubspot/name"
+    },
+    "hubspot/address": {
+        "id": "hubspot/address",
+        "text": "Address",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Address",
+        "key": "hubspot/address"
+    },
+    "hubspot/city": {
+        "id": "hubspot/city",
+        "text": "City",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "City",
+        "key": "hubspot/city"
+    },
+    "hubspot/hubspot_owner_id": {
+        "id": "hubspot/hubspot_owner_id",
+        "text": "Hubspot owner ID",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Hubspot owner ID",
+        "key": "hubspot/hubspot_owner_id"
+    },
+    "hubspot/hs_all_owner_ids": {
+        "id": "hubspot/hs_all_owner_ids",
+        "text": "Hs all owner ids",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Hs all owner ids",
+        "key": "hubspot/hs_all_owner_ids"
+    },
+    "hubspot/website": {
+        "id": "hubspot/website",
+        "text": "Website",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Website",
+        "key": "hubspot/website"
+    },
+    "hubspot/domain": {
+        "id": "hubspot/domain",
+        "text": "Domain",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Domain",
+        "key": "hubspot/domain"
+    },
+    "hubspot/numberofemployees": {
+        "id": "hubspot/numberofemployees",
+        "text": "Numberofemployees",
+        "type": "number",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Numberofemployees",
+        "key": "hubspot/numberofemployees"
+    },
+    "hubspot/industry": {
+        "id": "hubspot/industry",
+        "text": "Industry",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Industry",
+        "key": "hubspot/industry"
+    },
+    "hubspot/annualrevenue": {
+        "id": "hubspot/annualrevenue",
+        "text": "Annualrevenue",
+        "type": "number",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Annualrevenue",
+        "key": "hubspot/annualrevenue"
+    },
+    "hubspot/web_technologies": {
+        "id": "hubspot/web_technologies",
+        "text": "Web technologies",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Web technologies",
+        "key": "hubspot/web_technologies"
+    },
+    "hubspot/twitterhandle": {
+        "id": "hubspot/twitterhandle",
+        "text": "Twitterhandle",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Twitterhandle",
+        "key": "hubspot/twitterhandle"
+    },
+    "hubspot/linkedin_company_page": {
+        "id": "hubspot/linkedin_company_page",
+        "text": "Linkedin company page",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Linkedin company page",
+        "key": "hubspot/linkedin_company_page"
+    },
+    "hubspot/id": {
+        "id": "hubspot/id",
+        "text": "Id",
+        "type": "number",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Id",
+        "key": "hubspot/id"
+    },
+    "hubspot/founded_year": {
+        "id": "hubspot/founded_year",
+        "text": "Founded year",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Founded year",
+        "key": "hubspot/founded_year"
+    },
+    "hubspot/hubspot_owner_assigneddate": {
+        "id": "hubspot/hubspot_owner_assigneddate",
+        "text": "Hubspot owner assigneddate",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Hubspot owner assigneddate",
+        "key": "hubspot/hubspot_owner_assigneddate"
+    },
+    "hubspot/is_public": {
+        "id": "hubspot/is_public",
+        "text": "Is public",
+        "type": "boolean",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Is public",
+        "key": "hubspot/is_public"
+    },
+    "hubspot/description": {
+        "id": "hubspot/description",
+        "text": "Description",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Description",
+        "key": "hubspot/description"
+    },
+    "hubspot/createdate": {
+        "id": "hubspot/createdate",
+        "text": "Createdate",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Createdate",
+        "key": "hubspot/createdate"
+    },
+    "hubspot/linkedinbio": {
+        "id": "hubspot/linkedinbio",
+        "text": "Linkedinbio",
+        "type": "string",
+        "id_path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "path": [
+            "Traits",
+            "Hubspot"
+        ],
+        "title": "Linkedinbio",
+        "key": "hubspot/linkedinbio"
+    }
+}

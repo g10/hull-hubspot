@@ -1,0 +1,1288 @@
+{
+    "account.id": {
+        "id": "account.id",
+        "text": "Id",
+        "type": "string",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "Id",
+        "key": "account.id"
+    },
+    "account.external_id": {
+        "id": "account.external_id",
+        "text": "External Id",
+        "type": "string",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "External Id",
+        "key": "account.external_id"
+    },
+    "account.name": {
+        "id": "account.name",
+        "text": "Name",
+        "type": "string",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "Name",
+        "key": "account.name"
+    },
+    "account.domain": {
+        "id": "account.domain",
+        "text": "Domain",
+        "type": "string",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "Domain",
+        "key": "account.domain"
+    },
+    "account.created_at": {
+        "id": "account.created_at",
+        "text": "Created At",
+        "type": "date",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "Created At",
+        "key": "account.created_at"
+    },
+    "account.is_customer": {
+        "id": "account.is_customer",
+        "text": "Is customer",
+        "type": "boolean",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "Is customer",
+        "key": "account.is_customer"
+    },
+    "account.source": {
+        "id": "account.source",
+        "text": "Source",
+        "type": "string",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "Source",
+        "key": "account.source"
+    },
+    "account.account_status": {
+        "id": "account.account_status",
+        "text": "Account status",
+        "type": "string",
+        "id_path": [
+            "Account"
+        ],
+        "path": [
+            "Account"
+        ],
+        "title": "Account status",
+        "key": "account.account_status"
+    },
+    "account.hubspot/hs_lastmodifieddate": {
+        "id": "account.hubspot/hs_lastmodifieddate",
+        "text": "Hs lastmodifieddate",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Hs lastmodifieddate",
+        "key": "account.hubspot/hs_lastmodifieddate"
+    },
+    "account.hubspot/name": {
+        "id": "account.hubspot/name",
+        "text": "Name",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Name",
+        "key": "account.hubspot/name"
+    },
+    "account.hubspot/address": {
+        "id": "account.hubspot/address",
+        "text": "Address",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Address",
+        "key": "account.hubspot/address"
+    },
+    "account.hubspot/city": {
+        "id": "account.hubspot/city",
+        "text": "City",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "City",
+        "key": "account.hubspot/city"
+    },
+    "account.hubspot/hubspot_owner_id": {
+        "id": "account.hubspot/hubspot_owner_id",
+        "text": "Hubspot owner",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Hubspot owner",
+        "key": "account.hubspot/hubspot_owner_id"
+    },
+    "account.hubspot/hs_all_owner_ids": {
+        "id": "account.hubspot/hs_all_owner_ids",
+        "text": "Hs all owner ids",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Hs all owner ids",
+        "key": "account.hubspot/hs_all_owner_ids"
+    },
+    "account.hubspot/website": {
+        "id": "account.hubspot/website",
+        "text": "Website",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Website",
+        "key": "account.hubspot/website"
+    },
+    "account.hubspot/domain": {
+        "id": "account.hubspot/domain",
+        "text": "Domain",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Domain",
+        "key": "account.hubspot/domain"
+    },
+    "account.hubspot/numberofemployees": {
+        "id": "account.hubspot/numberofemployees",
+        "text": "Numberofemployees",
+        "type": "number",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Numberofemployees",
+        "key": "account.hubspot/numberofemployees"
+    },
+    "account.hubspot/industry": {
+        "id": "account.hubspot/industry",
+        "text": "Industry",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Industry",
+        "key": "account.hubspot/industry"
+    },
+    "account.hubspot/annualrevenue": {
+        "id": "account.hubspot/annualrevenue",
+        "text": "Annualrevenue",
+        "type": "number",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Annualrevenue",
+        "key": "account.hubspot/annualrevenue"
+    },
+    "account.hubspot/web_technologies": {
+        "id": "account.hubspot/web_technologies",
+        "text": "Web technologies",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Web technologies",
+        "key": "account.hubspot/web_technologies"
+    },
+    "account.hubspot/twitterhandle": {
+        "id": "account.hubspot/twitterhandle",
+        "text": "Twitterhandle",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Twitterhandle",
+        "key": "account.hubspot/twitterhandle"
+    },
+    "account.hubspot/linkedin_company_page": {
+        "id": "account.hubspot/linkedin_company_page",
+        "text": "Linkedin company page",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Linkedin company page",
+        "key": "account.hubspot/linkedin_company_page"
+    },
+    "account.hubspot/id": {
+        "id": "account.hubspot/id",
+        "text": "Id",
+        "type": "number",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Id",
+        "key": "account.hubspot/id"
+    },
+    "account.hubspot/founded_year": {
+        "id": "account.hubspot/founded_year",
+        "text": "Founded year",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Founded year",
+        "key": "account.hubspot/founded_year"
+    },
+    "account.hubspot/hubspot_owner_assigneddate": {
+        "id": "account.hubspot/hubspot_owner_assigneddate",
+        "text": "Hubspot owner assigneddate",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Hubspot owner assigneddate",
+        "key": "account.hubspot/hubspot_owner_assigneddate"
+    },
+    "account.hubspot/is_public": {
+        "id": "account.hubspot/is_public",
+        "text": "Is public",
+        "type": "boolean",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Is public",
+        "key": "account.hubspot/is_public"
+    },
+    "account.hubspot/description": {
+        "id": "account.hubspot/description",
+        "text": "Description",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Description",
+        "key": "account.hubspot/description"
+    },
+    "account.hubspot/createdate": {
+        "id": "account.hubspot/createdate",
+        "text": "Createdate",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Createdate",
+        "key": "account.hubspot/createdate"
+    },
+    "account.hubspot/linkedinbio": {
+        "id": "account.hubspot/linkedinbio",
+        "text": "Linkedinbio",
+        "type": "string",
+        "id_path": [
+            "Account hubspot"
+        ],
+        "path": [
+            "Account hubspot"
+        ],
+        "title": "Linkedinbio",
+        "key": "account.hubspot/linkedinbio"
+    },
+    "id": {
+        "id": "id",
+        "text": "Hull ID",
+        "type": "string",
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Hull ID",
+        "key": "id"
+    },
+    "created_at": {
+        "id": "created_at",
+        "text": "Signup on",
+        "type": "date",
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Signup on",
+        "key": "created_at"
+    },
+    "is_approved": {
+        "id": "is_approved",
+        "text": "Is approved",
+        "type": "boolean",
+        "default": false,
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Is approved",
+        "key": "is_approved"
+    },
+    "external_id": {
+        "id": "external_id",
+        "text": "External ID",
+        "type": "string",
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "External ID",
+        "key": "external_id"
+    },
+    "anonymous_ids": {
+        "id": "anonymous_ids",
+        "text": "Anonymous IDs",
+        "type": "string",
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Anonymous IDs",
+        "key": "anonymous_ids"
+    },
+    "event": {
+        "id": "event",
+        "text": "Has done",
+        "type": "event",
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Has done",
+        "key": "event"
+    },
+    "email": {
+        "id": "email",
+        "text": "Email",
+        "type": "string",
+        "default": null,
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Email",
+        "key": "email"
+    },
+    "domain": {
+        "id": "domain",
+        "text": "Domain",
+        "type": "string",
+        "default": null,
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Domain",
+        "key": "domain"
+    },
+    "name": {
+        "id": "name",
+        "text": "Name",
+        "type": "string",
+        "default": null,
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Name",
+        "key": "name"
+    },
+    "last_name": {
+        "id": "last_name",
+        "text": "Last name",
+        "type": "string",
+        "default": null,
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Last name",
+        "key": "last_name"
+    },
+    "first_name": {
+        "id": "first_name",
+        "text": "First name",
+        "type": "string",
+        "default": null,
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "First name",
+        "key": "first_name"
+    },
+    "phone": {
+        "id": "phone",
+        "text": "Phone number",
+        "type": "string",
+        "default": null,
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Phone number",
+        "key": "phone"
+    },
+    "username": {
+        "id": "username",
+        "text": "Username",
+        "type": "string",
+        "default": null,
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Username",
+        "key": "username"
+    },
+    "picture": {
+        "id": "picture",
+        "text": "Picture",
+        "type": "string",
+        "default": null,
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Picture",
+        "key": "picture"
+    },
+    "last_known_ip": {
+        "id": "last_known_ip",
+        "text": "Last known IP",
+        "type": "string",
+        "default": null,
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Last known IP",
+        "key": "last_known_ip"
+    },
+    "address_street": {
+        "id": "address_street",
+        "text": "Street address",
+        "type": "string",
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Street address",
+        "key": "address_street"
+    },
+    "address_city": {
+        "id": "address_city",
+        "text": "City",
+        "type": "string",
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "City",
+        "key": "address_city"
+    },
+    "address_postal_code": {
+        "id": "address_postal_code",
+        "text": "Postal code",
+        "type": "string",
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Postal code",
+        "key": "address_postal_code"
+    },
+    "address_state": {
+        "id": "address_state",
+        "text": "State",
+        "type": "string",
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "State",
+        "key": "address_state"
+    },
+    "address_country": {
+        "id": "address_country",
+        "text": "Country",
+        "type": "string",
+        "id_path": [
+            "User"
+        ],
+        "path": [
+            "User"
+        ],
+        "title": "Country",
+        "key": "address_country"
+    },
+    "traits_coconuts": {
+        "id": "traits_coconuts",
+        "text": "Coconuts",
+        "type": "number",
+        "id_path": [
+            "Traits"
+        ],
+        "path": [
+            "Traits"
+        ],
+        "title": "Coconuts",
+        "key": "traits_coconuts"
+    },
+    "traits_util/manual_updated_at": {
+        "id": "traits_util/manual_updated_at",
+        "text": "Manual updated at",
+        "type": "date",
+        "id_path": [
+            "Util"
+        ],
+        "path": [
+            "Util"
+        ],
+        "title": "Manual updated at",
+        "key": "traits_util/manual_updated_at"
+    },
+    "traits_neverbounce/result": {
+        "id": "traits_neverbounce/result",
+        "text": "Result",
+        "type": "string",
+        "id_path": [
+            "Neverbounce"
+        ],
+        "path": [
+            "Neverbounce"
+        ],
+        "title": "Result",
+        "key": "traits_neverbounce/result"
+    },
+    "traits_neverbounce/status": {
+        "id": "traits_neverbounce/status",
+        "text": "Status",
+        "type": "string",
+        "id_path": [
+            "Neverbounce"
+        ],
+        "path": [
+            "Neverbounce"
+        ],
+        "title": "Status",
+        "key": "traits_neverbounce/status"
+    },
+    "traits_hubspot/first_name": {
+        "id": "traits_hubspot/first_name",
+        "text": "First name",
+        "type": "string",
+        "id_path": [
+            "Hubspot"
+        ],
+        "path": [
+            "Hubspot"
+        ],
+        "title": "First name",
+        "key": "traits_hubspot/first_name"
+    },
+    "traits_hubspot/last_name": {
+        "id": "traits_hubspot/last_name",
+        "text": "Last name",
+        "type": "string",
+        "id_path": [
+            "Hubspot"
+        ],
+        "path": [
+            "Hubspot"
+        ],
+        "title": "Last name",
+        "key": "traits_hubspot/last_name"
+    },
+    "traits_hubspot/address_city": {
+        "id": "traits_hubspot/address_city",
+        "text": "Address city",
+        "type": "string",
+        "id_path": [
+            "Hubspot"
+        ],
+        "path": [
+            "Hubspot"
+        ],
+        "title": "Address city",
+        "key": "traits_hubspot/address_city"
+    },
+    "traits_hubspot/address_state": {
+        "id": "traits_hubspot/address_state",
+        "text": "Address state",
+        "type": "string",
+        "id_path": [
+            "Hubspot"
+        ],
+        "path": [
+            "Hubspot"
+        ],
+        "title": "Address state",
+        "key": "traits_hubspot/address_state"
+    },
+    "traits_hubspot/company": {
+        "id": "traits_hubspot/company",
+        "text": "Company",
+        "type": "string",
+        "id_path": [
+            "Hubspot"
+        ],
+        "path": [
+            "Hubspot"
+        ],
+        "title": "Company",
+        "key": "traits_hubspot/company"
+    },
+    "traits_hubspot/job_title": {
+        "id": "traits_hubspot/job_title",
+        "text": "Job title",
+        "type": "string",
+        "id_path": [
+            "Hubspot"
+        ],
+        "path": [
+            "Hubspot"
+        ],
+        "title": "Job title",
+        "key": "traits_hubspot/job_title"
+    },
+    "traits_hubspot/website": {
+        "id": "traits_hubspot/website",
+        "text": "Website",
+        "type": "string",
+        "id_path": [
+            "Hubspot"
+        ],
+        "path": [
+            "Hubspot"
+        ],
+        "title": "Website",
+        "key": "traits_hubspot/website"
+    },
+    "traits_hubspot/created_at": {
+        "id": "traits_hubspot/created_at",
+        "text": "Created at",
+        "type": "date",
+        "id_path": [
+            "Hubspot"
+        ],
+        "path": [
+            "Hubspot"
+        ],
+        "title": "Created at",
+        "key": "traits_hubspot/created_at"
+    },
+    "traits_hubspot/updated_at": {
+        "id": "traits_hubspot/updated_at",
+        "text": "Updated at",
+        "type": "date",
+        "id_path": [
+            "Hubspot"
+        ],
+        "path": [
+            "Hubspot"
+        ],
+        "title": "Updated at",
+        "key": "traits_hubspot/updated_at"
+    },
+    "traits_hubspot/lifecycle_stage": {
+        "id": "traits_hubspot/lifecycle_stage",
+        "text": "Lifecycle stage",
+        "type": "string",
+        "id_path": [
+            "Hubspot"
+        ],
+        "path": [
+            "Hubspot"
+        ],
+        "title": "Lifecycle stage",
+        "key": "traits_hubspot/lifecycle_stage"
+    },
+    "traits_hubspot/became_lead_at": {
+        "id": "traits_hubspot/became_lead_at",
+        "text": "Became lead at",
+        "type": "date",
+        "id_path": [
+            "Hubspot"
+        ],
+        "path": [
+            "Hubspot"
+        ],
+        "title": "Became lead at",
+        "key": "traits_hubspot/became_lead_at"
+    },
+    "traits_hubspot/id": {
+        "id": "traits_hubspot/id",
+        "text": "Id",
+        "type": "number",
+        "id_path": [
+            "Hubspot"
+        ],
+        "path": [
+            "Hubspot"
+        ],
+        "title": "Id",
+        "key": "traits_hubspot/id"
+    },
+    "first_seen_at": {
+        "id": "first_seen_at",
+        "text": "First seen at",
+        "type": "date",
+        "id_path": [
+            "Sessions"
+        ],
+        "path": [
+            "Sessions"
+        ],
+        "title": "First seen at",
+        "key": "first_seen_at"
+    },
+    "last_seen_at": {
+        "id": "last_seen_at",
+        "text": "Last seen at",
+        "type": "date",
+        "id_path": [
+            "Sessions"
+        ],
+        "path": [
+            "Sessions"
+        ],
+        "title": "Last seen at",
+        "key": "last_seen_at"
+    },
+    "first_session_started_at": {
+        "id": "first_session_started_at",
+        "text": "Started at",
+        "type": "date",
+        "id_path": [
+            "Sessions",
+            "First Session"
+        ],
+        "path": [
+            "Sessions",
+            "First Session"
+        ],
+        "title": "Started at",
+        "key": "first_session_started_at"
+    },
+    "first_session_platform_id": {
+        "id": "first_session_platform_id",
+        "text": "Platform",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "First Session"
+        ],
+        "path": [
+            "Sessions",
+            "First Session"
+        ],
+        "title": "Platform",
+        "key": "first_session_platform_id"
+    },
+    "first_session_initial_url": {
+        "id": "first_session_initial_url",
+        "text": "Initial url",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "First Session"
+        ],
+        "path": [
+            "Sessions",
+            "First Session"
+        ],
+        "title": "Initial url",
+        "key": "first_session_initial_url"
+    },
+    "first_session_initial_referrer": {
+        "id": "first_session_initial_referrer",
+        "text": "Initial referrer",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "First Session"
+        ],
+        "path": [
+            "Sessions",
+            "First Session"
+        ],
+        "title": "Initial referrer",
+        "key": "first_session_initial_referrer"
+    },
+    "first_session_initial_utm_source": {
+        "id": "first_session_initial_utm_source",
+        "text": "Initial utm source",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "First Session"
+        ],
+        "path": [
+            "Sessions",
+            "First Session"
+        ],
+        "title": "Initial utm source",
+        "key": "first_session_initial_utm_source"
+    },
+    "first_session_initial_utm_medium": {
+        "id": "first_session_initial_utm_medium",
+        "text": "Initial utm medium",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "First Session"
+        ],
+        "path": [
+            "Sessions",
+            "First Session"
+        ],
+        "title": "Initial utm medium",
+        "key": "first_session_initial_utm_medium"
+    },
+    "first_session_initial_utm_term": {
+        "id": "first_session_initial_utm_term",
+        "text": "Initial utm term",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "First Session"
+        ],
+        "path": [
+            "Sessions",
+            "First Session"
+        ],
+        "title": "Initial utm term",
+        "key": "first_session_initial_utm_term"
+    },
+    "first_session_initial_utm_campaign": {
+        "id": "first_session_initial_utm_campaign",
+        "text": "Initial utm campaign",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "First Session"
+        ],
+        "path": [
+            "Sessions",
+            "First Session"
+        ],
+        "title": "Initial utm campaign",
+        "key": "first_session_initial_utm_campaign"
+    },
+    "first_session_initial_utm_content": {
+        "id": "first_session_initial_utm_content",
+        "text": "Initial utm content",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "First Session"
+        ],
+        "path": [
+            "Sessions",
+            "First Session"
+        ],
+        "title": "Initial utm content",
+        "key": "first_session_initial_utm_content"
+    },
+    "signup_session_started_at": {
+        "id": "signup_session_started_at",
+        "text": "Started at",
+        "type": "date",
+        "id_path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "title": "Started at",
+        "key": "signup_session_started_at"
+    },
+    "signup_session_platform_id": {
+        "id": "signup_session_platform_id",
+        "text": "Platform",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "title": "Platform",
+        "key": "signup_session_platform_id"
+    },
+    "signup_session_initial_url": {
+        "id": "signup_session_initial_url",
+        "text": "Initial url",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "title": "Initial url",
+        "key": "signup_session_initial_url"
+    },
+    "signup_session_initial_referrer": {
+        "id": "signup_session_initial_referrer",
+        "text": "Initial referrer",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "title": "Initial referrer",
+        "key": "signup_session_initial_referrer"
+    },
+    "signup_session_initial_utm_source": {
+        "id": "signup_session_initial_utm_source",
+        "text": "Initial utm source",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "title": "Initial utm source",
+        "key": "signup_session_initial_utm_source"
+    },
+    "signup_session_initial_utm_medium": {
+        "id": "signup_session_initial_utm_medium",
+        "text": "Initial utm medium",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "title": "Initial utm medium",
+        "key": "signup_session_initial_utm_medium"
+    },
+    "signup_session_initial_utm_term": {
+        "id": "signup_session_initial_utm_term",
+        "text": "Initial utm term",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "title": "Initial utm term",
+        "key": "signup_session_initial_utm_term"
+    },
+    "signup_session_initial_utm_campaign": {
+        "id": "signup_session_initial_utm_campaign",
+        "text": "Initial utm campaign",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "title": "Initial utm campaign",
+        "key": "signup_session_initial_utm_campaign"
+    },
+    "signup_session_initial_utm_content": {
+        "id": "signup_session_initial_utm_content",
+        "text": "Initial utm content",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "path": [
+            "Sessions",
+            "Signup Session"
+        ],
+        "title": "Initial utm content",
+        "key": "signup_session_initial_utm_content"
+    },
+    "latest_session_started_at": {
+        "id": "latest_session_started_at",
+        "text": "Started at",
+        "type": "date",
+        "id_path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "title": "Started at",
+        "key": "latest_session_started_at"
+    },
+    "latest_session_platform_id": {
+        "id": "latest_session_platform_id",
+        "text": "Platform",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "title": "Platform",
+        "key": "latest_session_platform_id"
+    },
+    "latest_session_initial_url": {
+        "id": "latest_session_initial_url",
+        "text": "Initial url",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "title": "Initial url",
+        "key": "latest_session_initial_url"
+    },
+    "latest_session_initial_referrer": {
+        "id": "latest_session_initial_referrer",
+        "text": "Initial referrer",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "title": "Initial referrer",
+        "key": "latest_session_initial_referrer"
+    },
+    "latest_session_initial_utm_source": {
+        "id": "latest_session_initial_utm_source",
+        "text": "Initial utm source",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "title": "Initial utm source",
+        "key": "latest_session_initial_utm_source"
+    },
+    "latest_session_initial_utm_medium": {
+        "id": "latest_session_initial_utm_medium",
+        "text": "Initial utm medium",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "title": "Initial utm medium",
+        "key": "latest_session_initial_utm_medium"
+    },
+    "latest_session_initial_utm_term": {
+        "id": "latest_session_initial_utm_term",
+        "text": "Initial utm term",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "title": "Initial utm term",
+        "key": "latest_session_initial_utm_term"
+    },
+    "latest_session_initial_utm_campaign": {
+        "id": "latest_session_initial_utm_campaign",
+        "text": "Initial utm campaign",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "title": "Initial utm campaign",
+        "key": "latest_session_initial_utm_campaign"
+    },
+    "latest_session_initial_utm_content": {
+        "id": "latest_session_initial_utm_content",
+        "text": "Initial utm content",
+        "type": "string",
+        "id_path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "path": [
+            "Sessions",
+            "Latest Session"
+        ],
+        "title": "Initial utm content",
+        "key": "latest_session_initial_utm_content"
+    }
+}

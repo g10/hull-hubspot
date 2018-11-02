@@ -44,7 +44,7 @@
     "test": "yarn run test:lint && yarn run test:unit && yarn run test:integration",
     "test:lint": "eslint server",
     "test:flow": "flow check",
-    "test:unit": "NODE_ENV=test mocha --require babel-register -R spec ./test/unit",
+    "test:unit": "NODE_ENV=test jest ./test/unit --config jest.config.json",
     "test:integration": "NODE_ENV=test mocha --require babel-register -R spec ./test/integration",
     "update": "updtr",
     "postinstall": "yarn run build"

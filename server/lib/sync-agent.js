@@ -120,6 +120,7 @@ class SyncAgent {
         });
       }
     );
+
     debug("initialize", {
       usersSegments: typeof this.usersSegments,
       accountsSegments: typeof this.accountsSegments,
@@ -151,8 +152,8 @@ class SyncAgent {
       hullClient: this.hullClient,
       usersSegments: this.usersSegments,
       accountsSegments: this.accountsSegments,
-      hubspotContactProperties,
-      hubspotCompanyProperties,
+      hubspotContactPropertyGroups: hubspotContactProperties,
+      hubspotCompanyPropertyGroups: hubspotCompanyProperties,
       hullUserProperties,
       hullAccountProperties
     });

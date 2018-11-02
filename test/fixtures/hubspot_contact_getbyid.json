@@ -1,0 +1,541 @@
+{
+  "vid": 1,
+  "canonical-vid": 1,
+  "merged-vids": [],
+  "portal-id": 9999999,
+  "is-contact": true,
+  "profile-token": "AO_T-mNgTAcCYSO5nD-d61gPE8YSnBwdtCrirs5QKxKlxJQcgPoPuQBRYwORqJ-VYjbfK1Ur4JGVhzwPE6b_yg1Iotk_yKQHnyXHVecv2JtdOF-twO-NPpKeYT00TLMkrtltlXeue8pi",
+  "profile-url": "https://app.hubspot.com/contacts/9999999/lists/public/contact/_AO_T-mNgTAcCYSO5nD-d61gPE8YSnBwdtCrirs5QKxKlxJQcgPoPuQBRYwORqJ-VYjbfK1Ur4JGVhzwPE6b_yg1Iotk_yKQHnyXHVecv2JtdOF-twO-NPpKeYT00TLMkrtltlXeue8pi/",
+  "properties": {
+      "firstname": {
+          "value": "Cool",
+          "versions": [
+              {
+                  "value": "Cool",
+                  "source-type": "CONTACTS_WEB",
+                  "source-id": "sample-contact",
+                  "source-label": null,
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      },
+      "city": {
+          "value": "Cambridge",
+          "versions": [
+              {
+                  "value": "Cambridge",
+                  "source-type": "CONTACTS_WEB",
+                  "source-id": "sample-contact",
+                  "source-label": null,
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      },
+      "num_unique_conversion_events": {
+          "value": "0",
+          "versions": [
+              {
+                  "value": "0",
+                  "source-type": "CALCULATED",
+                  "source-id": null,
+                  "source-label": null,
+                  "timestamp": 0,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_email_quarantined": {
+          "value": "",
+          "versions": [
+              {
+                  "value": "",
+                  "source-type": "EMAIL",
+                  "source-id": "Updated in response to a contact being created.",
+                  "source-label": "coolrobot@hubspot.com",
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_revenue": {
+          "value": "0.0",
+          "versions": [
+              {
+                  "value": "0.0",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_social_num_broadcast_clicks": {
+          "value": "0",
+          "versions": [
+              {
+                  "value": "0",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "createdate": {
+          "value": "1541007331228",
+          "versions": [
+              {
+                  "value": "1541007331228",
+                  "source-type": "API",
+                  "source-id": "sample-contact",
+                  "source-label": null,
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_email_recipient_fatigue_recovery_time": {
+          "value": "",
+          "versions": [
+              {
+                  "value": "",
+                  "source-type": "EMAIL",
+                  "source-id": "Updated in response to a contact being created.",
+                  "source-label": "coolrobot@hubspot.com",
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_email_optout": {
+          "value": "",
+          "versions": [
+              {
+                  "value": "",
+                  "source-type": "EMAIL",
+                  "source-id": "Updated in response to a contact being created.",
+                  "source-label": "coolrobot@hubspot.com",
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_last_timestamp": {
+          "value": "",
+          "versions": [
+              {
+                  "value": "",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_num_visits": {
+          "value": "0",
+          "versions": [
+              {
+                  "value": "0",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_social_linkedin_clicks": {
+          "value": "0",
+          "versions": [
+              {
+                  "value": "0",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_last_visit_timestamp": {
+          "value": "",
+          "versions": [
+              {
+                  "value": "",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_social_last_engagement": {
+          "value": "",
+          "versions": [
+              {
+                  "value": "",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_source": {
+          "value": "OFFLINE",
+          "versions": [
+              {
+                  "value": "OFFLINE",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_email_domain": {
+          "value": "hubspot.com",
+          "versions": [
+              {
+                  "value": "hubspot.com",
+                  "source-type": "CALCULATED",
+                  "source-id": null,
+                  "source-label": null,
+                  "timestamp": 0,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_num_page_views": {
+          "value": "0",
+          "versions": [
+              {
+                  "value": "0",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_first_touch_converting_campaign": {
+          "value": "",
+          "versions": [
+              {
+                  "value": "",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "company": {
+          "value": "HubSpot",
+          "versions": [
+              {
+                  "value": "HubSpot",
+                  "source-type": "CONTACTS_WEB",
+                  "source-id": "sample-contact",
+                  "source-label": null,
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      },
+      "state": {
+          "value": "MA",
+          "versions": [
+              {
+                  "value": "MA",
+                  "source-type": "CONTACTS_WEB",
+                  "source-id": "sample-contact",
+                  "source-label": null,
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      },
+      "email": {
+          "value": "coolrobot@hubspot.com",
+          "versions": [
+              {
+                  "value": "coolrobot@hubspot.com",
+                  "source-type": "API",
+                  "source-id": "sample-contact",
+                  "source-label": null,
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      },
+      "website": {
+          "value": "http://www.HubSpot.com",
+          "versions": [
+              {
+                  "value": "http://www.HubSpot.com",
+                  "source-type": "CONTACTS_WEB",
+                  "source-id": "sample-contact",
+                  "source-label": null,
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      },
+      "jobtitle": {
+          "value": "Robot",
+          "versions": [
+              {
+                  "value": "Robot",
+                  "source-type": "CONTACTS_WEB",
+                  "source-id": "sample-contact",
+                  "source-label": null,
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_first_visit_timestamp": {
+          "value": "",
+          "versions": [
+              {
+                  "value": "",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "lastmodifieddate": {
+          "value": "1541007382913",
+          "versions": [
+              {
+                  "value": "1541007382913",
+                  "source-type": "CALCULATED",
+                  "source-id": null,
+                  "source-label": null,
+                  "timestamp": 1541007382913,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_first_timestamp": {
+          "value": "1541007331228",
+          "versions": [
+              {
+                  "value": "1541007331228",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_social_google_plus_clicks": {
+          "value": "0",
+          "versions": [
+              {
+                  "value": "0",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_last_touch_converting_campaign": {
+          "value": "",
+          "versions": [
+              {
+                  "value": "",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_average_page_views": {
+          "value": "0",
+          "versions": [
+              {
+                  "value": "0",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "lastname": {
+          "value": "Robot (Sample Contact)",
+          "versions": [
+              {
+                  "value": "Robot (Sample Contact)",
+                  "source-type": "CONTACTS_WEB",
+                  "source-id": "sample-contact",
+                  "source-label": null,
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_social_facebook_clicks": {
+          "value": "0",
+          "versions": [
+              {
+                  "value": "0",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_predictivecontactscore_v2": {
+          "value": "2.65",
+          "versions": [
+              {
+                  "value": "2.65",
+                  "source-type": "CALCULATED",
+                  "source-id": null,
+                  "source-label": "HubSpot Predictive Contact Scoring Model",
+                  "timestamp": 1541007380869,
+                  "selected": false
+              }
+          ]
+      },
+      "num_conversion_events": {
+          "value": "0",
+          "versions": [
+              {
+                  "value": "0",
+                  "source-type": "CALCULATED",
+                  "source-id": null,
+                  "source-label": null,
+                  "timestamp": 0,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_num_event_completions": {
+          "value": "0",
+          "versions": [
+              {
+                  "value": "0",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_social_twitter_clicks": {
+          "value": "0",
+          "versions": [
+              {
+                  "value": "0",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_source_data_2": {
+          "value": "sample-contact",
+          "versions": [
+              {
+                  "value": "sample-contact",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_lifecyclestage_lead_date": {
+          "value": "1541007331228",
+          "versions": [
+              {
+                  "value": "1541007331228",
+                  "source-type": "CONTACTS_WEB",
+                  "source-id": "sample-contact",
+                  "source-label": null,
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      },
+      "hs_analytics_source_data_1": {
+          "value": "API",
+          "versions": [
+              {
+                  "value": "API",
+                  "source-type": "ANALYTICS",
+                  "source-id": "ContactAnalyticsDetailsUpdateWorker",
+                  "source-label": null,
+                  "timestamp": 1541007334486,
+                  "selected": false
+              }
+          ]
+      },
+      "lifecyclestage": {
+          "value": "lead",
+          "versions": [
+              {
+                  "value": "lead",
+                  "source-type": "CONTACTS_WEB",
+                  "source-id": "sample-contact",
+                  "source-label": null,
+                  "timestamp": 1541007331228,
+                  "selected": false
+              }
+          ]
+      }
+  },
+  "form-submissions": [],
+  "list-memberships": [],
+  "identity-profiles": [
+      {
+          "vid": 1,
+          "saved-at-timestamp": 1541007331280,
+          "deleted-changed-timestamp": 0,
+          "identities": [
+              {
+                  "type": "EMAIL",
+                  "value": "coolrobot@hubspot.com",
+                  "timestamp": 1541007331228,
+                  "is-primary": true
+              },
+              {
+                  "type": "LEAD_GUID",
+                  "value": "243e5c8a-47ab-464f-9639-a22bbe6d4e17",
+                  "timestamp": 1541007331278
+              }
+          ]
+      }
+  ],
+  "merge-audits": []
+}

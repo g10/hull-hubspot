@@ -1,0 +1,554 @@
+[
+    {
+        "hull_trait_name": "hubspot/about_us",
+        "hull_trait_type": null,
+        "hubspot_property_name": "about_us",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/first_deal_created_date",
+        "hull_trait_type": null,
+        "hubspot_property_name": "first_deal_created_date",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/founded_year",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "founded_year",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_avatar_filemanager_key",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_avatar_filemanager_key",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_lastmodifieddate",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "hs_lastmodifieddate",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_predictivecontactscore_v2",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_predictivecontactscore_v2",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "number"
+    },
+    {
+        "hull_trait_name": "hubspot/hubspot_owner_assigneddate",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "hubspot_owner_assigneddate",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/is_public",
+        "hull_trait_type": "boolean",
+        "hubspot_property_name": "is_public",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "bool",
+        "hubspot_property_field_type": "booleancheckbox"
+    },
+    {
+        "hull_trait_name": "hubspot/num_associated_contacts",
+        "hull_trait_type": null,
+        "hubspot_property_name": "num_associated_contacts",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/num_associated_deals",
+        "hull_trait_type": null,
+        "hubspot_property_name": "num_associated_deals",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/recent_deal_amount",
+        "hull_trait_type": null,
+        "hubspot_property_name": "recent_deal_amount",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/recent_deal_close_date",
+        "hull_trait_type": null,
+        "hubspot_property_name": "recent_deal_close_date",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/timezone",
+        "hull_trait_type": null,
+        "hubspot_property_name": "timezone",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/total_money_raised",
+        "hull_trait_type": null,
+        "hubspot_property_name": "total_money_raised",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/total_revenue",
+        "hull_trait_type": null,
+        "hubspot_property_name": "total_revenue",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/name",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "name",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/phone",
+        "hull_trait_type": null,
+        "hubspot_property_name": "phone",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/address",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "address",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/address2",
+        "hull_trait_type": null,
+        "hubspot_property_name": "address2",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/city",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "city",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/state",
+        "hull_trait_type": null,
+        "hubspot_property_name": "state",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_sales_email_last_replied",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_sales_email_last_replied",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hubspot_owner_id",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "hubspot_owner_id",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "enumeration",
+        "hubspot_property_field_type": "select"
+    },
+    {
+        "hull_trait_name": "hubspot/notes_last_contacted",
+        "hull_trait_type": null,
+        "hubspot_property_name": "notes_last_contacted",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/notes_last_updated",
+        "hull_trait_type": null,
+        "hubspot_property_name": "notes_last_updated",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/notes_next_activity_date",
+        "hull_trait_type": null,
+        "hubspot_property_name": "notes_next_activity_date",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/num_contacted_notes",
+        "hull_trait_type": null,
+        "hubspot_property_name": "num_contacted_notes",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/num_notes",
+        "hull_trait_type": null,
+        "hubspot_property_name": "num_notes",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/zip",
+        "hull_trait_type": null,
+        "hubspot_property_name": "zip",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/country",
+        "hull_trait_type": null,
+        "hubspot_property_name": "country",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hubspot_team_id",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hubspot_team_id",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "enumeration",
+        "hubspot_property_field_type": "select"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_all_owner_ids",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "hs_all_owner_ids",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "enumeration",
+        "hubspot_property_field_type": "select"
+    },
+    {
+        "hull_trait_name": "hubspot/website",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "website",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/domain",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "domain",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_all_team_ids",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_all_team_ids",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "enumeration",
+        "hubspot_property_field_type": "select"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_all_accessible_team_ids",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_all_accessible_team_ids",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "enumeration",
+        "hubspot_property_field_type": "select"
+    },
+    {
+        "hull_trait_name": "hubspot/numberofemployees",
+        "hull_trait_type": "number",
+        "hubspot_property_name": "numberofemployees",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/industry",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "industry",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "enumeration",
+        "hubspot_property_field_type": "select"
+    },
+    {
+        "hull_trait_name": "hubspot/annualrevenue",
+        "hull_trait_type": "number",
+        "hubspot_property_name": "annualrevenue",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/lifecyclestage",
+        "hull_trait_type": null,
+        "hubspot_property_name": "lifecyclestage",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "enumeration",
+        "hubspot_property_field_type": "radio"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_lead_status",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_lead_status",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "enumeration",
+        "hubspot_property_field_type": "radio"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_parent_company_id",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_parent_company_id",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/type",
+        "hull_trait_type": null,
+        "hubspot_property_name": "type",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "enumeration",
+        "hubspot_property_field_type": "radio"
+    },
+    {
+        "hull_trait_name": "hubspot/description",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "description",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "textarea"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_num_child_companies",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_num_child_companies",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/createdate",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "createdate",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/closedate",
+        "hull_trait_type": null,
+        "hubspot_property_name": "closedate",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/first_contact_createdate",
+        "hull_trait_type": null,
+        "hubspot_property_name": "first_contact_createdate",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/web_technologies",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "web_technologies",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "enumeration",
+        "hubspot_property_field_type": "checkbox"
+    },
+    {
+        "hull_trait_name": "hubspot/facebookfans",
+        "hull_trait_type": null,
+        "hubspot_property_name": "facebookfans",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/twitterhandle",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "twitterhandle",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/twitterbio",
+        "hull_trait_type": null,
+        "hubspot_property_name": "twitterbio",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/twitterfollowers",
+        "hull_trait_type": null,
+        "hubspot_property_name": "twitterfollowers",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/facebook_company_page",
+        "hull_trait_type": null,
+        "hubspot_property_name": "facebook_company_page",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/linkedin_company_page",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "linkedin_company_page",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/linkedinbio",
+        "hull_trait_type": "string",
+        "hubspot_property_name": "linkedinbio",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/googleplus_page",
+        "hull_trait_type": null,
+        "hubspot_property_name": "googleplus_page",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_analytics_first_timestamp",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_analytics_first_timestamp",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_analytics_first_touch_converting_campaign",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_analytics_first_touch_converting_campaign",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_analytics_first_visit_timestamp",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_analytics_first_visit_timestamp",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_analytics_last_timestamp",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_analytics_last_timestamp",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_analytics_last_touch_converting_campaign",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_analytics_last_touch_converting_campaign",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_analytics_last_visit_timestamp",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_analytics_last_visit_timestamp",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "datetime",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_analytics_num_page_views",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_analytics_num_page_views",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_analytics_num_visits",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_analytics_num_visits",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_analytics_source",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_analytics_source",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "enumeration",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_analytics_source_data_1",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_analytics_source_data_1",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/hs_analytics_source_data_2",
+        "hull_trait_type": null,
+        "hubspot_property_name": "hs_analytics_source_data_2",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text"
+    },
+    {
+        "hull_trait_name": "hubspot/days_to_close",
+        "hull_trait_type": null,
+        "hubspot_property_name": "days_to_close",
+        "hubspot_property_read_only": true,
+        "hubspot_property_type": "number",
+        "hubspot_property_field_type": "text"
+    }
+]
