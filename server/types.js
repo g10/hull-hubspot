@@ -97,7 +97,7 @@ export type HubspotMultipleReadContact = {
       }
     }
   }
-}
+};
 
 export type HubspotMultipleReadContactsMap = {
   [propertyName: number]: HubspotMultipleReadContact

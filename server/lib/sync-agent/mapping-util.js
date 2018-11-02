@@ -42,9 +42,6 @@ const CONTACT_DEFAULT_MAPPING = require("./contact-default-mapping");
 const COMPANY_DEFAULT_MAPPING = require("./company-default-mapping");
 
 class MappingUtil {
-  // connector: THullConnector;
-  //hullClient: Object;
-  // logger: Object;
   usersSegments: Array<THullSegment>;
   accountsSegments: Array<THullSegment>;
 
@@ -398,17 +395,21 @@ class MappingUtil {
    * Not sure what the platform will have in those cases...
    */
   contactOutgoingMappingAllOverwrite(): boolean {
-    return _.every(this.contactOutgoingMapping, { hull_overwrite_hubspot: true });
+    return _.every(this.contactOutgoingMapping, {
+      hull_overwrite_hubspot: true
+    });
   }
 
   companyOutgoingMappingNoOverwriteAttributes(): Array<string> {
-    return _.reduce(this.companyOutgoingMapping,
+    return _.reduce(
+      this.companyOutgoingMapping,
       (noOverwriteAttributes, value) => {
         if (!value.hull_overwrite_hubspot) {
           noOverwriteAttributes.push(value);
         }
       },
-    []);
+      []
+    );
   }
   /**
    * Returns the Hubspot properties names.
@@ -1013,16 +1014,13 @@ class MappingUtil {
     existingHubspotContact: HubspotMultipleReadContact,
     envelope: HubspotUserUpdateMessageEnvelope
   ): HubspotUserUpdateMessageEnvelope {
-
     _.forEach(this.contactOutgoingMapping, mapping => {
       if (mapping.hull_overwrite_hubspot === false) {
         if (
           !_.isNil(
             _.get(
               existingHubspotContact,
-              `properties.${
-                mapping.hubspot_property_name
-              }.value`
+              `properties.${mapping.hubspot_property_name}.value`
             )
           )
         ) {
@@ -1034,7 +1032,6 @@ class MappingUtil {
     });
     return envelope;
   }
-
 }
 
 module.exports = MappingUtil;

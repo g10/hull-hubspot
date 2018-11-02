@@ -204,19 +204,23 @@ class HubspotClient {
     });
   }
 
-  getContactByIds(ids: Array<string>): Promise<HubspotGetMultipleContactsResponse> {
+  getContactsByIds(
+    ids: Array<string>
+  ): Promise<HubspotGetMultipleContactsResponse> {
     return this.retryUnauthorized(() => {
-      return this.agent.get(`/contacts/v1/contact/vids/batch/`).query({
+      return this.agent.get("/contacts/v1/contact/vids/batch/").query({
         vid: ids
-        });
+      });
     });
   }
 
-  getContactByEmails(emails: Array<string>): Promise<HubspotGetMultipleContactsResponse> {
+  getContactByEmails(
+    emails: Array<string>
+  ): Promise<HubspotGetMultipleContactsResponse> {
     return this.retryUnauthorized(() => {
-      return this.agent.get(`/contacts/v1/contact/emails/batch/`).query({
+      return this.agent.get("/contacts/v1/contact/emails/batch/").query({
         email: emails
-        });
+      });
     });
   }
 
@@ -545,6 +549,10 @@ class HubspotClient {
               objectId: error.id
             }
           });
+          if (envelope === null || envelope === undefined) {
+            return null;
+          }
+
           const hubspotMessage =
             error.propertyValidationResult &&
             _.truncate(error.propertyValidationResult.message, {
@@ -592,7 +600,10 @@ class HubspotClient {
     return this.retryUnauthorized(() => {
       return this.agent.post(`/companies/v2/domains/${domain}/companies`).send({
         requestOptions: {
-          properties: _.union(["domain", "hs_lastmodifieddate", "name"], additionalProperties)
+          properties: _.union(
+            ["domain", "hs_lastmodifieddate", "name"],
+            additionalProperties
+          )
         }
       });
     });
