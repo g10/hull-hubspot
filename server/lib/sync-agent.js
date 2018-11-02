@@ -123,6 +123,7 @@ class SyncAgent {
         });
       }
     );
+
     debug("initialize", {
       usersSegments: typeof this.usersSegments,
       accountsSegments: typeof this.accountsSegments,

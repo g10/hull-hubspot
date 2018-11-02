@@ -128,7 +128,40 @@ class MappingUtil {
   }
 
   getContactOutgoingMapping(): Array<HubspotContactOutgoingMapping> {
-    return this.contactAttributesOutgoingSettings.reduce(
+    const mappingFromDefault = CONTACT_DEFAULT_MAPPING.reduce(
+      (mapping, defaultMapping) => {
+        const hullTrait = this.hullUserProperties[defaultMapping.hull];
+        const hubspotContactProperty = _.find(this.hubspotContactProperties, {
+          name: defaultMapping.name
+        });
+
+        if (hubspotContactProperty === undefined) {
+          return mapping;
+        }
+        return mapping.concat([
+          {
+            hull_trait_name: defaultMapping.hull,
+            hull_default_trait_name:
+              (defaultMapping && defaultMapping.name) || null,
+            hull_trait_type: _.get(hullTrait, "type", undefined),
+            hull_overwrite_hubspot: true,
+            hubspot_property_name: defaultMapping.name,
+            hubspot_property_label: defaultMapping.name,
+            hubspot_property_read_only:
+              hubspotContactProperty && hubspotContactProperty.readOnlyValue,
+            hubspot_property_type:
+              hubspotContactProperty && hubspotContactProperty.type,
+            hubspot_property_field_type:
+              hubspotContactProperty && hubspotContactProperty.fieldType,
+            hubspot_property_display_order:
+              hubspotContactProperty && hubspotContactProperty.displayOrder
+          }
+        ]);
+      },
+      []
+    );
+
+    const mappingFromSettings = this.contactAttributesOutgoingSettings.reduce(
       (outboundMapping, setting) => {
         if (!setting.name || !setting.hull) {
           return outboundMapping;
@@ -188,6 +221,7 @@ class MappingUtil {
       },
       []
     );
+    return mappingFromDefault.concat(mappingFromSettings);
   }
 
   getContactIncomingMapping(): Array<HubspotContactIncomingMapping> {
@@ -403,9 +437,12 @@ class MappingUtil {
   }
 
   /**
-   * Prepares a Hull User resolution object for `hull.as` method.
-   * @param  {Object} hubspotUser
-   * @return {Object}
+   * Returns the user identification attributes for
+   * a `hull.asUser` scoped client.
+   *
+   * @param {HubspotReadContact} hubspotUser The Hubspot contact object.
+   * @returns {THullUserIdent} The user identification attributes.
+   * @memberof MappingUtil
    */
   getHullUserIdentFromHubspot(hubspotUser: HubspotReadContact): THullUserIdent {
     const ident: THullUserIdent = {};
@@ -430,9 +467,12 @@ class MappingUtil {
   }
 
   /**
-   * Prepares a Hull User resolution object for `hull.as` method.
-   * @param  {Object} hubspotUser
-   * @return {Object}
+   * Returns the account identification attributes for
+   * a `hull.asAccount` scoped client.
+   *
+   * @param {HubspotReadCompany} hubspotCompany The Hubspot company object.
+   * @returns {THullAccountIdent} The account identification attributes.
+   * @memberof MappingUtil
    */
   getHullAccountIdentFromHubspot(
     hubspotCompany: HubspotReadCompany
@@ -443,27 +483,24 @@ class MappingUtil {
     // otherwise we do only `domain` which is the only other option
     // for the setting
     if (this.incomingAccountIdentHull === "external_id") {
-      const hubspotIdentValue =
-        hubspotCompany.properties[this.incomingAccountIdentService] &&
-        hubspotCompany.properties[this.incomingAccountIdentService].value;
-      if (
-        hubspotIdentValue !== undefined &&
-        hubspotIdentValue !== null &&
-        hubspotIdentValue.trim() !== ""
-      ) {
-        ident[this.incomingAccountIdentHull] = hubspotIdentValue;
+      const hubspotIdentValue: string = _.get(
+        hubspotCompany,
+        `properties.${this.incomingAccountIdentService}.value`,
+        ""
+      );
+
+      if (!_.isNil(hubspotIdentValue) && _.trim(hubspotIdentValue).length > 0) {
+        _.set(ident, this.incomingAccountIdentHull, hubspotIdentValue);
       }
     }
 
-    const domainIdentity =
-      hubspotCompany.properties.domain &&
-      hubspotCompany.properties.domain.value;
+    const domainIdentity: string = _.get(
+      hubspotCompany,
+      "properties.domain.value",
+      ""
+    );
 
-    if (
-      domainIdentity !== undefined &&
-      domainIdentity !== null &&
-      domainIdentity.trim() !== ""
-    ) {
+    if (!_.isNil(domainIdentity) && _.trim(domainIdentity).length > 0) {
       ident.domain = domainIdentity;
     }
 
@@ -474,24 +511,38 @@ class MappingUtil {
     return ident;
   }
 
-  getHullAccountTraits(accountData: HubspotReadCompany): THullAttributes {
+  /**
+   * Returns the account attributes from a Hubspot company.
+   *
+   * @param {HubspotReadCompany} hubspotCompany The hubspot company
+   * @returns {MappingResult<THullAttributes>} Mapping results for hull account attributes.
+   * @memberof MappingUtil
+   */
+  getHullAccountTraits(
+    hubspotCompany: HubspotReadCompany
+  ): MappingResult<THullAttributes> {
+    const mapResults = {
+      warnings: [],
+      errors: [],
+      result: {}
+    };
+
     const hullTraits = _.reduce(
       this.companyIncomingMapping,
       (traits, mappingEntry) => {
         if (!mappingEntry.hubspot_property_name) {
-          this.hullClient
-            .asAccount(_.pick(accountData, ["id", "external_id", "domain"]))
-            .logger.warn("incoming.account.warning", {
-              warning: "cannot find mapped hubspot property",
-              mappingEntry
-            });
+          mapResults.warnings.push({
+            message:
+              "Cannot find mapped Hubspot property, see data for details.",
+            data: mappingEntry
+          });
         }
         if (
-          accountData.properties &&
-          _.has(accountData.properties, mappingEntry.hubspot_property_name)
+          hubspotCompany.properties &&
+          _.has(hubspotCompany.properties, mappingEntry.hubspot_property_name)
         ) {
           let val = _.get(
-            accountData,
+            hubspotCompany,
             `properties[${mappingEntry.hubspot_property_name}].value`
           );
           if (mappingEntry.hubspot_property_type === "number") {
@@ -520,9 +571,9 @@ class MappingUtil {
       {}
     );
 
-    hullTraits["hubspot/id"] = accountData.companyId;
+    hullTraits["hubspot/id"] = hubspotCompany.companyId;
 
-    const hubspotName = _.get(accountData, "properties.name.value");
+    const hubspotName = _.get(hubspotCompany, "properties.name.value");
     if (!_.isEmpty(hubspotName)) {
       _.set(hullTraits, "name", {
         value: hubspotName,
@@ -531,32 +582,42 @@ class MappingUtil {
     }
 
     debug("getHullTraits", hullTraits);
-    return hullTraits;
+    mapResults.result = hullTraits;
+    return mapResults;
   }
 
   /**
-   * Maps Hubspot contact properties to Hull traits
-   * @param  {Object} userData Hubspot contact
-   * @return {Object}          Hull user traits
+   * Returns the user attributes from a Hubspot contact.
+   *
+   * @param {HubspotReadContact} hubspotContact The hubspot contact
+   * @returns {MappingResult<THullAttributes>} Mapping results for hull users attributes
+   * @memberof MappingUtil
    */
-  getHullUserTraits(userData: HubspotReadContact): THullAttributes {
+  getHullUserTraits(
+    hubspotContact: HubspotReadContact
+  ): MappingResult<THullAttributes> {
+    const mapResults = {
+      warnings: [],
+      errors: [],
+      result: {}
+    };
+
     const hullTraits = _.reduce(
       this.contactIncomingMapping,
       (traits, mappingEntry) => {
         if (!mappingEntry.hubspot_property_name) {
-          this.hullClient
-            .asUser(_.pick(userData, ["id", "external_id", "email"]))
-            .logger.warn("incoming.user.warning", {
-              warning: "cannot find mapped hubspot property",
-              mappingEntry
-            });
+          mapResults.warnings.push({
+            message:
+              "Cannot find mapped Hubspot property, see data for details.",
+            data: mappingEntry
+          });
         }
         if (
-          userData.properties &&
-          _.has(userData.properties, mappingEntry.hubspot_property_name)
+          hubspotContact.properties &&
+          _.has(hubspotContact.properties, mappingEntry.hubspot_property_name)
         ) {
           let val = _.get(
-            userData,
+            hubspotContact,
             `properties[${mappingEntry.hubspot_property_name}].value`
           );
           if (mappingEntry.hubspot_property_type === "number") {
@@ -586,7 +647,8 @@ class MappingUtil {
       {}
     );
 
-    hullTraits["hubspot/id"] = userData["canonical-vid"] || userData.vid;
+    hullTraits["hubspot/id"] =
+      hubspotContact["canonical-vid"] || hubspotContact.vid;
 
     if (hullTraits["hubspot/first_name"]) {
       hullTraits.first_name = {
@@ -602,7 +664,8 @@ class MappingUtil {
       };
     }
     debug("getHullTraits", hullTraits);
-    return hullTraits;
+    mapResults.result = hullTraits;
+    return mapResults;
   }
 
   getHubspotContact(message: THullUserUpdateMessage): HubspotWriteContact {

@@ -1,0 +1,14 @@
+[
+    {
+        "hull_trait_name": "source",
+        "hull_default_trait_name": null,
+        "hull_trait_type": "string",
+        "hull_overwrite_hubspot": false,
+        "hubspot_property_name": "source",
+        "hubspot_property_label": "source",
+        "hubspot_property_read_only": false,
+        "hubspot_property_type": "string",
+        "hubspot_property_field_type": "text",
+        "hubspot_property_display_order": 0
+    }
+]
