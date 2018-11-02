@@ -30,7 +30,7 @@ import type {
   MappingResult,
   HubspotAccountUpdateMessageEnvelope,
   HubspotUserUpdateMessageEnvelope,
-  HubspotReadMultipleContactMap
+  HubspotMultipleReadContact
 } from "../../types";
 
 const _ = require("lodash");
@@ -1010,7 +1010,7 @@ class MappingUtil {
   }
 
   patchHubspotContactProperties(
-    existingHubspotContact: HubspotReadMultipleContactRead,
+    existingHubspotContact: HubspotMultipleReadContact,
     envelope: HubspotUserUpdateMessageEnvelope
   ): HubspotUserUpdateMessageEnvelope {
 

@@ -11,7 +11,7 @@ import type {
   HubspotWriteContact,
   HubspotWriteCompany,
   HubspotReadCompany,
-  HubspotReadMultipleContactsMap
+  HubspotMultipleReadContactsMap
 } from "../types";
 
 declare type HubspotGetAllContactsResponse = {
@@ -26,7 +26,7 @@ declare type HubspotGetAllContactsResponse = {
 
 declare type HubspotGetMultipleContactsResponse = {
   ...IncomingMessage,
-  body: HubspotReadMultipleContactsMap
+  body: HubspotMultipleReadContactsMap
 };
 
 declare type HubspotGetAllCompaniesResponse = {

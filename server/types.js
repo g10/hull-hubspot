@@ -63,7 +63,7 @@ export type HubspotReadContact = {
   }
 };
 
-export type HubspotReadMultipleContacts = {
+export type HubspotMultipleReadContact = {
   vid: string,
   "canonical-vid": string,
   "merged-vids": Array<string>,
@@ -99,8 +99,8 @@ export type HubspotReadMultipleContacts = {
   }
 }
 
-export type HubspotReadMultipleContactsMap = {
-  [propertyName: number]: HubspotReadMultipleContacts
+export type HubspotMultipleReadContactsMap = {
+  [propertyName: number]: HubspotMultipleReadContact
 };
 
 export type HubspotReadCompany = {

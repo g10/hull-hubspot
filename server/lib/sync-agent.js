@@ -11,9 +11,7 @@ import type {
   HubspotUserUpdateMessageEnvelope,
   HubspotReadContact,
   HubspotAccountUpdateMessageEnvelope,
-  FilterUtilResults,
-  HubspotGetMultipleContactsResponse,
-  HubspotGetCompanyResponse
+  FilterUtilResults
 } from "../types";
 
 // const Promise = require("bluebird");
@@ -429,7 +427,7 @@ class SyncAgent {
         }, {});
 
         if (!_.isEmpty(envelopesWithIds)) {
-          const results: HubspotGetMultipleContactsResponse =
+          const results =
             await this.hubspotClient.getContactsByIds(
               _.map(envelopesWithIds, (value, key) => key)
             );
@@ -464,7 +462,7 @@ class SyncAgent {
         }, {});
 
         if (!_.isEmpty(envelopesWithEmails)) {
-          const results: HubspotGetMultipleContactsResponse =
+          const results =
             await this.hubspotClient.getContactsByEmails(
               _.map(envelopesWithEmails, (value, key) => key)
             );
