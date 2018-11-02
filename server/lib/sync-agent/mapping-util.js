@@ -1024,9 +1024,12 @@ class MappingUtil {
             )
           )
         ) {
-          _.remove(envelope.hubspotWriteContact.properties, v => {
-            return v.name === mapping.hubspot_property_name;
-          });
+          _.remove(
+            envelope.hubspotWriteContact.properties,
+            (v: { name: string }) => {
+              return v.name === mapping.hubspot_property_name;
+            }
+          );
         }
       }
     });
