@@ -11,7 +11,7 @@ import type {
   HubspotWriteContact,
   HubspotWriteCompany,
   HubspotReadCompany,
-  HubspotReadMultipleContacts
+  HubspotReadMultipleContactsMap
 } from "../types";
 
 declare type HubspotGetAllContactsResponse = {
@@ -26,7 +26,7 @@ declare type HubspotGetAllContactsResponse = {
 
 declare type HubspotGetMultipleContactsResponse = {
   ...IncomingMessage,
-  body: HubspotReadMultipleContacts
+  body: HubspotReadMultipleContactsMap
 };
 
 declare type HubspotGetAllCompaniesResponse = {
@@ -204,7 +204,7 @@ class HubspotClient {
     });
   }
 
-  getContactByIds(ids: Array<string>): Promise<HubspotReadMultipleContacts> {
+  getContactByIds(ids: Array<string>): Promise<HubspotGetMultipleContactsResponse> {
     return this.retryUnauthorized(() => {
       return this.agent.get(`/contacts/v1/contact/vids/batch/`).query({
         vid: ids
@@ -212,7 +212,7 @@ class HubspotClient {
     });
   }
 
-  getContactByEmails(emails: Array<string>): Promise<HubspotReadMultipleContacts> {
+  getContactByEmails(emails: Array<string>): Promise<HubspotGetMultipleContactsResponse> {
     return this.retryUnauthorized(() => {
       return this.agent.get(`/contacts/v1/contact/emails/batch/`).query({
         email: emails
@@ -584,11 +584,15 @@ class HubspotClient {
       });
   }
 
-  postCompanyDomainSearch(domain: string) {
+  /**
+   * have to include additionalProperties because in no overwrite scenarios
+   * we need to make sure we don't overwrite the property if it's not null
+   */
+  postCompanyDomainSearch(domain: string, additionalProperties: Array<string>) {
     return this.retryUnauthorized(() => {
       return this.agent.post(`/companies/v2/domains/${domain}/companies`).send({
         requestOptions: {
-          properties: ["domain", "hs_lastmodifieddate", "name"]
+          properties: _.union(["domain", "hs_lastmodifieddate", "name"], additionalProperties)
         }
       });
     });

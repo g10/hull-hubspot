@@ -28,7 +28,9 @@ import type {
   HullProperties,
   MappingUtilConfiguration,
   MappingResult,
-  HubspotAccountUpdateMessageEnvelope
+  HubspotAccountUpdateMessageEnvelope,
+  HubspotUserUpdateMessageEnvelope,
+  HubspotReadMultipleContactRead
 } from "../../types";
 
 const _ = require("lodash");
@@ -41,7 +43,7 @@ const COMPANY_DEFAULT_MAPPING = require("./company-default-mapping");
 
 class MappingUtil {
   // connector: THullConnector;
-  // hullClient: Object;
+  //hullClient: Object;
   // logger: Object;
   usersSegments: Array<THullSegment>;
   accountsSegments: Array<THullSegment>;
@@ -186,16 +188,6 @@ class MappingUtil {
       },
       []
     );
-  }
-
-  /**
-   * Should probably try to detect undefined and hull hull_overwrite_hubspot too
-   * Not sure what the platform will have in those cases...
-   * @param  {[type]} boolean [description]
-   * @return {[type]}         [description]
-   */
-  contactOutgoingMappingAllOverwrite(): boolean {
-    return _.every(this.contactOutgoingMapping, { hull_overwrite_hubspot: true });
   }
 
   getContactIncomingMapping(): Array<HubspotContactIncomingMapping> {
@@ -367,6 +359,23 @@ class MappingUtil {
     return mappingFromDefault.concat(mappingFromSettings);
   }
 
+  /**
+   * Should probably try to detect undefined and hull hull_overwrite_hubspot too
+   * Not sure what the platform will have in those cases...
+   */
+  contactOutgoingMappingAllOverwrite(): boolean {
+    return _.every(this.contactOutgoingMapping, { hull_overwrite_hubspot: true });
+  }
+
+  companyOutgoingMappingNoOverwriteAttributes(): Array<string> {
+    return _.reduce(this.companyOutgoingMapping,
+      (noOverwriteAttributes, value) => {
+        if (!value.hull_overwrite_hubspot) {
+          noOverwriteAttributes.push(value);
+        }
+      },
+    []);
+  }
   /**
    * Returns the Hubspot properties names.
    * When doing a sync we need to download only those
@@ -913,6 +922,7 @@ class MappingUtil {
    * @type {[type]}
    */
   patchHubspotCompanyProperties(
+    existingHubspotCompany: HubspotAccountRead
     envelope: HubspotAccountUpdateMessageEnvelope
   ): HubspotAccountUpdateMessageEnvelope {
     _.forEach(this.companyOutgoingMapping, mapping => {
@@ -928,6 +938,34 @@ class MappingUtil {
           )
         ) {
           _.remove(envelope.hubspotWriteCompany.properties, v => {
+            return v.name === mapping.hubspot_property_name;
+          });
+        }
+      }
+    });
+    return envelope;
+  }
+}
+
+
+  patchHubspotContactProperties(
+    existingHubspotContact: HubspotReadMultipleContactRead,
+    envelope: HubspotUserUpdateMessageEnvelope
+    ): HubspotUserUpdateMessageEnvelope {
+
+    _.forEach(this.contactOutgoingMapping, mapping => {
+      if (mapping.hull_overwrite_hubspot === false) {
+        if (
+          !_.isNil(
+            _.get(
+              existingHubspotContact,
+              `properties.${
+                mapping.hubspot_property_name
+              }.value`
+            )
+          )
+        ) {
+          _.remove(envelope.hubspotWriteContact.properties, v => {
             return v.name === mapping.hubspot_property_name;
           });
         }

@@ -64,41 +64,43 @@ export type HubspotReadContact = {
 };
 
 export type HubspotReadMultipleContacts = {
-  [propertyName: number]: {
+  vid: string,
+  "canonical-vid": string,
+  "merged-vids": Array<string>,
+  "portal-id": number,
+  "is-contact": boolean,
+  "profile-token": string,
+  "profile-url": string,
+  properties: {
+    [propertyName: string]: {
+      value: mixed
+    }
+  },
+  "form-submissions": Array<string>,
+  "identity-profiles": Array<{
     vid: string,
-    "canonical-vid": string,
-    "merged-vids": Array<string>,
+    "saved-at-timestamp": number,
+    identities: Array<{
+      type: string,
+      value: string,
+      timestamp: number,
+      "is-primary": boolean
+    }>
+  }>,
+  "merge-audits": Array<string>,
+  "associated-company": {
+    "company-id": number,
     "portal-id": number,
-    "is-contact": boolean,
-    "profile-token": string,
-    "profile-url": string,
     properties: {
       [propertyName: string]: {
         value: mixed
       }
-    },
-    "form-submissions": Array<string>,
-    "identity-profiles": Array<{
-      vid: string,
-      "saved-at-timestamp": number,
-      identities: Array<{
-        type: string,
-        value: string,
-        timestamp: number,
-        "is-primary": boolean
-      }>
-    }>,
-    "merge-audits": Array<string>,
-    "associated-company": {
-      "company-id": number,
-      "portal-id": number,
-      properties: {
-        [propertyName: string]: {
-          value: mixed
-        }
-      }
     }
   }
+}
+
+export type HubspotReadMultipleContactsMap = {
+  [propertyName: number]: HubspotReadMultipleContacts
 };
 
 export type HubspotReadCompany = {

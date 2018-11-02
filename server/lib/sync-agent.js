@@ -11,7 +11,8 @@ import type {
   HubspotUserUpdateMessageEnvelope,
   HubspotReadContact,
   HubspotAccountUpdateMessageEnvelope,
-  FilterUtilResults
+  FilterUtilResults,
+  HubspotGetMultipleContactsResponse
 } from "../types";
 
 // const Promise = require("bluebird");
@@ -426,9 +427,11 @@ class SyncAgent {
         }, {});
 
         if (!_.isEmpty(envelopesWithIds)) {
-          const results = await this.hubspotClient.getContactsByIds(
-            _.map(envelopesWithIds, (value, key) => key)
-          );
+          const results: HubspotGetMultipleContactsResponse =
+            await this.hubspotClient.getContactsByIds(
+              _.map(envelopesWithIds, (value, key) => key)
+            );
+
           if (!_.isEmpty(results.body)) {
 
             _.forEach(envelopesWithIds, (value, key) => {
@@ -436,7 +439,7 @@ class SyncAgent {
               if (!_.isEmpty(existingContact)) {
                 // Change this for contacts too...
                 finalEnvelopesToSend.push(
-                  this.mappingUtil.patchHubspotCompanyProperties(existingContact, value)
+                  this.mappingUtil.patchHubspotContactProperties(existingContact, value)
                 );
               } else {
                 envelopesPossibleUpdate.push(value);
@@ -459,16 +462,17 @@ class SyncAgent {
         }, {});
 
         if (!_.isEmpty(envelopesWithEmails)) {
-          const results = await this.hubspotClient.getContactsByEmails(
-            _.map(envelopesWithEmails, (value, key) => key)
-          );
+          const results: HubspotGetMultipleContactsResponse =
+            await this.hubspotClient.getContactsByEmails(
+              _.map(envelopesWithEmails, (value, key) => key)
+            );
           if (!_.isEmpty(results.body)) {
             _.forEach(envelopesWithEmails, (envelope, email) => {
               const existingContact = _.find(results.body, (value, key) => _.get(value.properties.email) === email);
               if (!_.isEmpty(existingContact)) {
                 // Change this for contacts too...
                 finalEnvelopesToSend.push(
-                  this.mappingUtil.patchHubspotCompanyProperties(existingContact, envelope)
+                  this.mappingUtil.patchHubspotContactProperties(existingContact, envelope)
                 );
               } else {
                 finalEnvelopesToSend.push(envelope);
@@ -483,7 +487,7 @@ class SyncAgent {
       })
     );
 
-    return Promise.resolve(finalEnvelopesToSend);
+    return finalEnvelopesToSend;
   }
 
   async sendAccountUpdateMessages(
@@ -526,24 +530,25 @@ class SyncAgent {
     await Promise.all(
       filterResults.toUpdate.map(async envelopeToUpdate => {
         try {
+
           const results = await this.hubspotClient.getCompanyById(
             envelopeToUpdate.hubspotWriteCompany.objectId
           );
-          const companyId = _.get(results, "body.companyId");
+
+          const companyId = _.toString(_.get(results, "body.companyId"));
+
           if (
-            results.body &&
-            !_.isEmpty(_.toString(companyId)) &&
-            _.toString(companyId) ===
-              envelopeToUpdate.hubspotWriteCompany.objectId
+            results.body && !_.isEmpty(companyId) &&
+            companyId === envelopeToUpdate.hubspotWriteCompany.objectId
           ) {
-            envelopeToUpdate.existingHubspotCompany = results.body;
             accountsToUpdate.push(
-              this.mappingUtil.patchHubspotCompanyProperties(envelopeToUpdate)
+              this.mappingUtil.patchHubspotCompanyProperties(results.body, envelopeToUpdate)
             );
           } else {
             _.unset(envelopeToUpdate.hubspotWriteCompany, "objectId");
             accountsToInsert.push(envelopeToUpdate);
           }
+
         } catch (error) {
           _.unset(envelopeToUpdate.hubspotWriteCompany, "objectId");
           accountsToInsert.push(envelopeToUpdate);
@@ -560,9 +565,9 @@ class SyncAgent {
     // first perform search for companies to be updated
     await Promise.all(
       combinedInsertResults.map(async envelopeToInsert => {
-        const domain = envelopeToInsert.message.account.domain; // TODO
+        const domain = envelopeToInsert.message.account.domain;
         const results = await this.hubspotClient.postCompanyDomainSearch(
-          domain
+          domain, this.mappingUtil.companyOutgoingMappingNoOverwriteAttributes()
         );
         if (results.body.results && results.body.results.length > 0) {
           const existingCompanies = _.sortBy(
@@ -572,13 +577,13 @@ class SyncAgent {
           const envelopeToUpdate = _.cloneDeep(envelopeToInsert);
           const latestCompany = _.last(existingCompanies);
 
+          envelopeToUpdate.hubspotWriteCompany.objectId = latestCompany.companyId.toString();
+
           // this is additional logic if we found a company to filter
           // attributes for the overwrite attribute feature
           // if the customer does not want to overwrite target value
-          envelopeToUpdate.existingHubspotCompany = latestCompany;
-          envelopeToUpdate.hubspotWriteCompany.objectId = latestCompany.companyId.toString();
           accountsToUpdate.push(
-            this.mappingUtil.patchHubspotCompanyProperties(envelopeToUpdate)
+            this.mappingUtil.patchHubspotCompanyProperties(latestCompany, envelopeToUpdate)
           );
         } else {
           accountsToInsert.push(envelopeToInsert);
