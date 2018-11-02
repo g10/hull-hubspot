@@ -34,7 +34,17 @@ declare type HubspotGetAllCompaniesResponse = {
   body: {
     companies: Array<HubspotReadCompany>,
     "has-more": boolean,
-    offset: string
+    offset: number
+  }
+};
+
+declare type HubspotGetModifiedCompaniesResponse = {
+  ...IncomingMessage,
+  body: {
+    results: Array<HubspotReadCompany>,
+    hasMore: boolean,
+    offset: number,
+    total: number
   }
 };
 
@@ -285,7 +295,7 @@ class HubspotClient {
   getAllCompaniesStream(
     properties: Array<string>,
     count: number = 100,
-    offset: ?string = null
+    offset: ?number = null
   ): Readable {
     const getAllCompaniesPage = (push, pageCount, pageOffset) => {
       return this.getAllCompanies(properties, pageCount, pageOffset).then(
@@ -322,7 +332,7 @@ class HubspotClient {
   getRecentlyUpdatedContacts(
     properties: Array<string> = [],
     count: number = 100,
-    offset: ?string = null
+    offset: ?number = null
   ): Promise<HubspotGetAllContactsResponse> {
     return this.retryUnauthorized(() => {
       return this.agent
@@ -340,7 +350,7 @@ class HubspotClient {
     stopFetchAt: string,
     properties: Array<string>,
     count: number = 100,
-    offset: ?string = null
+    offset: ?number = null
   ): Readable {
     return promiseToReadableStream(push => {
       const getRecentContactsPage = pageOffset => {
@@ -661,8 +671,8 @@ class HubspotClient {
   getRecentlyUpdatedCompanies(
     properties: Array<string>,
     count: number = 100,
-    offset: ?string = null
-  ): Promise<HubspotGetAllCompaniesResponse> {
+    offset: ?number = null
+  ): Promise<HubspotGetModifiedCompaniesResponse> {
     return this.retryUnauthorized(() => {
       return this.agent.get("/companies/v2/companies/recent/modified").query({
         count,
@@ -677,7 +687,7 @@ class HubspotClient {
     stopFetchAt: string,
     properties: Array<string>,
     count: number = 100,
-    offset: ?string = null
+    offset: ?number = null
   ): Readable {
     return promiseToReadableStream(push => {
       const getRecentCompaniesPage = pageOffset => {
