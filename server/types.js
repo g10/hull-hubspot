@@ -63,7 +63,7 @@ export type HubspotReadContact = {
   }
 };
 
-export type HubspotReadMultipleContact = {
+export type HubspotReadMultipleContacts = {
   [propertyName: number]: {
     vid: string,
     "canonical-vid": string,
@@ -91,7 +91,7 @@ export type HubspotReadMultipleContact = {
     "merge-audits": Array<string>,
     "associated-company": {
       "company-id": number,
-      "portal-id": number,,
+      "portal-id": number,
       properties: {
         [propertyName: string]: {
           value: mixed

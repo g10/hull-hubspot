@@ -11,7 +11,7 @@ import type {
   HubspotWriteContact,
   HubspotWriteCompany,
   HubspotReadCompany,
-  HubspotReadMultipleContact
+  HubspotReadMultipleContacts
 } from "../types";
 
 declare type HubspotGetAllContactsResponse = {
@@ -22,6 +22,11 @@ declare type HubspotGetAllContactsResponse = {
     "time-offset": string,
     "vid-offset": string
   }
+};
+
+declare type HubspotGetMultipleContactsResponse = {
+  ...IncomingMessage,
+  body: HubspotReadMultipleContacts
 };
 
 declare type HubspotGetAllCompaniesResponse = {
@@ -199,10 +204,18 @@ class HubspotClient {
     });
   }
 
-  getContactByIds(ids: Array<string>): Promise<HubspotReadMultipleContact> {
+  getContactByIds(ids: Array<string>): Promise<HubspotReadMultipleContacts> {
     return this.retryUnauthorized(() => {
       return this.agent.get(`/contacts/v1/contact/vids/batch/`).query({
         vid: ids
+        });
+    });
+  }
+
+  getContactByEmails(emails: Array<string>): Promise<HubspotReadMultipleContacts> {
+    return this.retryUnauthorized(() => {
+      return this.agent.get(`/contacts/v1/contact/emails/batch/`).query({
+        email: emails
         });
     });
   }

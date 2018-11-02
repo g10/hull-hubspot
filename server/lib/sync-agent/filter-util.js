@@ -66,6 +66,13 @@ class FilterUtil {
       toUpdate: [],
       toSkip: []
     };
+
+    /**
+     * It's pretty confusing here that we don't use toUpdate array
+     * It's because we're posting to a batch endpoint that can do upsert
+     * if we ever decide to use toUpdate, we have to change the overwrite
+     * attribute detection code to look at toUpdate as well...
+     */
     envelopes.forEach(envelope => {
       const { user, changes = {} } = envelope.message;
       if (

@@ -188,6 +188,16 @@ class MappingUtil {
     );
   }
 
+  /**
+   * Should probably try to detect undefined and hull hull_overwrite_hubspot too
+   * Not sure what the platform will have in those cases...
+   * @param  {[type]} boolean [description]
+   * @return {[type]}         [description]
+   */
+  contactOutgoingMappingAllOverwrite(): boolean {
+    return _.every(this.contactOutgoingMapping, { hull_overwrite_hubspot: true });
+  }
+
   getContactIncomingMapping(): Array<HubspotContactIncomingMapping> {
     const mappingFromDefault = CONTACT_DEFAULT_MAPPING.reduce(
       (mapping, defaultMapping) => {
@@ -902,7 +912,6 @@ class MappingUtil {
    * so we don't overwrite it
    * @type {[type]}
    */
- */
   patchHubspotCompanyProperties(
     envelope: HubspotAccountUpdateMessageEnvelope
   ): HubspotAccountUpdateMessageEnvelope {
