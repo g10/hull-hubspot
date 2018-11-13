@@ -18,8 +18,11 @@ class FilterUtil {
   constructor(ctx: THullReqContext) {
     this.connector = ctx.connector;
     this.isBatch = ctx.isBatch;
-    this.incomingAccountIdentHull = this.connector.private_settings.incoming_account_ident_hull;
-    this.incomingAccountIdentService = this.connector.private_settings.incoming_account_ident_service;
+    this.incomingAccountIdentHull =
+      this.connector.private_settings.incoming_account_ident_hull || "domain";
+    this.incomingAccountIdentService =
+      this.connector.private_settings.incoming_account_ident_service ||
+      "domain";
 
     debug("isBatch", this.isBatch);
   }
