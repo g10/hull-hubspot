@@ -83,7 +83,7 @@ class Mapping {
           ) {
             val = val.split(";");
           }
-          traits[prop.hull] = val;
+          traits[prop.hull.replace("traits_", "")] = val;
         }
         return traits;
       },

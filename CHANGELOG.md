@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.14
+- hotfix remove `traits_` prefix from incoming traits
+
 ## v0.5.13
 - hotfix support `account` properties inside Contacts
 
@@ -138,7 +141,7 @@
 
 ## v0.2.2
 - [bugfix] move `ship:update` handler to background job so it doesn't interfere
-with refresh token operation (which triggers the update event) 
+with refresh token operation (which triggers the update event)
 
 ## v0.2.1
 - [bugfix] handle the datetime field type
