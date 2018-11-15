@@ -86,7 +86,8 @@ class Mapping {
           ) {
             val = val.split(";");
           }
-          traits[prop.hull.replace("traits_", "")] = val;
+          const nameWithoutPrefix = _.trimStart(prop.hull, "traits_");
+          traits[nameWithoutPrefix] = val;
         }
         return traits;
       },
