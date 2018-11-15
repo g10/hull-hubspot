@@ -57,6 +57,9 @@ class Mapping {
     const hullTraits = _.reduce(
       this.map.to_hull,
       (traits, prop) => {
+        if (!prop.hull || !prop.name) {
+          return traits;
+        }
         const hubspotProp = this.findHubspotProp(hubspotProperties, prop);
         if (!hubspotProp) {
           this.client
