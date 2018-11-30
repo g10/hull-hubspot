@@ -23,7 +23,8 @@ describe("Hubspot", function test() {
         }, {
           name: "custom_hubspot_create_at",
           hull: "custom_created_at"
-        }]
+        }],
+        synchronized_segments: ["a"]
       }
     });
     minihubspot.listen(8002);
@@ -38,7 +39,8 @@ describe("Hubspot", function test() {
     minihull.stubBatch([{
       email: "foo@bar.com",
       first_name: "Foo",
-      last_name: "Bar"
+      last_name: "Bar",
+      segment_ids: ["a"]
     }]);
     minihull.batchConnector("123456789012345678901234", "http://localhost:8000/batch");
     minihubspot.on("incoming.request#6", (req) => {
@@ -66,7 +68,7 @@ describe("Hubspot", function test() {
               message: `Email address ${minihull.users().get("0.email")} is invalid`
             }
           }, {
-            index: 2,
+            index: 1,
             propertyValidationResult: {
               isValid: false,
               message: "1496643178000 is at 6:12:58.0 UTC, not midnight!",
@@ -83,11 +85,18 @@ describe("Hubspot", function test() {
     minihull.stubBatch([{
       email: "foo@bar.com",
       first_name: "Foo",
-      last_name: "Bar"
+      last_name: "Bar",
+      segment_ids: ["a"]
     }, {
       email: "foo1@bar.com",
       first_name: "Foo1",
-      last_name: "Bar1"
+      last_name: "Bar1",
+      segment_ids: ["a"]
+    }, {
+      email: "foo2@bar.com",
+      first_name: "Foo2",
+      last_name: "Bar2",
+      segment_ids: ["a"]
     }, {
       email: "foo2@bar.com",
       first_name: "Foo2",
