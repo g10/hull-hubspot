@@ -27,7 +27,8 @@ describe("Hubspot properties formatting", function test() {
         }, {
           name: "custom_hubspot_create_at",
           hull: "custom_created_at"
-        }]
+        }],
+        synchronized_segments: ["a"]
       }
     });
     minihubspot.listen(8002);
@@ -58,7 +59,8 @@ describe("Hubspot properties formatting", function test() {
     minihull.stubBatch([{
       email: "foo@bar.com",
       custom_created_at: "2016-08-04T12:49:28Z",
-      custom_date_created_at: "2016-08-04T12:49:28Z"
+      custom_date_created_at: "2016-08-04T12:49:28Z",
+      segment_ids: ["a"]
     }])
     minihull.batchConnector("123456789012345678901234", "http://localhost:8000/batch");
     minihubspot.on("incoming.request#3", (req) => {
