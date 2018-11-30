@@ -170,7 +170,7 @@ class SyncAgent {
       []
     );
     if (segmentIds.length === 0) {
-      return true;
+      return false;
     }
     return _.intersection(segmentIds, user.segment_ids).length > 0;
   }
