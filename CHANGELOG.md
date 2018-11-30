@@ -2,6 +2,7 @@
 
 ## v0.5.14
 - fix outgoing users filter in case of empty segment
+- upgrade to hull-node@0.13.17 to fix batch endpoint
 
 ## v0.5.13
 - hotfix support `account` properties inside Contacts
